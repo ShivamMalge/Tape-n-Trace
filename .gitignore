@@ -1,0 +1,41 @@
+# --- Course material (input, not source) ---------------------------------
+# ~154 MB of docx/pptx/pdf. Kept in the working folder for reference while
+# building the exercise bank; never committed. Content gets transcribed into
+# engine fixtures in P1.1 rather than read from .docx at runtime.
+5th sem Toc 2026-27/
+*.pdf
+*.docx
+*.pptx
+
+# --- Node / pnpm ----------------------------------------------------------
+node_modules/
+.pnpm-store/
+*.tsbuildinfo
+
+# --- Build output ---------------------------------------------------------
+dist/
+build/
+.next/
+out/
+
+# --- Test / coverage ------------------------------------------------------
+coverage/
+.vitest/
+
+# --- Python (vyakarana, P1.8) --------------------------------------------
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+
+# --- Env ------------------------------------------------------------------
+.env
+.env.local
+.env.*.local
+
+# --- Editor / OS ----------------------------------------------------------
+.DS_Store
+Thumbs.db
+*.swp
