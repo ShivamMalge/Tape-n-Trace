@@ -164,15 +164,15 @@ phase reuses.
 
 **Acceptance criteria**
 
-- [ ] `packages/engine` has zero React/DOM imports, enforced by lint, failing CI.
-- [ ] At least 90% line coverage on `fa/simulate.ts` and `trace.ts`.
-- [ ] `simulateDFA` agrees with the brute-force oracle on all strings up to length 12, for 200 random DFAs.
-- [ ] `simulateNFA` retains dead branches in its branch tree, flagged dead at the step they died.
-- [ ] Every trace produced passes all six trace invariants (architecture.md §5).
-- [ ] A trace round-trips through `JSON.stringify` / `parse` byte-identically.
-- [ ] `validate()` on a DFA with two transitions for the same `(state, symbol)` returns **all** violations,
+- [x] `packages/engine` has zero React/DOM imports, enforced by lint, failing CI.
+- [x] At least 90% line coverage on `fa/simulate.ts` and `trace.ts`. — both at 100%, engine at 99.8%.
+- [x] `simulateDFA` agrees with the brute-force oracle on all strings up to length 12, for 200 random DFAs.
+- [x] `simulateNFA` retains dead branches in its branch tree, flagged dead at the step they died.
+- [x] Every trace produced passes all six trace invariants (architecture.md §5).
+- [x] A trace round-trips through `JSON.stringify` / `parse` byte-identically.
+- [x] `validateFA` on a DFA with two transitions for the same `(state, symbol)` returns **all** violations,
       not the first.
-- [ ] Deep-cloning a snapshot is impossible by construction: snapshots are frozen, and a mutation attempt
+- [x] Deep-cloning a snapshot is impossible by construction: snapshots are frozen, and a mutation attempt
       throws in development (ADR-001).
 
 **Exit gate.** CI is green, coverage gate active, and the trace-invariant helper is importable by any
@@ -207,15 +207,21 @@ inherits it.
 
 **Acceptance criteria**
 
-- [ ] The renderer imports nothing from `packages/engine` — verified by lint.
-- [ ] No component exceeds 300 lines; the line-count lint rule is active in CI.
-- [ ] Scrubbing the transport slider to any step renders in under 16 ms with no re-simulation.
-- [ ] An NFA run on a string with 3 accepting paths renders a branch tree with 3 highlighted paths and
+- [x] The renderer imports nothing from `packages/engine` — verified by lint. Type-only imports are
+      allowed and erase at build time; a runtime import fails the build.
+- [x] No component exceeds 300 lines; the line-count lint rule is active in CI.
+- [~] Scrubbing re-simulates nothing — the trace is computed once per run and the slider indexes it.
+      **The 16 ms figure is unverified.** Measured only through `renderToStaticMarkup`, which is the
+      wrong instrument: it rebuilds the markup from scratch where a real scrub is a diffing re-render.
+      Needs a jsdom or browser measurement, which lands with the editor's accessibility tests.
+- [x] An NFA run on a string with 3 accepting paths renders a branch tree with 3 highlighted paths and
       the dead branches greyed at their death step.
-- [ ] An invalid machine shows every violation simultaneously in the editor.
-- [ ] A trace loaded from JSON renders identically to the same trace produced in-process.
-- [ ] Machine editing is fully keyboard-navigable; every state and transition is screen-reader announced.
-- [ ] The README status table lists exactly what works.
+- [~] Every violation is shown simultaneously, and `validateFA` returns them all — but there is no
+      editor yet in which to create an invalid machine by hand.
+- [x] A trace loaded from JSON renders identically to the same trace produced in-process.
+- [~] Every state and transition is screen-reader announced, and the transport bar is keyboard-driven.
+      Machine *editing* is not navigable because machine editing does not exist yet.
+- [x] The README status table lists exactly what works.
 
 **Exit gate.** v0.1 is deployable and a student can simulate DFAs and NFAs end to end.
 

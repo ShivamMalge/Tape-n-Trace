@@ -1,0 +1,11 @@
+packages:
+  - 'packages/*'
+  - 'apps/*'
+
+# pnpm blocks dependency build scripts by default. These two need theirs:
+# esbuild (under vitest) places its platform binary, and sharp (under Next's
+# image optimisation) builds its native bindings. Allowed explicitly rather than
+# left to prompt on every fresh clone and stall CI.
+allowBuilds:
+  esbuild: true
+  sharp: true

@@ -1,0 +1,111 @@
+/**
+ * Design tokens — shared by the web app and the notebook widget build.
+ *
+ * Everything visual resolves to a token here. Two reasons that matters beyond
+ * tidiness: the anywidget build injects CSS into a host notebook whose theme is
+ * not ours to control, and the highlight roles the engine emits (`current`,
+ * `dead`, `taken`, ...) must map to exactly one colour each, everywhere they are
+ * drawn, or the same trace reads differently in two places.
+ */
+
+:root {
+  --tnt-bg: #ffffff;
+  --tnt-surface: #f6f7f9;
+  --tnt-border: #d5d9e0;
+  --tnt-text: #10131a;
+  --tnt-text-muted: #5b6472;
+
+  /* Machine parts at rest. */
+  --tnt-state-fill: #ffffff;
+  --tnt-state-stroke: #3d4451;
+  --tnt-edge: #6b7280;
+  --tnt-label: #374151;
+
+  /* Highlight roles. One colour per role, defined once. */
+  --tnt-current: #1d4ed8;
+  --tnt-current-soft: #dbeafe;
+  --tnt-accepting: #15803d;
+  --tnt-accepting-soft: #dcfce7;
+  --tnt-dead: #9ca3af;
+  --tnt-dead-soft: #f3f4f6;
+  --tnt-new: #7c3aed;
+  --tnt-taken: #1d4ed8;
+  --tnt-candidate: #a5b4fc;
+  --tnt-marked: #b45309;
+
+  /* Input tape. */
+  --tnt-consumed: #9ca3af;
+  --tnt-read: #1d4ed8;
+  --tnt-lookahead: #4b5563;
+
+  --tnt-radius: 6px;
+  --tnt-focus: #2563eb;
+  --tnt-font: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --tnt-mono: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-tnt-theme='light']) {
+    --tnt-bg: #0f1117;
+    --tnt-surface: #171a21;
+    --tnt-border: #2c313c;
+    --tnt-text: #e8eaed;
+    --tnt-text-muted: #9aa3b2;
+
+    --tnt-state-fill: #1c2029;
+    --tnt-state-stroke: #9aa3b2;
+    --tnt-edge: #8b93a1;
+    --tnt-label: #c8cede;
+
+    --tnt-current: #60a5fa;
+    --tnt-current-soft: #1e3a5f;
+    --tnt-accepting: #4ade80;
+    --tnt-accepting-soft: #14532d;
+    --tnt-dead: #4b5563;
+    --tnt-dead-soft: #1f2430;
+    --tnt-new: #c084fc;
+    --tnt-taken: #60a5fa;
+    --tnt-candidate: #4c5b91;
+    --tnt-marked: #fbbf24;
+
+    --tnt-consumed: #4b5563;
+    --tnt-read: #60a5fa;
+    --tnt-lookahead: #9aa3b2;
+  }
+}
+
+[data-tnt-theme='dark'] {
+  --tnt-bg: #0f1117;
+  --tnt-surface: #171a21;
+  --tnt-border: #2c313c;
+  --tnt-text: #e8eaed;
+  --tnt-text-muted: #9aa3b2;
+
+  --tnt-state-fill: #1c2029;
+  --tnt-state-stroke: #9aa3b2;
+  --tnt-edge: #8b93a1;
+  --tnt-label: #c8cede;
+
+  --tnt-current: #60a5fa;
+  --tnt-current-soft: #1e3a5f;
+  --tnt-accepting: #4ade80;
+  --tnt-accepting-soft: #14532d;
+  --tnt-dead: #4b5563;
+  --tnt-dead-soft: #1f2430;
+  --tnt-new: #c084fc;
+  --tnt-taken: #60a5fa;
+  --tnt-candidate: #4c5b91;
+  --tnt-marked: #fbbf24;
+
+  --tnt-consumed: #4b5563;
+  --tnt-read: #60a5fa;
+  --tnt-lookahead: #9aa3b2;
+}
+
+/* Respect a reader who has asked the OS to stop things moving. */
+@media (prefers-reduced-motion: reduce) {
+  .tnt-animated {
+    transition: none !important;
+    animation: none !important;
+  }
+}

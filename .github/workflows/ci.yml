@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Lint, types, tests, build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      # Two bans live here (architecture.md §2.1, §10.1): the engine may not
+      # import React or touch the DOM, and the renderers may not import the
+      # engine at runtime. A violation fails the build rather than being left to
+      # code review.
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      # Coverage thresholds are enforced by the vitest config, not by a later
+      # step: under 90% on the engine is a failing run, not a warning. This is
+      # the slowest job in CI at roughly five minutes, almost all of it the
+      # exhaustive oracle agreement check.
+      - name: Engine tests with coverage
+        run: pnpm --filter @tape-n-trace/engine test:coverage
+
+      - name: Renderer tests
+        run: pnpm --filter @tape-n-trace/ui test
+
+      - name: Build the web app
+        run: pnpm --filter @tape-n-trace/web build
+
+# Gates that arrive with the phases that earn them (architecture.md §11):
+#   pytest                         — P1.8, with the vyakarana package
+#   bundle freshness for vyakarana — P1.8, alongside the anywidget bridge
+# They are deliberately absent rather than stubbed: a green check for a step
+# that runs nothing is worse than no check at all.

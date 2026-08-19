@@ -1,0 +1,71 @@
+@import '@tape-n-trace/ui/tokens.css';
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--tnt-bg);
+  color: var(--tnt-text);
+  font-family: var(--tnt-font);
+  line-height: 1.55;
+}
+
+a {
+  color: var(--tnt-current);
+}
+
+h1,
+h2,
+h3 {
+  line-height: 1.25;
+  margin: 0 0 0.4em;
+}
+
+code,
+kbd {
+  font-family: var(--tnt-mono);
+  font-size: 0.92em;
+}
+
+:focus-visible {
+  outline: 2px solid var(--tnt-focus);
+  outline-offset: 2px;
+}
+
+.tnt-page {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 24px 20px 64px;
+}
+
+.tnt-card {
+  border: 1px solid var(--tnt-border);
+  border-radius: var(--tnt-radius);
+  background: var(--tnt-surface);
+  padding: 16px;
+}
+
+.tnt-muted {
+  color: var(--tnt-text-muted);
+}
+
+/* Skip link — the first tab stop on every page. */
+.tnt-skip {
+  position: absolute;
+  left: -9999px;
+}
+.tnt-skip:focus {
+  left: 8px;
+  top: 8px;
+  z-index: 10;
+  padding: 8px 12px;
+  background: var(--tnt-bg);
+  border: 1px solid var(--tnt-border);
+  border-radius: var(--tnt-radius);
+}

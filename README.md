@@ -11,18 +11,25 @@ Jupyter and Colab.
 
 ## ⚠ What actually works today
 
-**Nothing. This project is pre-implementation.** The specification is complete; no code has been written.
+**You can simulate a finite automaton end to end. You cannot yet draw one.** P0.1 and most of P0.2
+are complete: the engine, the renderers, and a web app that runs any of seven preset machines
+step by step. The machine editor and export are the outstanding parts of P0.2.
 
-| Area | Status |
-|---|---|
-| Engine — types, trace protocol | ❌ Not started |
-| Engine — FA simulation (DFA / NFA / ε-NFA) | ❌ Not started |
-| Engine — Module 1–2 conversions | ❌ Not started |
-| Engine — grammars, PDA, TM | ❌ Not started |
-| Web app | ❌ Not started |
-| Equivalence checker and grading | ❌ Not started |
-| Pumping lemma game | ❌ Not started |
-| Vyakarana (Python package) | ❌ Not started |
+| Area | Status | Notes |
+|---|---|---|
+| Engine — types, trace protocol, serialisation | ✅ P0.1 | `TraceBuilder`, frozen shared snapshots, wire format |
+| Engine — validation and canonical naming | ✅ P0.1 | all violations reported, deterministic ids |
+| Engine — FA simulation (DFA / NFA / ε-NFA) | ✅ P0.1 | branch tree for NFAs, explicit ε-closure steps |
+| Engine — presets, strings and languages | ✅ P0.2 | gallery, divisible-by-K family, Σ* enumeration |
+| Renderers — automaton, branch tree, transport | ✅ P0.2 | pure SVG, theme-aware, screen-reader labelled |
+| Web app — simulate a machine end to end | ✅ P0.2 | 7 presets, multi-run table, strings primer |
+| Editor — draw and edit a machine | ❌ Not started | P0.2 remainder |
+| Export — PNG, SVG, `.tnt` | ❌ Not started | P0.2 remainder |
+| Engine — Module 1–2 conversions | ❌ Not started | P0.3 |
+| Engine — grammars, PDA, TM | ❌ Not started | P1.3 onward |
+| Equivalence checker and grading | ❌ Not started | P1.1 |
+| Pumping lemma game | ❌ Not started | P1.2 |
+| Vyakarana (Python package) | ❌ Not started | P1.8 |
 
 *This table is updated in the same commit as the feature it describes. A capability is never claimed here
 before it is real — a rule this project inherits from a sibling whose docs advertised animations nothing
