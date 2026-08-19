@@ -82,3 +82,44 @@ export {
   enumerateUpTo,
   reverse,
 } from './strings.js'
+
+export type { AddStateOptions } from './fa/edit.js'
+export {
+  addState,
+  addTransition,
+  applyLayout,
+  emptyMachine,
+  moveState,
+  nextStateName,
+  removeState,
+  removeTransition,
+  renameState,
+  setAlphabet,
+  setEdgeLabels,
+  setKind,
+  setStart,
+  toggleAccepting,
+} from './fa/edit.js'
+
+export type { EquivalenceSnapshot, PairNode } from './fa/equivalence.js'
+export { areEquivalent, equivalence, separatingWord } from './fa/equivalence.js'
+
+export type { SubsetRow, SubsetSnapshot } from './fa/subset.js'
+export { nfaToDfa } from './fa/subset.js'
+
+export type { EpsilonSnapshot } from './fa/epsilon.js'
+export { epsilonElim } from './fa/epsilon.js'
+
+export type { MinimizeSnapshot } from './fa/minimize.js'
+export { minimize, pairKey } from './fa/minimize.js'
+
+export { EMPTY_LITERAL, EPSILON_LITERAL, parseRegex, regexSize, regexToString } from './regex/parse.js'
+
+export type { RegexTreeNode, ThompsonSnapshot } from './regex/thompson.js'
+export { regexToENFA } from './regex/thompson.js'
+
+export type { LabelledEdge, StateElimSnapshot } from './regex/stateElim.js'
+export { concat as concatRegex, dfaToRegex, star as starRegex, union as unionRegex } from './regex/stateElim.js'
+
+export type { GrammarSnapshot } from './fa/regularGrammar.js'
+export { checkRightLinear, grammarToNFA, nfaToGrammar } from './fa/regularGrammar.js'

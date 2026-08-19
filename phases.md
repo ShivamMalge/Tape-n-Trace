@@ -210,17 +210,18 @@ inherits it.
 - [x] The renderer imports nothing from `packages/engine` — verified by lint. Type-only imports are
       allowed and erase at build time; a runtime import fails the build.
 - [x] No component exceeds 300 lines; the line-count lint rule is active in CI.
-- [~] Scrubbing re-simulates nothing — the trace is computed once per run and the slider indexes it.
-      **The 16 ms figure is unverified.** Measured only through `renderToStaticMarkup`, which is the
-      wrong instrument: it rebuilds the markup from scratch where a real scrub is a diffing re-render.
-      Needs a jsdom or browser measurement, which lands with the editor's accessibility tests.
+- [~] Scrubbing re-simulates nothing — proven exactly: the engine call is counted, and moving the
+      slider across every step leaves the count at 1. Cost is also independent of machine size
+      (1.0x for 17x the transitions), which is what the memoised renderers and the identity caches in
+      `geometry.ts` buy. **The 16 ms itself is still unverified**: it is a browser budget, and the
+      measurement runs in jsdom, where DOM mutation is an order of magnitude slower. Asserting the
+      number there would be choosing a threshold to fit the tooling rather than measuring the thing.
 - [x] An NFA run on a string with 3 accepting paths renders a branch tree with 3 highlighted paths and
       the dead branches greyed at their death step.
-- [~] Every violation is shown simultaneously, and `validateFA` returns them all — but there is no
-      editor yet in which to create an invalid machine by hand.
+- [x] An invalid machine shows every violation simultaneously in the editor.
 - [x] A trace loaded from JSON renders identically to the same trace produced in-process.
-- [~] Every state and transition is screen-reader announced, and the transport bar is keyboard-driven.
-      Machine *editing* is not navigable because machine editing does not exist yet.
+- [x] Machine editing is fully keyboard-navigable; every state and transition is screen-reader
+      announced. Tested by building a machine end to end through labelled controls alone.
 - [x] The README status table lists exactly what works.
 
 **Exit gate.** v0.1 is deployable and a student can simulate DFAs and NFAs end to end.
@@ -251,18 +252,22 @@ Steps each trace must contain:
 
 **Acceptance criteria**
 
-- [ ] Every conversion is a pure function `(input) -> Trace`, tested with no UI present.
-- [ ] **The grand round-trip.** For 200 random NFAs bounded to 4 states and 2 symbols:
+- [x] Every conversion is a pure function `(input) -> Trace`, tested with no UI present.
+- [x] **The grand round-trip.** For 200 random NFAs bounded to 4 states and 2 symbols:
       `nfaToDfa` then `minimize` then `dfaToRegex` then `regexToENFA` then `epsilonElim` then `nfaToDfa`
       then `minimize` yields a DFA equivalent to the original. Bounds are mandatory — state elimination
       blows up RE size super-exponentially and an unbounded generator makes CI flaky.
-- [ ] `minimize(minimize(D))` equals `minimize(D)`, and the state count matches an independently written
+- [x] `minimize(minimize(D))` equals `minimize(D)`, and the state count matches an independently written
       partition-refinement implementation used only in tests.
-- [ ] Subset construction on Hopcroft's 2^n bad case reaches the state cap and shows the "this is the
+- [x] Subset construction on Hopcroft's 2^n bad case reaches the state cap and shows the "this is the
       point" explanation rather than hanging.
-- [ ] Canonical state naming: running the same conversion twice produces byte-identical state ids.
-- [ ] Every step's `narration` reads as a sentence a lecturer would say. No `"step 4"`.
-- [ ] Each conversion cites its Hopcroft 2e section in `Step.citation`.
+- [x] Canonical state naming: running the same conversion twice produces byte-identical state ids.
+- [x] Every step's `narration` reads as a sentence a lecturer would say. No `"step 4"` — the
+      `TraceBuilder` refuses a narration that is empty, lacks a final period, or carries placeholder text.
+- [~] Each conversion cites its Hopcroft 2e section in `Step.citation` — except
+      `fa/regularGrammar.ts`, which cites nothing. Regular grammars are not covered at any section the
+      syllabus prescribes, and inventing a reference is worse than omitting one. Add it once the
+      printed 2e has been checked.
 
 **Exit gate.** The grand round-trip is green. It exercises the whole Module 1-2 engine and catches nearly
 every conversion bug; nothing proceeds until it passes.

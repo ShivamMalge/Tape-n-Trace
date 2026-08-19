@@ -32,6 +32,22 @@ export const LIMITS = {
   SIMULATION_STEPS: 10_000,
   CFG_PRODUCTIONS: 300,
   SEARCH_DEPTH: 100,
+  /**
+   * The most steps any one trace will narrate.
+   *
+   * Separate from the caps above, and for a different reason. Those bound how
+   * big an *object* the engine will build; this bounds how much of the building
+   * it will describe. Every step carries a complete snapshot (§5), so a trace of
+   * n steps over an artifact of n parts costs O(n²) — at the 2^12 subset cap
+   * that is millions of entries and a trace `JSON.stringify` cannot even
+   * represent, which is the blow-up ADR-001 predicts.
+   *
+   * Past this, the algorithm keeps running and still reports its real result;
+   * it simply stops emitting per-step snapshots and says so in `meta.truncated`.
+   * Nobody scrubs four thousand steps anyway — the value of the exponential case
+   * is watching it start to explode and being told how far it went.
+   */
+  TRACE_STEPS: 300,
   /** Applies to the serialised form, per ADR-001. */
   TRACE_BYTES: 5 * 1024 * 1024,
 } as const
@@ -115,9 +131,19 @@ export class TraceBuilder<TSnapshot> {
     return this
   }
 
-  /** Record that a §9 guard fired. The UI surfaces this as prose. */
-  truncate(reason: string, cap: number): this {
-    this.truncation ??= { reason, cap }
+  /**
+   * Record that a §9 guard fired. The UI surfaces this as prose.
+   *
+   * First reason wins, so a repeated guard does not overwrite the explanation of
+   * why the run stopped. `replace` is for the case where a *harder* guard fires
+   * later: a run that stopped narrating at the step cap and then hit the subset
+   * state cap should report the state cap, because that is the one that changed
+   * the answer rather than the commentary.
+   */
+  truncate(reason: string, cap: number, options: { replace?: boolean } = {}): this {
+    if (this.truncation === undefined || options.replace === true) {
+      this.truncation = { reason, cap }
+    }
     return this
   }
 

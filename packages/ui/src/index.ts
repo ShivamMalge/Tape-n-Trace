@@ -39,6 +39,8 @@ export type {
   TreeNodeRole,
 } from './automaton/highlights.js'
 
+export { eventPoint, stateAt, svgPoint, transitionsAt } from './automaton/coords.js'
+
 export { AutomatonRenderer } from './automaton/automaton-renderer.js'
 export type { AutomatonRendererProps } from './automaton/automaton-renderer.js'
 

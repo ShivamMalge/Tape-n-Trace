@@ -35,6 +35,16 @@ export const CATALOG: Tool[] = [
     verb: 'simulate',
   },
   {
+    id: 'edit-fa',
+    title: 'Draw a finite automaton',
+    summary: 'Draw a DFA, NFA or ε-NFA by hand, with every problem in it listed as you work.',
+    href: '/edit',
+    status: 'live',
+    phase: 'P0.2',
+    modules: [1],
+    verb: 'simulate',
+  },
+  {
     id: 'strings-and-languages',
     title: 'Strings and languages',
     summary: 'Alphabets, powers, Σ*, length and concatenation, with every string of length ≤ k listed.',

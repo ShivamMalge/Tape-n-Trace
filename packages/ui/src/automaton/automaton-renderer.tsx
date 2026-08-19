@@ -31,6 +31,22 @@ export interface AutomatonRendererProps {
   onSelectState?: ((id: StateId) => void) | undefined
   onSelectEdge?: ((group: EdgeGroup) => void) | undefined
   className?: string
+
+  /**
+   * Editing hooks. The renderer forwards these to the `<svg>` and does nothing
+   * else with them: it stays a pure function of props, and the editor reads what
+   * was hit from the `data-` attributes below via `coords.ts`. Adding a callback
+   * per element instead would put editing policy inside the renderer, which is
+   * the retrofit §10.1 exists to avoid.
+   */
+  svgRef?: React.Ref<SVGSVGElement>
+  onPointerDown?: React.PointerEventHandler<SVGSVGElement> | undefined
+  onPointerMove?: React.PointerEventHandler<SVGSVGElement> | undefined
+  onPointerUp?: React.PointerEventHandler<SVGSVGElement> | undefined
+  onDoubleClick?: React.MouseEventHandler<SVGSVGElement> | undefined
+  onContextMenu?: React.MouseEventHandler<SVGSVGElement> | undefined
+  /** Drawn last, above everything — the editor's in-progress edge, for instance. */
+  overlay?: React.ReactNode
 }
 
 export function AutomatonRenderer({
@@ -43,6 +59,13 @@ export function AutomatonRenderer({
   onSelectState,
   onSelectEdge,
   className,
+  svgRef,
+  onPointerDown,
+  onPointerMove,
+  onPointerUp,
+  onDoubleClick,
+  onContextMenu,
+  overlay,
 }: AutomatonRendererProps): React.JSX.Element {
   const radius = mini ? MINI_NODE_RADIUS : NODE_RADIUS
   const layout = resolveLayout(machine, { radius })
@@ -59,13 +82,24 @@ export function AutomatonRenderer({
 
   return (
     <svg
+      ref={svgRef}
       className={className}
       viewBox={`${view.x} ${view.y} ${view.width} ${view.height}`}
       width="100%"
       role="group"
       aria-label={describeMachine(machine)}
       data-tnt-theme={theme === 'auto' ? undefined : theme}
-      style={{ fontFamily: 'var(--tnt-font)', maxWidth: '100%', display: 'block' }}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={onPointerUp}
+      onDoubleClick={onDoubleClick}
+      onContextMenu={onContextMenu}
+      style={{
+        fontFamily: 'var(--tnt-font)',
+        maxWidth: '100%',
+        display: 'block',
+        touchAction: onPointerDown === undefined ? undefined : 'none',
+      }}
     >
       <defs>
         {markerRoles.map((role) => (
@@ -154,6 +188,8 @@ export function AutomatonRenderer({
           )
         })}
       </g>
+
+      {overlay}
     </svg>
   )
 }

@@ -46,6 +46,9 @@ export default function RootLayout({ children }: { children: ReactNode }): React
             <a href="/simulate" style={{ fontSize: 14 }}>
               Simulate
             </a>
+            <a href="/edit" style={{ fontSize: 14 }}>
+              Draw
+            </a>
             <a href="/learn/strings" style={{ fontSize: 14 }}>
               Strings &amp; languages
             </a>

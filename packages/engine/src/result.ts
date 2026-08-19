@@ -14,6 +14,12 @@ export interface ValidationError {
   message: string
   /** What the editor should point at. */
   subject: { kind: 'state' | 'transition' | 'production' | 'machine'; id?: string }
+  /**
+   * Character offset into the source text, for inputs that are typed rather
+   * than drawn — regular expressions here, grammars in P1.3. The editor
+   * underlines the offending character instead of pointing at the whole box.
+   */
+  position?: number
 }
 
 export type Result<T> = { ok: true; value: T } | { ok: false; errors: ValidationError[] }

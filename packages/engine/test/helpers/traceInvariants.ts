@@ -87,6 +87,19 @@ function assertHighlightsResolve(trace: Trace<Step<unknown>>): void {
             expect(ids.states.has(id), `${where} names "${id}", absent from the snapshot`).toBe(true)
           }
           break
+        case 'production':
+          expect(
+            h.index >= 0 && h.index < ids.productionCount,
+            `${where} names production ${h.index}, outside 0..${ids.productionCount - 1}`,
+          ).toBe(true)
+          break
+        case 'tableCell':
+          // A table's axes vary by conversion — subsets against symbols, states
+          // against states, pairs against pairs — so what is checked is that
+          // both labels name something the snapshot actually contains.
+          expect(ids.labels.has(h.row), `${where} names row "${h.row}", absent from the snapshot`).toBe(true)
+          expect(ids.labels.has(h.col), `${where} names column "${h.col}", absent from the snapshot`).toBe(true)
+          break
         default:
           throw new Error(
             `assertTraceInvariants cannot resolve a "${(h as Highlight).type}" highlight yet. ` +
@@ -131,6 +144,49 @@ function defaultConsistency(snapshot: unknown, result: TraceResult): boolean | s
     )
   }
 
+  // A conversion's final snapshot must actually hold the machine it claims to
+  // have produced. A trace that says "here is your DFA" while its last frame
+  // shows a half-built one is the exact failure the invariant exists to catch.
+  if (result.type === 'machine') {
+    // Most conversions call the thing they are building `target`; a grammar
+    // snapshot calls its automaton `machine`, because there the grammar is the
+    // other half of the pair. Either name counts.
+    const built = (snapshot as { target?: unknown; machine?: unknown }).target ??
+      (snapshot as { machine?: unknown }).machine
+    if (status !== 'done') {
+      return `the result is a machine but the final snapshot has status ${JSON.stringify(status)}, expected 'done'`
+    }
+    return (
+      JSON.stringify(built) === JSON.stringify(result.machine) ||
+      'the final snapshot differs from the machine the trace returned'
+    )
+  }
+
+  if (result.type === 'grammar') {
+    if (status !== 'done') {
+      return `the result is a grammar but the final snapshot has status ${JSON.stringify(status)}, expected 'done'`
+    }
+    return (
+      JSON.stringify((snapshot as { grammar?: unknown }).grammar) === JSON.stringify(result.grammar) ||
+      'the final snapshot differs from the grammar the trace returned'
+    )
+  }
+
+  if (result.type === 'regex') {
+    if (status !== 'done') {
+      return `the result is a regex but the final snapshot has status ${JSON.stringify(status)}, expected 'done'`
+    }
+    return true
+  }
+
+  if (result.type === 'verdict') {
+    const expected = result.holds ? 'equivalent' : 'different'
+    return (
+      status === expected ||
+      `the verdict is holds=${result.holds} but the final snapshot has status ${JSON.stringify(status)}`
+    )
+  }
+
   if (result.type !== 'acceptance') {
     return `no default consistency check exists for a "${result.type}" result — pass finalSnapshotMatchesResult`
   }
@@ -152,12 +208,28 @@ interface SnapshotIds {
   states: Set<string>
   transitions: Set<string>
   treeNodes: Set<string>
+  /** Anything a table axis may legally be labelled with. */
+  labels: Set<string>
+  /** How many productions the snapshot's grammar holds. */
+  productionCount: number
   inputLength: number
+}
+
+interface MachineLike {
+  states?: string[]
+  alphabet?: string[]
+  transitions?: { id: string }[]
 }
 
 /**
  * Gather the ids a highlight may legally name. Extended per phase, as the
  * snapshots each phase introduces arrive.
+ *
+ * A conversion snapshot holds more than one machine — a source and a growing
+ * target, or the two machines being compared — and a highlight carries no field
+ * saying which one it means (§5). Ids are therefore pooled across all of them.
+ * That is deliberate rather than sloppy: for ε-elimination, where source and
+ * target share state names, highlighting a state in both panes is exactly right.
  */
 function collectIds(snapshot: unknown, where: string): SnapshotIds {
   if (snapshot === null || typeof snapshot !== 'object') {
@@ -165,15 +237,40 @@ function collectIds(snapshot: unknown, where: string): SnapshotIds {
   }
 
   const s = snapshot as {
-    machine?: { states?: string[]; transitions?: { id: string }[] }
+    machine?: MachineLike
+    source?: MachineLike
+    target?: MachineLike | null
+    machineA?: MachineLike
+    machineB?: MachineLike
     nodes?: { id: string }[]
+    grammar?: { productions?: unknown[]; variables?: string[]; terminals?: string[] }
+    table?: { name?: string }[]
+    states?: string[]
     input?: unknown[]
   }
 
+  const machines = [s.machine, s.source, s.target, s.machineA, s.machineB].filter(
+    (m): m is MachineLike => m !== null && m !== undefined,
+  )
+
+  const states = new Set(machines.flatMap((m) => m.states ?? []))
+  const transitions = new Set(machines.flatMap((m) => (m.transitions ?? []).map((t) => t.id)))
+
+  const labels = new Set<string>([
+    ...states,
+    ...machines.flatMap((m) => m.alphabet ?? []),
+    ...(s.table ?? []).flatMap((row) => (row.name === undefined ? [] : [row.name])),
+    ...(s.states ?? []),
+    ...(s.grammar?.variables ?? []),
+    ...(s.grammar?.terminals ?? []),
+  ])
+
   return {
-    states: new Set(s.machine?.states ?? []),
-    transitions: new Set((s.machine?.transitions ?? []).map((t) => t.id)),
+    states,
+    transitions,
     treeNodes: new Set((s.nodes ?? []).map((n) => n.id)),
+    labels,
+    productionCount: s.grammar?.productions?.length ?? 0,
     inputLength: s.input?.length ?? 0,
   }
 }

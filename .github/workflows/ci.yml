@@ -47,6 +47,11 @@ jobs:
       - name: Renderer tests
         run: pnpm --filter @tape-n-trace/ui test
 
+      # Includes the editor's keyboard-navigability and screen-reader checks
+      # (§11.5), which are acceptance criteria rather than nice-to-haves.
+      - name: Web app tests
+        run: pnpm --filter @tape-n-trace/web test
+
       - name: Build the web app
         run: pnpm --filter @tape-n-trace/web build
 
