@@ -49,6 +49,9 @@ export default function RootLayout({ children }: { children: ReactNode }): React
             <a href="/edit" style={{ fontSize: 14 }}>
               Draw
             </a>
+            <a href="/convert" style={{ fontSize: 14 }}>
+              Convert
+            </a>
             <a href="/learn/strings" style={{ fontSize: 14 }}>
               Strings &amp; languages
             </a>

@@ -11,9 +11,9 @@ Jupyter and Colab.
 
 ## ⚠ What actually works today
 
-**The whole Module 1–2 engine works. Only simulation and drawing have a UI.** Every conversion the
-exam turns on — subset construction, ε-elimination, minimisation, state elimination, Thompson — is
-built and verified end to end. The conversion pages that show them are not.
+**Modules 1–2 are complete, engine and UI.** Every conversion the exam turns on — subset
+construction, ε-elimination, minimisation, state elimination, Thompson — can be drawn, run and
+stepped through, with the working shown rather than just the answer.
 
 | Area | Status | Notes |
 |---|---|---|
@@ -26,7 +26,7 @@ built and verified end to end. The conversion pages that show them are not.
 | Engine — subset construction, ε-elimination | ✅ P0.3 | reachable subsets only; the 2^n case stops and explains itself |
 | Engine — minimisation, equivalence | ✅ P0.3 | table filling by round; shortest separating string |
 | Engine — regular expressions | ✅ P0.3 | parser, Thompson, state elimination, regular grammars |
-| Web app — conversion steppers | ❌ Not started | P0.3 remainder — the engine is done, the routes are not |
+| Web app — conversion steppers | ✅ P0.3 | six `/convert` routes on one shell: subset table, triangle, parse tree |
 | RE playground, closure lab, text search | ❌ Not started | P0.4 |
 | Equivalence checker UI and grading | ❌ Not started | P1.1 |
 | Pumping lemma game | ❌ Not started | P1.2 |
@@ -37,7 +37,7 @@ The engine’s exit gate for P0.3 is the **grand round-trip**: 200 random NFAs p
 `subset → minimise → state elimination → Thompson → ε-elimination → subset → minimise`, with the DFA that
 comes out required to accept exactly the language that went in. It is green.
 
-397 tests: 338 engine (99.3% line coverage, CI-gated at 90%), 30 renderer, 29 web app.
+437 tests: 338 engine (99.3% line coverage, CI-gated at 90%), 43 renderer, 56 web app.
 
 Every citation the engine emits has been checked against a printed copy of Hopcroft 2e rather than
 written from memory — the audit, including four corrections and two deliberate divergences, is in

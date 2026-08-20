@@ -237,7 +237,8 @@ inherits it.
 - `fa/subset.ts`, `fa/epsilon.ts`, `fa/minimize.ts`, `fa/equivalence.ts`, `fa/regularGrammar.ts`.
 - `regex/parse.ts`, `regex/thompson.ts`, `regex/stateElim.ts`. **Not** `regex/rij.ts` — enrichment.
 - One shared "source left, growing target right, artifact table underneath" stepper shell, plus one route
-  per conversion under `/convert/[conversion]`.
+  per conversion under `/convert/[conversion]`. **Built** — six routes, one shell, driven by a registry
+  (`lib/conversions.ts`) so a new conversion is an entry rather than a page.
 
 Steps each trace must contain:
 

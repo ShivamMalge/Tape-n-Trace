@@ -61,3 +61,12 @@ export type { BranchTreeProps } from './tree/branch-tree.js'
 
 export { SPEED_CHOICES, TransportBar } from './controls/transport-bar.js'
 export type { TransportBarProps } from './controls/transport-bar.js'
+
+export { DataTable } from './table/data-table.js'
+export type { DataTableProps, TableColumn, TableRow } from './table/data-table.js'
+
+export { TriangleTable } from './table/triangle-table.js'
+export type { TriangleTableProps } from './table/triangle-table.js'
+
+export { ParseTree } from './tree/parse-tree.js'
+export type { ParseTreeNode, ParseTreeProps } from './tree/parse-tree.js'
