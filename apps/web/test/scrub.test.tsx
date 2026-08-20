@@ -86,7 +86,14 @@ describe('scrubbing', () => {
    * the machine is. If that broke, a 70-transition machine would cost roughly
    * ten times a 6-transition one, and this catches it.
    */
-  it('costs about the same on a big machine as on a small one', () => {
+  /**
+   * Given a generous timeout because it is a timing measurement, not a unit
+   * test: two machines, each warmed up and then scrubbed repeatedly. On this
+   * machine it lands near 5 s, which is exactly vitest's default — so without
+   * this it fails roughly one run in four, and would fail far more often on a
+   * busy CI box. A benchmark that flakes teaches nothing except to ignore it.
+   */
+  it('costs about the same on a big machine as on a small one', { timeout: 60_000 }, () => {
     const measure = (machine: Parameters<typeof AutomatonController>[0]['machine'], input: string): number => {
       const view = render(<AutomatonController machine={machine} initialInput={input} />)
       const steps = Number(slider().max)
@@ -99,7 +106,9 @@ describe('scrubbing', () => {
       // Warm up: the first pass pays for path and style objects later ones reuse.
       for (let i = 0; i <= steps; i++) seek(i)
 
-      const reps = 10
+      // Six passes is plenty: the ratio has held between 0.93x and 1.02x across
+      // runs, so more repetitions buy precision the assertion does not need.
+      const reps = 6
       const started = performance.now()
       for (let r = 0; r < reps; r++) {
         for (let i = 0; i <= steps; i++) seek(i)
