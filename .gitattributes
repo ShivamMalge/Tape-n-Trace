@@ -1,0 +1,24 @@
+# Line endings: LF in the repository, native in the working copy.
+#
+# Without this, every commit made on Windows reports "LF will be replaced by
+# CRLF" across dozens of files, and a clone on Linux or in CI sees a diff that
+# is entirely invisible whitespace. Normalising once removes both.
+* text=auto eol=lf
+
+# Binary, so Git never inspects or rewrites them. The course PDFs and Office
+# documents are gitignored, but the patterns are here in case one is ever
+# force-added.
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.ico   binary
+*.pdf   binary
+*.docx  binary
+*.pptx  binary
+*.woff  binary
+*.woff2 binary
+*.ttf   binary
+
+# Generated; keep them out of diffs and language statistics.
+pnpm-lock.yaml  linguist-generated=true -diff
