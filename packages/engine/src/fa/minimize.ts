@@ -158,7 +158,7 @@ export function minimize(dfa: FiniteAutomaton): Result<Trace<Step<MinimizeSnapsh
 
   builder.step({
     narration: describeMerge(states.length, blocks),
-    citation: '4.4.2, Thm 4.24',
+    citation: '4.4.3, Thm 4.24',
     highlight: target.states.map((id) => ({ type: 'state' as const, id, role: 'new' as const })),
     snapshot: { source, target, states, marks, round, blocks, status: 'done' },
   })

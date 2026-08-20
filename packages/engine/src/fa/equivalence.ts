@@ -1,12 +1,23 @@
 /**
  * Are two automata equivalent, and if not, what is the shortest string that
- * separates them? — Hopcroft 2e §4.1.
+ * separates them? — Hopcroft 2e §4.4.2.
  *
  * The product construction, explored breadth-first. Two DFAs are equivalent iff
  * no reachable pair of states is *distinguishing* — one accepting, one not. BFS
  * order is what makes the counterexample the **shortest** one, and that is the
  * whole point: telling a student "your DFA is wrong" is a grade, but telling
  * them "it disagrees with the answer on 0110" is teaching.
+ *
+ * **On the method.** §4.4.2 answers this question by pooling the two machines'
+ * states into one automaton and running the table-filling algorithm of §4.4.1 on
+ * it, then asking whether the two start states came out equivalent. That is the
+ * procedure a student is examined on, and `minimize` implements it.
+ *
+ * Here the same question is answered by walking the product automaton (§4.2.1)
+ * instead, for one reason: table filling returns a yes or a no, and the product
+ * walk returns a *witness*. Reaching a distinguishing pair breadth-first means
+ * the path that got there spells the shortest string the two machines disagree
+ * on, and that string is the thing worth showing.
  */
 
 import { productStateName } from '../ids.js'
@@ -85,7 +96,7 @@ export function equivalence(
 
   builder.step({
     narration: `Start the product construction at the pair ${root.id}: the start state of each machine.`,
-    citation: '4.1.1',
+    citation: '4.4.2',
     highlight: [
       { type: 'state', id: machineA.start, role: 'start' },
       { type: 'state', id: machineB.start, role: 'start' },
@@ -135,7 +146,7 @@ export function equivalence(
     builder.bump('pairsExplored')
     builder.step({
       narration: describePair(pair, discovered, separator),
-      citation: '4.1.1',
+      citation: '4.4.2',
       highlight: [
         { type: 'state', id: pair.a, role: 'current' },
         { type: 'state', id: pair.b, role: 'current' },
@@ -176,7 +187,7 @@ export function equivalence(
 
   builder.step({
     narration: `Every reachable pair agrees on acceptance, so the two automata accept exactly the same language.`,
-    citation: '4.1.2',
+    citation: '4.4.2',
     highlight: [],
     snapshot: { machineA, machineB, pairs, current: null, witness: null, status: 'equivalent' },
   })
@@ -199,7 +210,7 @@ function finish(
 
   builder.step({
     narration: `The pair ${separator.id} separates them: ${acceptedBy} machine accepts ${shown} and ${rejectedBy} rejects it, so the two are not equivalent.`,
-    citation: '4.1.2',
+    citation: '4.4.2',
     highlight: [
       { type: 'state', id: separator.a, role: 'marked' },
       { type: 'state', id: separator.b, role: 'marked' },

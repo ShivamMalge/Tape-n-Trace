@@ -588,6 +588,12 @@ demoted topics, so the decision holds for every scheme currently in play.
 **Consequences.** v1.0 gets roughly two weeks cheaper. Another scheme that includes CYK enables it by
 listing the topic id, with no engine change — which is the whole point of §8.
 
+**Sixth demoted topic: regular grammars.** Verified against the printed 2e and every course document
+after P0.3 shipped. Hopcroft 2e has no section on them at all — Chapter 3 is regular expressions and
+Chapter 5 starts at context-free grammars — and the syllabus, lesson plan, question bank and all three
+model papers examine none. `fa/regularGrammar.ts` is built and tested, carries no citation, and is
+enrichment. See [docs/citations.md](docs/citations.md).
+
 One caveat recorded in phases.md §2.4: the section list bounds *reading*, while the model question
 papers bound *examination*, and they do not perfectly agree. Left recursion elimination is examined at
 8 marks despite sitting outside Hopcroft 5.1/5.2/5.4. Scheme configs therefore carry topics that no

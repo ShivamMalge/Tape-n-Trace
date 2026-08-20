@@ -1,5 +1,5 @@
 /**
- * Removing ε-transitions — Hopcroft 2e §2.5.5.
+ * Removing ε-transitions — Hopcroft 2e §2.5.3 (ε-closures).
  *
  * One step per state: its ε-closure computed with the search visible, then the
  * transitions that closure induces. The construction is
@@ -10,6 +10,17 @@
  * with the start state unchanged. Both closures matter and both are where marks
  * are lost: the one *before* reading (the machine may have already moved) and
  * the one *after* (it may move again before the next symbol).
+ *
+ * **On the citation.** Hopcroft's §2.5.5, "Eliminating ε-Transitions", does not
+ * do this: it eliminates ε by running a modified subset construction straight
+ * through to a *DFA*, and Theorem 2.22 is accordingly about ε-NFAs and DFAs.
+ * `nfaToDfa` is where that construction lives, and it cites §2.5.5 correctly.
+ *
+ * This module produces an ε-free *NFA* instead — a standard construction, but
+ * one the prescribed text does not carry. It is a separate stepper on purpose:
+ * collapsing ε-removal and determinisation into one procedure hides which half
+ * of the work each is doing, and the two are examined separately. So the steps
+ * cite §2.5.3, which is genuinely what they perform, and claim nothing more.
  */
 
 import { faTransitionId, sortStateIds } from '../ids.js'
@@ -62,7 +73,7 @@ export function epsilonElim(enfa: FiniteAutomaton): Result<Trace<Step<EpsilonSna
     narration: hasEpsilon
       ? `The automaton has ${countEpsilon(source)} ε-transitions. Each state's ε-closure decides where it can be before reading anything, and that is what replaces them.`
       : `This automaton has no ε-transitions, so removing them changes nothing but its kind.`,
-    citation: '2.5.5',
+    citation: '2.5.3',
     highlight: source.transitions
       .filter((t) => t.read === null)
       .map((t) => ({ type: 'transition' as const, id: t.id, role: 'removed' as const })),
@@ -115,7 +126,7 @@ export function epsilonElim(enfa: FiniteAutomaton): Result<Trace<Step<EpsilonSna
   const finalTarget = target
   builder.step({
     narration: `Every state has been given the moves its ε-closure allows, and the ε-transitions are gone. The NFA has ${finalTarget.transitions.length} transitions and accepts the same language.`,
-    citation: '2.5.5, Thm 2.22',
+    citation: '2.5.3',
     highlight: finalTarget.accepting.map((id) => ({
       type: 'state' as const,
       id,

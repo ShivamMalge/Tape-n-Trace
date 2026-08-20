@@ -39,6 +39,10 @@ comes out required to accept exactly the language that went in. It is green.
 
 397 tests: 338 engine (99.3% line coverage, CI-gated at 90%), 30 renderer, 29 web app.
 
+Every citation the engine emits has been checked against a printed copy of Hopcroft 2e rather than
+written from memory — the audit, including four corrections and two deliberate divergences, is in
+[docs/citations.md](docs/citations.md).
+
 *This table is updated in the same commit as the feature it describes. A capability is never claimed here
 before it is real — a rule this project inherits from a sibling whose docs advertised animations nothing
 imported and a QuickSort that did not sort.*
@@ -133,6 +137,7 @@ Full tree and rationale in [architecture.md](architecture.md) §3.
 | [architecture.md](architecture.md) | Boundaries, the trace protocol, core types, ADRs, prohibitions |
 | [phases.md](phases.md) | Build order, per-phase acceptance criteria, schedule, open decisions |
 | [documentation.md](documentation.md) | The Vyakarana Python API (specification — not yet released) |
+| [docs/citations.md](docs/citations.md) | Every Hopcroft 2e citation, verified against the printed edition |
 | `prd (2).md` | The original product requirements document |
 
 ---

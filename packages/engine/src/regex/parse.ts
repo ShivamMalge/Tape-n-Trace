@@ -1,5 +1,6 @@
 /**
- * Parsing and printing regular expressions — Hopcroft 2e §3.1.
+ * Parsing and printing regular expressions — Hopcroft 2e §3.1, and §3.1.3 for
+ * the precedence rule below.
  *
  * Precedence, tightest first: **star, then concatenation, then union**. So
  * `01* + 1` is `(0(1*)) + 1` and nothing else, which is the reading students are

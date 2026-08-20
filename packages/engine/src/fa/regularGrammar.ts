@@ -12,10 +12,27 @@
  * One step per production or transition mapped, so the correspondence is watched
  * rather than asserted.
  *
- * **Citations are absent here on purpose.** Every other module cites its Hopcroft
- * 2e section; regular grammars are not covered at any of the sections the
- * syllabus prescribes, and this file will not invent a reference to a page that
- * may not say what it claims. Add one once the printed edition has been checked.
+ * ---
+ *
+ * **This topic is enrichment, and carries no citation. Both facts were checked
+ * rather than assumed.**
+ *
+ * Hopcroft 2e has no section on regular grammars at all — not in Chapter 3,
+ * which is regular expressions, and not in Chapter 5, which goes straight to
+ * context-free grammars. The table of contents was read to confirm it.
+ *
+ * Nor does the course examine them. The BTOCH503 syllabus prescribes only
+ * Hopcroft sections; the lesson plan, the question bank and all three model
+ * papers were searched, and every occurrence of "grammar" in them is
+ * context-free. Regular and right-linear grammars appear nowhere.
+ *
+ * So this module is an ADR-003 case: out of scope, therefore **demoted, not
+ * deleted**. It is built, tested and correct, and it is marked `enrichment` in
+ * the topic graph so it stays off the v1.0 critical path. A student who wants
+ * the theory should read one of the syllabus's own reference texts — Linz, or
+ * Mishra & Chandrasekaran — and this file names no section in either, because
+ * neither has been checked against a printed copy. A citation nobody verified is
+ * worth less than an honest blank.
  */
 
 import { faTransitionId, freshStateId } from '../ids.js'

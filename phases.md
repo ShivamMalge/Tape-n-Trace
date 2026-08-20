@@ -264,10 +264,14 @@ Steps each trace must contain:
 - [x] Canonical state naming: running the same conversion twice produces byte-identical state ids.
 - [x] Every step's `narration` reads as a sentence a lecturer would say. No `"step 4"` — the
       `TraceBuilder` refuses a narration that is empty, lacks a final period, or carries placeholder text.
-- [~] Each conversion cites its Hopcroft 2e section in `Step.citation` — except
-      `fa/regularGrammar.ts`, which cites nothing. Regular grammars are not covered at any section the
-      syllabus prescribes, and inventing a reference is worse than omitting one. Add it once the
-      printed 2e has been checked.
+- [x] Each conversion cites its Hopcroft 2e section in `Step.citation`, **checked against a printed
+      copy** rather than from memory. The audit is in [docs/citations.md](docs/citations.md); it found
+      four wrong citations, all now fixed — most seriously `equivalence` citing §4.1 (the pumping
+      lemma) where it meant §4.4.2, and `stateElim` citing a theorem from §3.2.1, the one subsection
+      this scheme explicitly excludes.
+      `fa/regularGrammar.ts` alone cites nothing, and that is now a settled answer rather than a gap:
+      Hopcroft 2e has no section on regular grammars, and the syllabus, lesson plan, question bank and
+      all three model papers examine none. It is **enrichment under ADR-003** — demoted, not deleted.
 
 **Exit gate.** The grand round-trip is green. It exercises the whole Module 1-2 engine and catches nearly
 every conversion bug; nothing proceeds until it passes.

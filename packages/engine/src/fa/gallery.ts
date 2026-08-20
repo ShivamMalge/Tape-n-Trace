@@ -1,11 +1,10 @@
 /**
  * Canonical machines — the presets the app ships and the tests measure against.
  *
- * Citations are to *sections* of Hopcroft 2e (ADR-005), not figure numbers:
- * the section list is fixed by the syllabus and corroborated by the module-wise
- * textbook extracts, whereas figure numbers have not been checked against the
- * printed edition. A coarse citation is honest; a wrong one shown to a student
- * is not.
+ * Citations follow Hopcroft 2e (ADR-005) and have been checked against a printed
+ * copy — see docs/citations.md for the full audit. Where a preset illustrates a
+ * section without being a figure from it, it says so rather than implying
+ * otherwise.
  *
  * Layouts are hand-authored here, per §7 — a preset should look composed rather
  * than auto-arranged.
@@ -32,7 +31,14 @@ export interface GalleryEntry {
   suggested: string[]
 }
 
-/** Hopcroft §2.2 — strings over {0,1} containing 01 as a substring. */
+/**
+ * Hopcroft §2.2, Example 2.1 — strings over {0,1} containing 01 as a substring.
+ *
+ * The same machine as Fig. 2.4 with `q1` and `q2` exchanged: the book's accepting
+ * state is q1, this one's is q2. Structure, language and state count are
+ * identical. Noted in docs/citations.md so nobody comparing the two thinks they
+ * have made an error.
+ */
 export const dfaContains01: FiniteAutomaton = {
   kind: 'DFA',
   states: ['q0', 'q1', 'q2'],
@@ -50,7 +56,7 @@ export const dfaContains01: FiniteAutomaton = {
   layout: { q0: { x: 70, y: 90 }, q1: { x: 200, y: 90 }, q2: { x: 330, y: 90 } },
 }
 
-/** Hopcroft §2.3 — strings over {0,1} ending in 01. The classic NFA guess. */
+/** Hopcroft §2.3, Fig. 2.9 — strings over {0,1} ending in 01, verbatim. */
 export const nfaEndsIn01: FiniteAutomaton = {
   kind: 'NFA',
   states: ['q0', 'q1', 'q2'],
@@ -61,7 +67,13 @@ export const nfaEndsIn01: FiniteAutomaton = {
   layout: { q0: { x: 70, y: 90 }, q1: { x: 200, y: 90 }, q2: { x: 330, y: 90 } },
 }
 
-/** Hopcroft §2.5 — 0*1*, where the ε-transition is what accepts the empty string. */
+/**
+ * 0*1*, where the ε-transition is what accepts the empty string.
+ *
+ * Illustrates §2.5 rather than reproducing a figure from it — the book's ε-NFA
+ * there (Fig. 2.18) recognises decimal numerals, which is far too large to meet
+ * ε-closures on.
+ */
 export const enfaZerosThenOnes: FiniteAutomaton = {
   kind: 'ENFA',
   states: ['A', 'B'],
@@ -161,7 +173,7 @@ export const GALLERY: GalleryEntry[] = [
     id: 'dfa-contains-01',
     title: 'DFA — contains 01',
     language: 'Strings over {0, 1} that contain 01 as a substring.',
-    citation: 'Hopcroft 2e, §2.2',
+    citation: 'Hopcroft 2e, §2.2 (Example 2.1)',
     machine: dfaContains01,
     suggested: ['0110', '1000', '11', '01'],
   },
@@ -169,7 +181,7 @@ export const GALLERY: GalleryEntry[] = [
     id: 'nfa-ends-in-01',
     title: 'NFA — ends in 01',
     language: 'Strings over {0, 1} that end in 01.',
-    citation: 'Hopcroft 2e, §2.3',
+    citation: 'Hopcroft 2e, §2.3 (Fig. 2.9)',
     machine: nfaEndsIn01,
     suggested: ['0101', '0100', '01', '1'],
   },
@@ -185,7 +197,7 @@ export const GALLERY: GalleryEntry[] = [
     id: 'nfa-even-zeros-or-ends-in-1',
     title: 'NFA — even 0s, or ending in 1',
     language: 'Strings with an even number of 0s, or strings ending in 1.',
-    citation: 'Hopcroft 2e, §2.3',
+    citation: 'Constructed — illustrates §2.3',
     machine: nfaEvenZerosOrEndsIn1,
     suggested: ['0011', '101', '000', '1'],
   },
