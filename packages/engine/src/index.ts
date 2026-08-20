@@ -123,3 +123,18 @@ export { concat as concatRegex, dfaToRegex, star as starRegex, union as unionReg
 
 export type { GrammarSnapshot } from './fa/regularGrammar.js'
 export { checkRightLinear, grammarToNFA, nfaToGrammar } from './fa/regularGrammar.js'
+
+export type { ClosureSnapshot, Homomorphism } from './fa/closure.js'
+export {
+  applyClosure,
+  complement,
+  difference,
+  homomorphism,
+  intersection,
+  inverseHomomorphism,
+  reverse as reverseFA,
+  union as unionFA,
+} from './fa/closure.js'
+
+export type { KeywordMachines, Match, SearchResult } from './fa/textSearch.js'
+export { keywordDFA, keywordMachines, keywordNFA, searchText } from './fa/textSearch.js'

@@ -236,12 +236,7 @@ function collectIds(snapshot: unknown, where: string): SnapshotIds {
     throw new Error(`${where} has a non-object snapshot; highlights cannot be resolved against it.`)
   }
 
-  const s = snapshot as {
-    machine?: MachineLike
-    source?: MachineLike
-    target?: MachineLike | null
-    machineA?: MachineLike
-    machineB?: MachineLike
+  const s = snapshot as Record<string, unknown> & {
     nodes?: { id: string }[]
     grammar?: { productions?: unknown[]; variables?: string[]; terminals?: string[] }
     table?: { name?: string }[]
@@ -249,9 +244,11 @@ function collectIds(snapshot: unknown, where: string): SnapshotIds {
     input?: unknown[]
   }
 
-  const machines = [s.machine, s.source, s.target, s.machineA, s.machineB].filter(
-    (m): m is MachineLike => m !== null && m !== undefined,
-  )
+  // Machines are found by shape, not by field name. Conversions have called
+  // theirs `machine`, `source`, `target`, `machineA`/`machineB` and
+  // `left`/`right` across five phases, and an allowlist meant every new one
+  // silently resolved no ids until a test failed. Shape does not drift.
+  const machines = Object.values(s).filter(isMachineLike)
 
   const states = new Set(machines.flatMap((m) => m.states ?? []))
   const transitions = new Set(machines.flatMap((m) => (m.transitions ?? []).map((t) => t.id)))
@@ -268,11 +265,18 @@ function collectIds(snapshot: unknown, where: string): SnapshotIds {
   return {
     states,
     transitions,
-    treeNodes: new Set((s.nodes ?? []).map((n) => n.id)),
     labels,
     productionCount: s.grammar?.productions?.length ?? 0,
+    treeNodes: new Set((s.nodes ?? []).map((n) => n.id)),
     inputLength: s.input?.length ?? 0,
   }
+}
+
+/** A machine is anything carrying a state list and a transition list. */
+function isMachineLike(value: unknown): value is MachineLike {
+  if (value === null || typeof value !== 'object') return false
+  const candidate = value as MachineLike
+  return Array.isArray(candidate.states) && Array.isArray(candidate.transitions)
 }
 
 /** Assert that every snapshot in a trace is frozen, per ADR-001. */

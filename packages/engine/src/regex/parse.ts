@@ -221,7 +221,7 @@ export function regexToString(node: RegexNode): string {
     case 'epsilon':
       return EPSILON_LITERAL
     case 'symbol':
-      return node.sym
+      return escapeSymbol(node.sym)
     case 'star':
       return `${bracket(node.inner, PRECEDENCE.star)}*`
     case 'concat':
@@ -229,6 +229,20 @@ export function regexToString(node: RegexNode): string {
     case 'union':
       return `${bracket(node.left, PRECEDENCE.union)}+${bracket(node.right, PRECEDENCE.union)}`
   }
+}
+
+/**
+ * Characters that mean something to the parser, and so must be escaped when they
+ * appear as ordinary symbols.
+ *
+ * Without this, an automaton over an alphabet containing `*` prints an
+ * expression that will not parse back — and the printer's whole job is to
+ * produce something a student can re-enter.
+ */
+const NEEDS_ESCAPE = new Set(['(', ')', '*', '+', '|', '\\', ' ', EPSILON_LITERAL, EMPTY_LITERAL])
+
+function escapeSymbol(sym: Sym): string {
+  return [...sym].map((char) => (NEEDS_ESCAPE.has(char) ? `\\${char}` : char)).join('')
 }
 
 function bracket(node: RegexNode, needed: number): string {

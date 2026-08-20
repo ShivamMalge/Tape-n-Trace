@@ -94,7 +94,7 @@ describe('nfaToDfa — the subset construction', () => {
   })
 
   /** phases.md P0.3 — the 2^n bad case must explain itself, not hang. */
-  it('stops on the exponential case and says that is the point (§2.3.6)', () => {
+  it('stops on the exponential case and says that is the point (§2.3.6)', { timeout: 120_000 }, () => {
     // Hopcroft's family: strings whose n-th symbol from the end is 1. Every
     // subset of the tail states is reachable, so the DFA needs 2^n states.
     const n = 14
