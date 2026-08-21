@@ -67,6 +67,9 @@ export default function RootLayout({ children }: { children: ReactNode }): React
             <a href="/practice" style={{ fontSize: 14 }}>
               Practice
             </a>
+            <a href="/prove/pumping" style={{ fontSize: 14 }}>
+              Pumping
+            </a>
             <a href="/learn/strings" style={{ fontSize: 14 }}>
               Strings &amp; languages
             </a>

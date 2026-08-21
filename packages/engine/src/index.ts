@@ -150,3 +150,26 @@ export { compareTraces } from './grade/traceMatch.js'
 
 export type { SampleGrade } from './grade/sample.js'
 export { SAMPLE_CAVEAT, sampleCompare } from './grade/sample.js'
+
+export type { Difficulty, PumpingLanguage } from './pumping/oracles.js'
+export { PUMPING_LANGUAGES, pumpingLanguage } from './pumping/oracles.js'
+
+export type { AdversaryChoice, Decomposition, EngineAttack, ScoredSplit } from './pumping/regular.js'
+export {
+  PUMP_I_BOUND,
+  adversarySplit,
+  allSplits,
+  checkPump,
+  defenderSplit,
+  engineAttackIndex,
+  engineAttackWord,
+  failingIndices,
+  pumped,
+  truePumpingLength,
+} from './pumping/regular.js'
+
+export type { CflAdversaryChoice, CflDecomposition } from './pumping/cfl.js'
+export { allCflSplits, cflAdversarySplit, cflCheckPump, cflPumped } from './pumping/cfl.js'
+
+export type { GameMode, GamePhase, GameVariant, Move, PumpingSession } from './pumping/session.js'
+export { advance, proofParagraph, sessionTrace, startSession } from './pumping/session.js'

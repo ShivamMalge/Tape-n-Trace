@@ -36,7 +36,7 @@ Updated in the same commit as the work it describes. ✅ done and pushed · 🔨
 | P0.3 Conversions | v0.2 | ✅ | 2026-08-19/20 · grand round-trip green, 6 stepper routes |
 | P0.4 RE playground, closure, search | v0.3 | ✅ | 2026-08-21 · Modules 1–2 complete |
 | P1.1 Equivalence, exercises | v0.4 | ✅ | 2026-08-21 · 61 exercises, exact grading, compare view |
-| P1.2 Pumping game | v0.5 | ⬜ | |
+| P1.2 Pumping game | v0.5 | ✅ | 2026-08-21 · both modes, CFL variant, proof export |
 | P1.3 Grammars, parse trees | v0.6 | ⬜ | |
 | P1.4 PDA | v0.7 | ⬜ | |
 | P1.5 CFL properties, CNF | v0.8 | ⬜ | |
@@ -439,7 +439,7 @@ caveat shown prominently, because CFG equivalence is undecidable and saying so i
 
 ---
 
-### P1.2 — The pumping lemma game · 1 week · ships v0.5
+### ✅ P1.2 — The pumping lemma game · 1 week · ships v0.5 — **DONE**
 
 **Goal.** The pumping lemma is taught as a formula when it is actually a two-player game with alternating
 quantifiers. Make the alternation literal and it becomes obvious.
@@ -460,13 +460,20 @@ quantifiers. Make the alternation literal and it becomes obvious.
 
 **Acceptance criteria**
 
-- [ ] Membership for every preset is decided by an oracle, not by pattern matching.
-- [ ] The decomposition choice is genuinely adversarial: for a language where a naive `y = 0` split loses
+- ✅ Membership for every preset is decided by an oracle, not by pattern matching — counting, scanning
+      and arithmetic, tested against independent definitions (primes against a sieve; `0101` vs `0110`
+      for {ww}). The regular presets are decided by their own DFA through the shared simulator.
+- ✅ The decomposition choice is genuinely adversarial: for a language where a naive `y = 0` split loses
       immediately, the engine does not choose it.
-- [ ] The adversary's search over pumping indices is explicitly bounded, and the bound is reported.
-- [ ] Winning a round emits a written proof paragraph in exam prose, exportable.
-- [ ] Reverse mode correctly demonstrates that a regular language survives every pumping attempt.
-- [ ] Every game session is a `Trace`, replayable and shareable.
+- ✅ The adversary's search over pumping indices is explicitly bounded (i ≤ 12), and the bound travels
+      in every answer, every narration, and the proof paragraph.
+- ✅ Winning a round emits a written proof paragraph in exam prose, exportable as text. It is honest
+      about what was checked: every decomposition of the played w, each failing within the bound.
+- ✅ Reverse mode correctly demonstrates that a regular language survives every pumping attempt — the
+      DFA-loop decomposition is verified to pump for every challenge string up to length 8, and the
+      engine concedes. The win screen says what this does NOT prove.
+- ✅ Every game session is a `Trace`, replayable and shareable — same wire format as every simulation,
+      downloadable from the game screen.
 
 ---
 

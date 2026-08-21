@@ -11,7 +11,7 @@ Jupyter and Colab.
 
 ## ⚠ What actually works today
 
-**Modules 1 and 2 are complete, with auto-graded practice — v0.4.** Everything the first half of BTOCH503 examines is built,
+**Modules 1 and 2 complete, auto-graded practice, and the pumping game — v0.5.** Everything the first half of BTOCH503 examines is built,
 verified and on screen: simulation, all six conversions, the closure operations, keyword search and
 regular expressions. Modules 3 to 5 have not started.
 
@@ -26,7 +26,7 @@ regular expressions. Modules 3 to 5 have not started.
 | Engine — closure operations and keyword search | ✅ P0.4 | Hopcroft §4.2 and §2.4 |
 | Web app — RE playground, closure lab, text search | ✅ P0.4 | four synced panels, case studies, UNIX-RE explainer |
 | Practice — exact grading, compare view, 61 exercises | ✅ P1.1 | any correct machine passes; witness + lockstep compare |
-| Pumping lemma game | ❌ Not started | P1.2 |
+| Pumping lemma game | ✅ P1.2 | attack and defend, CFL variant, exportable proof prose |
 | Engine — grammars, PDA, TM | ❌ Not started | P1.3 onward |
 | Vyakarana (Python package) | ❌ Not started | P1.8 |
 
@@ -34,7 +34,7 @@ P0.3’s exit gate is the **grand round-trip**: 200 random NFAs pushed through
 `subset → minimise → state elimination → Thompson → ε-elimination → subset → minimise`, with the DFA that
 comes out required to accept exactly the language that went in. It is green.
 
-**629 tests**: 492 engine (98.4% line coverage, CI-gated at 90%), 43 renderer, 94 web app.
+**660 tests**: 519 engine (97.2% line coverage, CI-gated at 90%), 43 renderer, 98 web app.
 
 Every citation the engine emits has been checked against a printed copy of Hopcroft 2e rather than
 written from memory — the audit, including four corrections and two deliberate divergences, is in

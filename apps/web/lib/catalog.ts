@@ -143,7 +143,7 @@ export const CATALOG: Tool[] = [
     title: 'The pumping lemma game',
     summary: 'Play the adversary, or watch it play you, on a language that is not regular.',
     href: '/prove/pumping',
-    status: 'planned',
+    status: 'live',
     phase: 'P1.2',
     modules: [2],
     verb: 'prove',
