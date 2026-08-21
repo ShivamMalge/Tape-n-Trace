@@ -40,9 +40,24 @@ import { formatEdgeLabel, parseEdgeLabel } from '../lib/edge-labels'
 import { autoLayout } from '../lib/auto-layout'
 import { downloadBlob, downloadText, suggestFilename, svgToPngBlob, svgToString, toTntJson } from '../lib/export'
 
-export function MachineEditor({ initial }: { initial?: FiniteAutomaton }): React.JSX.Element {
+/**
+ * `onMachineChange` reports every committed edit upward, so a parent — the
+ * exercise workbench — can grade what is currently drawn without owning the
+ * editing state itself. The editor stays the single owner of the machine.
+ */
+export function MachineEditor({
+  initial,
+  onMachineChange,
+}: {
+  initial?: FiniteAutomaton
+  onMachineChange?: (machine: FiniteAutomaton) => void
+}): React.JSX.Element {
   const history = useMachineHistory(initial ?? emptyMachine())
   const { machine, commit, reset, undo, redo, canUndo, canRedo } = history
+
+  useEffect(() => {
+    onMachineChange?.(machine)
+  }, [machine, onMachineChange])
 
   const [mode, setMode] = useState<EditorMode>('draw')
   const [selected, setSelected] = useState<StateId | null>(null)

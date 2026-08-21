@@ -35,7 +35,7 @@ Updated in the same commit as the work it describes. ✅ done and pushed · 🔨
 | P0.2 Renderers, editor | v0.1 | ✅ | 2026-08-19 · simulator, editor, export |
 | P0.3 Conversions | v0.2 | ✅ | 2026-08-19/20 · grand round-trip green, 6 stepper routes |
 | P0.4 RE playground, closure, search | v0.3 | ✅ | 2026-08-21 · Modules 1–2 complete |
-| P1.1 Equivalence, exercises | v0.4 | ⬜ | engine half already done in P0.3 |
+| P1.1 Equivalence, exercises | v0.4 | ✅ | 2026-08-21 · 61 exercises, exact grading, compare view |
 | P1.2 Pumping game | v0.5 | ⬜ | |
 | P1.3 Grammars, parse trees | v0.6 | ⬜ | |
 | P1.4 PDA | v0.7 | ⬜ | |
@@ -355,7 +355,7 @@ every conversion bug; nothing proceeds until it passes.
 
 ---
 
-### P1.1 — Equivalence, compare view, exercise bank · 1 week · ships **v0.4, auto-graded practice**
+### ✅ P1.1 — Equivalence, compare view, exercise bank · 1 week · ships **v0.4, auto-graded practice** — **DONE**
 
 **Goal.** The feature no DSA visualiser can have. Regular language equivalence is decidable, so the app
 grades construction problems exactly and returns a counterexample instead of a score.
@@ -416,21 +416,25 @@ caveat shown prominently, because CFG equivalence is undecidable and saying so i
 
 **Acceptance criteria**
 
-- [ ] `areEquivalent` agrees with brute-force membership comparison over all strings up to length 12, for
+- ✅ `areEquivalent` agrees with brute-force membership comparison over all strings up to length 12, for
       500 random machine pairs.
-- [ ] The witness returned is the **shortest** distinguishing string, asserted in tests.
-- [ ] A student DFA with a different but correct structure grades as correct.
-- [ ] A student DFA wrong on exactly one long string receives that string as feedback.
-- [ ] Sample-based graders display the "not a proof" caveat prominently in the UI.
-- [ ] At least 60 exercises ship, spanning every module of the default scheme, sourced from the
+- ✅ The witness returned is the **shortest** distinguishing string, asserted in tests — every shorter
+      string is checked to agree, for all 500 pairs.
+- ✅ A student DFA with a different but correct structure grades as correct. NFA and ε-NFA submissions
+      are accepted too — the grader determinises and completes both sides itself.
+- ✅ A student DFA wrong on exactly one long string receives that string as feedback.
+- ✅ Sample-based graders carry the "not a proof" caveat naming the undecidability. (No sample-graded
+      exercise ships yet — the CFG/PDA/TM engines arrive in P1.3–P1.6 — so today it is enforced in the
+      grader's own contract and tests rather than on a page.)
+- ✅ At least 60 exercises ship (61), spanning every module of the default scheme, sourced from the
       department question bank and model papers with `source` recorded on each.
-- [ ] Exercises key on `TopicId`; a CI test fails on any exercise pointing at an unknown topic.
-- [ ] Every auto-graded exercise has a reference answer that its own grader marks correct — a CI test
+- ✅ Exercises key on `TopicId`; a CI test fails on any exercise pointing at an unknown topic.
+- ✅ Every auto-graded exercise has a reference answer that its own grader marks correct — a CI test
       runs the reference through the grader, so a broken reference cannot ship.
-- [ ] `marks`, `bloom` and `co` are present on every exercise; a CI test fails on a missing tag.
-- [ ] The bank can be filtered to **CIE-I scope** (first 40-50% of the syllabus) and **CIE-II scope**
+- ✅ `marks`, `bloom` and `co` are present on every exercise; a CI test fails on a missing tag.
+- ✅ The bank can be filtered to **CIE-I scope** (first 40-50% of the syllabus) and **CIE-II scope**
       (85-90%), because that is when the internal tests actually fall.
-- [ ] Divisible-by-K exercises are generated from the P0.2 preset family over base and divisor, not
+- ✅ Divisible-by-K exercises are generated from the P0.2 preset family over base and divisor, not
       hand-written one at a time.
 
 ---

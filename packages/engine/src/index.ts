@@ -141,3 +141,12 @@ export { keywordDFA, keywordMachines, keywordNFA, searchText } from './fa/textSe
 
 export type { AppliedCase, AppliedSource, BloomLevel } from './fa/applied.js'
 export { APPLIED, appliedCase } from './fa/applied.js'
+
+export type { LanguageGrade } from './grade/languageEquivalence.js'
+export { areEquivalentDetailed, gradeLanguage } from './grade/languageEquivalence.js'
+
+export type { TraceMatch } from './grade/traceMatch.js'
+export { compareTraces } from './grade/traceMatch.js'
+
+export type { SampleGrade } from './grade/sample.js'
+export { SAMPLE_CAVEAT, sampleCompare } from './grade/sample.js'
