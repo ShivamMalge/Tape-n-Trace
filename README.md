@@ -11,33 +11,30 @@ Jupyter and Colab.
 
 ## ⚠ What actually works today
 
-**Modules 1–2 are complete, engine and UI.** Every conversion the exam turns on — subset
-construction, ε-elimination, minimisation, state elimination, Thompson — can be drawn, run and
-stepped through, with the working shown rather than just the answer.
+**Modules 1 and 2 are complete — v0.3.** Everything the first half of BTOCH503 examines is built,
+verified and on screen: simulation, all six conversions, the closure operations, keyword search and
+regular expressions. Modules 3 to 5 have not started.
 
 | Area | Status | Notes |
 |---|---|---|
-| Engine — types, trace protocol, serialisation | ✅ P0.1 | `TraceBuilder`, frozen shared snapshots, wire format |
-| Engine — validation and canonical naming | ✅ P0.1 | every violation reported, deterministic ids |
+| Engine — trace protocol, validation, canonical naming | ✅ P0.1 | frozen shared snapshots, every violation reported |
 | Engine — FA simulation (DFA / NFA / ε-NFA) | ✅ P0.1 | branch tree for NFAs, explicit ε-closure steps |
-| Engine — presets, editing, strings and languages | ✅ P0.2 | gallery, divisible-by-K family, Σ* enumeration |
-| Renderers — automaton, branch tree, transport | ✅ P0.2 | pure SVG, theme-aware, screen-reader labelled |
+| Renderers — automaton, branch tree, tables, parse tree | ✅ P0.2–0.3 | pure SVG, theme-aware, screen-reader labelled |
 | Web app — simulate and draw a machine | ✅ P0.2 | 7 presets, editor, multi-run table, export |
-| Engine — subset construction, ε-elimination | ✅ P0.3 | reachable subsets only; the 2^n case stops and explains itself |
-| Engine — minimisation, equivalence | ✅ P0.3 | table filling by round; shortest separating string |
-| Engine — regular expressions | ✅ P0.3 | parser, Thompson, state elimination, regular grammars |
-| Web app — conversion steppers | ✅ P0.3 | six `/convert` routes on one shell: subset table, triangle, parse tree |
-| RE playground, closure lab, text search | ❌ Not started | P0.4 |
-| Equivalence checker UI and grading | ❌ Not started | P1.1 |
+| Engine — Module 1–2 conversions | ✅ P0.3 | subset, ε-elimination, minimisation, state elimination, Thompson |
+| Web app — conversion steppers | ✅ P0.3 | six `/convert` routes on one shared shell |
+| Engine — closure operations and keyword search | ✅ P0.4 | Hopcroft §4.2 and §2.4 |
+| Web app — RE playground, closure lab, text search | ✅ P0.4 | four synced panels, case studies, UNIX-RE explainer |
+| Equivalence checker UI and grading | ❌ Not started | P1.1 — the engine is already done |
 | Pumping lemma game | ❌ Not started | P1.2 |
 | Engine — grammars, PDA, TM | ❌ Not started | P1.3 onward |
 | Vyakarana (Python package) | ❌ Not started | P1.8 |
 
-The engine’s exit gate for P0.3 is the **grand round-trip**: 200 random NFAs pushed through
+P0.3’s exit gate is the **grand round-trip**: 200 random NFAs pushed through
 `subset → minimise → state elimination → Thompson → ε-elimination → subset → minimise`, with the DFA that
 comes out required to accept exactly the language that went in. It is green.
 
-437 tests: 338 engine (99.3% line coverage, CI-gated at 90%), 43 renderer, 56 web app.
+**595 tests**: 476 engine (98.8% line coverage, CI-gated at 90%), 43 renderer, 76 web app.
 
 Every citation the engine emits has been checked against a printed copy of Hopcroft 2e rather than
 written from memory — the audit, including four corrections and two deliberate divergences, is in

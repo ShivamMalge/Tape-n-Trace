@@ -138,3 +138,6 @@ export {
 
 export type { KeywordMachines, Match, SearchResult } from './fa/textSearch.js'
 export { keywordDFA, keywordMachines, keywordNFA, searchText } from './fa/textSearch.js'
+
+export type { AppliedCase, AppliedSource, BloomLevel } from './fa/applied.js'
+export { APPLIED, appliedCase } from './fa/applied.js'

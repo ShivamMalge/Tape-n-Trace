@@ -302,14 +302,22 @@ every conversion bug; nothing proceeds until it passes.
 
 **Acceptance criteria**
 
-- [ ] RE precedence tested against a table of at least 30 expressions with their intended parse.
-- [ ] All four playground panels stay in sync under rapid typing — debounced, no stale renders.
-- [ ] The intersection product construction is verified against brute-force membership on all strings up
+- [x] RE precedence tested against a table of at least 30 expressions with their intended parse — 42,
+      each written out fully bracketed. It found a real printer defect: a symbol that is itself an
+      operator printed unescaped, so an alphabet containing `*` produced output that would not parse back.
+- [x] All four playground panels stay in sync under rapid typing — debounced, no stale renders. Sync is
+      structural rather than careful: `buildPlayground` derives all four from one string in one call, so
+      a render pairing the tree for one expression with the machine for another is unrepresentable.
+- [x] The intersection product construction is verified against brute-force membership on all strings up
       to length 10, for 50 random machine pairs.
-- [ ] Complement is refused with an explanation when the input is an NFA, and offers the one-click
+- [x] Complement is refused with an explanation when the input is an NFA, and offers the one-click
       "convert to a complete DFA first" fix.
-- [ ] Text search on keywords `{web, ebay}` with input `webay` reports the textbook's match set.
-- [ ] Text search reuses `simulateDFA` and the automaton renderer. No bespoke simulator.
+- [x] Text search on keywords `{web, ebay}` with input `webay` reports the textbook's match set — both
+      overlapping occurrences. Getting there fixed two real bugs: the DFA accepted only when the whole
+      prefix was a keyword, and the head-scan path read one step too many from the trace.
+- [x] Text search reuses `simulateDFA` and the automaton renderer. No bespoke simulator. Meeting this
+      properly meant widening the keyword DFA's alphabet to cover the *text*, not just the keywords —
+      a machine that cannot read a full stop cannot be run over a sentence.
 
 **Exit gate.** Modules 1 and 2 are completely covered. v0.3 is a genuinely useful tool for half the course.
 

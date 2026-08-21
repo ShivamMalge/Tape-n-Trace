@@ -52,6 +52,18 @@ export default function RootLayout({ children }: { children: ReactNode }): React
             <a href="/convert" style={{ fontSize: 14 }}>
               Convert
             </a>
+            <a href="/regex" style={{ fontSize: 14 }}>
+              Regex
+            </a>
+            <a href="/closure" style={{ fontSize: 14 }}>
+              Closure
+            </a>
+            <a href="/search" style={{ fontSize: 14 }}>
+              Search
+            </a>
+            <a href="/applied" style={{ fontSize: 14 }}>
+              Case studies
+            </a>
             <a href="/learn/strings" style={{ fontSize: 14 }}>
               Strings &amp; languages
             </a>
