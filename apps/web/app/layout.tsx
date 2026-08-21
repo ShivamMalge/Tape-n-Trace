@@ -70,6 +70,9 @@ export default function RootLayout({ children }: { children: ReactNode }): React
             <a href="/prove/pumping" style={{ fontSize: 14 }}>
               Pumping
             </a>
+            <a href="/grammar" style={{ fontSize: 14 }}>
+              Grammars
+            </a>
             <a href="/learn/strings" style={{ fontSize: 14 }}>
               Strings &amp; languages
             </a>

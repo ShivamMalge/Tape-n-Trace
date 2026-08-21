@@ -173,3 +173,18 @@ export { allCflSplits, cflAdversarySplit, cflCheckPump, cflPumped } from './pump
 
 export type { GameMode, GamePhase, GameVariant, Move, PumpingSession } from './pumping/session.js'
 export { advance, proofParagraph, sessionTrace, startSession } from './pumping/session.js'
+
+export type { ParseGrammarOptions } from './cfg/parse.js'
+export { EPSILON_TOKENS, grammarToText, parseGrammar, productionToText, tokenise } from './cfg/parse.js'
+
+export type { CfgTreeNode, TreeBuilder } from './cfg/parseTree.js'
+export { applyToTree, startTree, treeYield, variablePositions } from './cfg/parseTree.js'
+
+export type { DerivationMode, DerivationStep, DeriveSnapshot, SearchBounds } from './cfg/derive.js'
+export { deriveString, findDerivation, generatedStrings, minYields } from './cfg/derive.js'
+
+export type { AmbiguityResult, AmbiguityWitness, NoWitness } from './cfg/ambiguity.js'
+export { detectAmbiguity, leftmostDerivationsOf, replay } from './cfg/ambiguity.js'
+
+export type { LeftRecursionSnapshot } from './cfg/leftRecursion.js'
+export { eliminateLeftRecursion, isLeftRecursive, primedName } from './cfg/leftRecursion.js'

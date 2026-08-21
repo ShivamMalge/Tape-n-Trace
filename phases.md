@@ -37,7 +37,7 @@ Updated in the same commit as the work it describes. ✅ done and pushed · 🔨
 | P0.4 RE playground, closure, search | v0.3 | ✅ | 2026-08-21 · Modules 1–2 complete |
 | P1.1 Equivalence, exercises | v0.4 | ✅ | 2026-08-21 · 61 exercises, exact grading, compare view |
 | P1.2 Pumping game | v0.5 | ✅ | 2026-08-21 · both modes, CFL variant, proof export |
-| P1.3 Grammars, parse trees | v0.6 | ⬜ | |
+| P1.3 Grammars, parse trees | v0.6 | ✅ | 2026-08-21 · derivations, ambiguity, left recursion |
 | P1.4 PDA | v0.7 | ⬜ | |
 | P1.5 CFL properties, CNF | v0.8 | ⬜ | |
 | P1.6 Turing machines | v0.9 | ⬜ | |
@@ -477,7 +477,7 @@ quantifiers. Make the alternation literal and it becomes obvious.
 
 ---
 
-### P1.3 — Grammars, derivations, parse trees · 2 weeks · ships v0.6
+### ✅ P1.3 — Grammars, derivations, parse trees · 2 weeks · ships v0.6 — **DONE**
 
 **Deliverables**
 
@@ -501,17 +501,19 @@ quantifiers. Make the alternation literal and it becomes obvious.
 
 **Acceptance criteria**
 
-- [ ] `S -> a S b | ε` derives `aaabbb` in 4 leftmost steps with a correct parse tree.
-- [ ] The ambiguity detector finds two parse trees for `id + id * id` in the classic grammar.
-- [ ] For the unambiguous rewrite it reports **"no counterexample within bounds"** and never claims
+- ✅ `S -> a S b | ε` derives `aaabbb` in 4 leftmost steps with a correct parse tree.
+- ✅ The ambiguity detector finds two parse trees for `id + id * id` in the classic grammar —
+      asserted both by the targeted derivation search and through the BFS detector.
+- ✅ For the unambiguous rewrite it reports **"no counterexample within bounds"** and never claims
       unambiguity.
-- [ ] Every parse tree's yield equals the derived string, property-tested over 200 random grammars.
-- [ ] Grammar parse errors carry a source position and all errors surface at once.
-- [ ] Left recursion elimination on the exam's expression grammar produces the textbook answer, and the
+- ✅ Every parse tree's yield equals the derived string, property-tested over 200 random grammars
+      (each sampled against its own generated language).
+- ✅ Grammar parse errors carry a source position (shown as line and column) and all errors surface at once.
+- ✅ Left recursion elimination on the exam's expression grammar produces the textbook answer, and the
       result has no left-recursive variable — checked structurally, not by eye.
-- [ ] The transformed grammar is language-equivalent to the original on a bounded sample, for 100 random
+- ✅ The transformed grammar is language-equivalent to the original on a bounded sample, for 100 random
       left-recursive grammars.
-- [ ] The docs panel states plainly that elimination **introduces ε-productions**, and links to the P1.5
+- ✅ The docs panel states plainly that elimination **introduces ε-productions**, and links to the P1.5
       ε-removal stage that clears them. The two transformations are taught in different modules and
       students routinely apply them in the wrong order.
 

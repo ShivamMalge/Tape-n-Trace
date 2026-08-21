@@ -151,9 +151,9 @@ export const CATALOG: Tool[] = [
   {
     id: 'grammars',
     title: 'Grammars, derivations and parse trees',
-    summary: 'Leftmost and rightmost derivations, parse trees, ambiguity, and the CNF pipeline.',
+    summary: 'Derivations with growing parse trees, the ambiguity detector, and left recursion elimination.',
     href: '/grammar',
-    status: 'planned',
+    status: 'live',
     phase: 'P1.3',
     modules: [3, 4],
     verb: 'convert',
