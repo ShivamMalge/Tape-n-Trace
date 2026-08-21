@@ -25,6 +25,31 @@ renders exist and are tested.
 
 ---
 
+## Status tracker
+
+Updated in the same commit as the work it describes. ✅ done and pushed · 🔨 in progress · ⬜ not started.
+
+| Phase | Ships | Status | Notes |
+|---|---|---|---|
+| P0.1 Foundations | engine | ✅ | 2026-08-19 · trace protocol, FA simulation, harness |
+| P0.2 Renderers, editor | v0.1 | ✅ | 2026-08-19 · simulator, editor, export |
+| P0.3 Conversions | v0.2 | ✅ | 2026-08-19/20 · grand round-trip green, 6 stepper routes |
+| P0.4 RE playground, closure, search | v0.3 | ✅ | 2026-08-21 · Modules 1–2 complete |
+| P1.1 Equivalence, exercises | v0.4 | ⬜ | engine half already done in P0.3 |
+| P1.2 Pumping game | v0.5 | ⬜ | |
+| P1.3 Grammars, parse trees | v0.6 | ⬜ | |
+| P1.4 PDA | v0.7 | ⬜ | |
+| P1.5 CFL properties, CNF | v0.8 | ⬜ | |
+| P1.6 Turing machines | v0.9 | ⬜ | |
+| P1.7 Undecidability, hierarchy | v1.0 | ⬜ | |
+| P1.8 Vyakarana (Python) | pkg 0.1 | ⬜ | ADR-004 spike first |
+
+**Deadline note (added 2026-08-21): 10 days remain.** The outstanding plan is ~11 estimated weeks,
+so v1.0 as specified does not fit. The cut that preserves the most value: P1.1 → P1.2 → P1.3 → P1.4
+in order (each ships alone), then reassess. P1.8 and P1.6/P1.7 are the natural sacrifices — the
+Python package is a separate deliverable, and Module 5 is explainer-heavy. Prefer shipping
+Modules 1–3 excellently over five modules shakily (§6, first risk).
+
 ## 2. Scope baseline — BTOCH503 (autonomous)
 
 **Default scheme: `atria-2026-btoch503`.** Theory of Computation, BTOCH503, semester V — Atria Institute
@@ -148,7 +173,7 @@ already worth using standing alone. **Target: 5 weeks.**
 
 ---
 
-### P0.1 — Foundations · 1 week · ships: engine package, no UI
+### ✅ P0.1 — Foundations · 1 week · ships: engine package, no UI — **DONE**
 
 **Goal.** The trace protocol, the type layer, and FA simulation, with the test harness that every later
 phase reuses.
@@ -180,7 +205,7 @@ future test file.
 
 ---
 
-### P0.2 — Renderers, editor, transport · 1.5 weeks · ships **v0.1, a usable DFA/NFA simulator**
+### ✅ P0.2 — Renderers, editor, transport · 1.5 weeks · ships **v0.1, a usable DFA/NFA simulator** — **DONE**
 
 **Goal.** The renderer/controller/docs triad pattern, established once, correctly, so every later feature
 inherits it.
@@ -228,7 +253,7 @@ inherits it.
 
 ---
 
-### P0.3 — Module 1-2 conversions · 1.5 weeks · ships v0.2
+### ✅ P0.3 — Module 1-2 conversions · 1.5 weeks · ships v0.2 — **DONE**
 
 **Goal.** The conversion steppers. This is the heart of the exam and the heart of the product.
 
@@ -279,7 +304,7 @@ every conversion bug; nothing proceeds until it passes.
 
 ---
 
-### P0.4 — RE playground, closure lab, text search · 1 week · ships **v0.3, Modules 1-2 complete**
+### ✅ P0.4 — RE playground, closure lab, text search · 1 week · ships **v0.3, Modules 1-2 complete** — **DONE**
 
 **Deliverables**
 
