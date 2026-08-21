@@ -189,15 +189,15 @@ phase reuses.
 
 **Acceptance criteria**
 
-- [x] `packages/engine` has zero React/DOM imports, enforced by lint, failing CI.
-- [x] At least 90% line coverage on `fa/simulate.ts` and `trace.ts`. — both at 100%, engine at 99.8%.
-- [x] `simulateDFA` agrees with the brute-force oracle on all strings up to length 12, for 200 random DFAs.
-- [x] `simulateNFA` retains dead branches in its branch tree, flagged dead at the step they died.
-- [x] Every trace produced passes all six trace invariants (architecture.md §5).
-- [x] A trace round-trips through `JSON.stringify` / `parse` byte-identically.
-- [x] `validateFA` on a DFA with two transitions for the same `(state, symbol)` returns **all** violations,
+- ✅ `packages/engine` has zero React/DOM imports, enforced by lint, failing CI.
+- ✅ At least 90% line coverage on `fa/simulate.ts` and `trace.ts`. — both at 100%, engine at 99.8%.
+- ✅ `simulateDFA` agrees with the brute-force oracle on all strings up to length 12, for 200 random DFAs.
+- ✅ `simulateNFA` retains dead branches in its branch tree, flagged dead at the step they died.
+- ✅ Every trace produced passes all six trace invariants (architecture.md §5).
+- ✅ A trace round-trips through `JSON.stringify` / `parse` byte-identically.
+- ✅ `validateFA` on a DFA with two transitions for the same `(state, symbol)` returns **all** violations,
       not the first.
-- [x] Deep-cloning a snapshot is impossible by construction: snapshots are frozen, and a mutation attempt
+- ✅ Deep-cloning a snapshot is impossible by construction: snapshots are frozen, and a mutation attempt
       throws in development (ADR-001).
 
 **Exit gate.** CI is green, coverage gate active, and the trace-invariant helper is importable by any
@@ -232,22 +232,22 @@ inherits it.
 
 **Acceptance criteria**
 
-- [x] The renderer imports nothing from `packages/engine` — verified by lint. Type-only imports are
+- ✅ The renderer imports nothing from `packages/engine` — verified by lint. Type-only imports are
       allowed and erase at build time; a runtime import fails the build.
-- [x] No component exceeds 300 lines; the line-count lint rule is active in CI.
-- [~] Scrubbing re-simulates nothing — proven exactly: the engine call is counted, and moving the
+- ✅ No component exceeds 300 lines; the line-count lint rule is active in CI.
+- ⚠️ Scrubbing re-simulates nothing — proven exactly: the engine call is counted, and moving the
       slider across every step leaves the count at 1. Cost is also independent of machine size
       (1.0x for 17x the transitions), which is what the memoised renderers and the identity caches in
       `geometry.ts` buy. **The 16 ms itself is still unverified**: it is a browser budget, and the
       measurement runs in jsdom, where DOM mutation is an order of magnitude slower. Asserting the
       number there would be choosing a threshold to fit the tooling rather than measuring the thing.
-- [x] An NFA run on a string with 3 accepting paths renders a branch tree with 3 highlighted paths and
+- ✅ An NFA run on a string with 3 accepting paths renders a branch tree with 3 highlighted paths and
       the dead branches greyed at their death step.
-- [x] An invalid machine shows every violation simultaneously in the editor.
-- [x] A trace loaded from JSON renders identically to the same trace produced in-process.
-- [x] Machine editing is fully keyboard-navigable; every state and transition is screen-reader
+- ✅ An invalid machine shows every violation simultaneously in the editor.
+- ✅ A trace loaded from JSON renders identically to the same trace produced in-process.
+- ✅ Machine editing is fully keyboard-navigable; every state and transition is screen-reader
       announced. Tested by building a machine end to end through labelled controls alone.
-- [x] The README status table lists exactly what works.
+- ✅ The README status table lists exactly what works.
 
 **Exit gate.** v0.1 is deployable and a student can simulate DFAs and NFAs end to end.
 
@@ -278,19 +278,19 @@ Steps each trace must contain:
 
 **Acceptance criteria**
 
-- [x] Every conversion is a pure function `(input) -> Trace`, tested with no UI present.
-- [x] **The grand round-trip.** For 200 random NFAs bounded to 4 states and 2 symbols:
+- ✅ Every conversion is a pure function `(input) -> Trace`, tested with no UI present.
+- ✅ **The grand round-trip.** For 200 random NFAs bounded to 4 states and 2 symbols:
       `nfaToDfa` then `minimize` then `dfaToRegex` then `regexToENFA` then `epsilonElim` then `nfaToDfa`
       then `minimize` yields a DFA equivalent to the original. Bounds are mandatory — state elimination
       blows up RE size super-exponentially and an unbounded generator makes CI flaky.
-- [x] `minimize(minimize(D))` equals `minimize(D)`, and the state count matches an independently written
+- ✅ `minimize(minimize(D))` equals `minimize(D)`, and the state count matches an independently written
       partition-refinement implementation used only in tests.
-- [x] Subset construction on Hopcroft's 2^n bad case reaches the state cap and shows the "this is the
+- ✅ Subset construction on Hopcroft's 2^n bad case reaches the state cap and shows the "this is the
       point" explanation rather than hanging.
-- [x] Canonical state naming: running the same conversion twice produces byte-identical state ids.
-- [x] Every step's `narration` reads as a sentence a lecturer would say. No `"step 4"` — the
+- ✅ Canonical state naming: running the same conversion twice produces byte-identical state ids.
+- ✅ Every step's `narration` reads as a sentence a lecturer would say. No `"step 4"` — the
       `TraceBuilder` refuses a narration that is empty, lacks a final period, or carries placeholder text.
-- [x] Each conversion cites its Hopcroft 2e section in `Step.citation`, **checked against a printed
+- ✅ Each conversion cites its Hopcroft 2e section in `Step.citation`, **checked against a printed
       copy** rather than from memory. The audit is in [docs/citations.md](docs/citations.md); it found
       four wrong citations, all now fixed — most seriously `equivalence` citing §4.1 (the pumping
       lemma) where it meant §4.4.2, and `stateElim` citing a theorem from §3.2.1, the one subsection
@@ -327,20 +327,20 @@ every conversion bug; nothing proceeds until it passes.
 
 **Acceptance criteria**
 
-- [x] RE precedence tested against a table of at least 30 expressions with their intended parse — 42,
+- ✅ RE precedence tested against a table of at least 30 expressions with their intended parse — 42,
       each written out fully bracketed. It found a real printer defect: a symbol that is itself an
       operator printed unescaped, so an alphabet containing `*` produced output that would not parse back.
-- [x] All four playground panels stay in sync under rapid typing — debounced, no stale renders. Sync is
+- ✅ All four playground panels stay in sync under rapid typing — debounced, no stale renders. Sync is
       structural rather than careful: `buildPlayground` derives all four from one string in one call, so
       a render pairing the tree for one expression with the machine for another is unrepresentable.
-- [x] The intersection product construction is verified against brute-force membership on all strings up
+- ✅ The intersection product construction is verified against brute-force membership on all strings up
       to length 10, for 50 random machine pairs.
-- [x] Complement is refused with an explanation when the input is an NFA, and offers the one-click
+- ✅ Complement is refused with an explanation when the input is an NFA, and offers the one-click
       "convert to a complete DFA first" fix.
-- [x] Text search on keywords `{web, ebay}` with input `webay` reports the textbook's match set — both
+- ✅ Text search on keywords `{web, ebay}` with input `webay` reports the textbook's match set — both
       overlapping occurrences. Getting there fixed two real bugs: the DFA accepted only when the whole
       prefix was a keyword, and the head-scan path read one step too many from the trace.
-- [x] Text search reuses `simulateDFA` and the automaton renderer. No bespoke simulator. Meeting this
+- ✅ Text search reuses `simulateDFA` and the automaton renderer. No bespoke simulator. Meeting this
       properly meant widening the keyword DFA's alphabet to cover the *text*, not just the keywords —
       a machine that cannot read a full stop cannot be run over a sentence.
 
