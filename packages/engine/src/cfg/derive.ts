@@ -272,7 +272,7 @@ export function generatedStrings(
   const queue: string[][] = [[grammar.start]]
   while (queue.length > 0 && explored < maxStates) {
     const sentential = queue.shift() as string[]
-    const key = sentential.join(' ')
+    const key = sentential.join('\u0000')
     if (seen.has(key)) continue
     seen.add(key)
     explored += 1

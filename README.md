@@ -11,9 +11,10 @@ Jupyter and Colab.
 
 ## ⚠ What actually works today
 
-**Modules 1–2 complete, practice, the pumping game, and Module 3's grammars — v0.6.** Everything the first half of BTOCH503 examines is built,
-verified and on screen: simulation, all six conversions, the closure operations, keyword search and
-regular expressions. Modules 3 to 5 have not started.
+**Modules 1–3 complete — v0.7.** Everything BTOCH503's first three modules examine is built, verified
+and on screen: simulation, all the conversions, closure operations, keyword search, regular
+expressions, the practice bank, the pumping game, grammars, and now pushdown automata with the ID
+sequence written the way the answer sheet wants it. Modules 4 and 5 have not started.
 
 | Area | Status | Notes |
 |---|---|---|
@@ -28,14 +29,15 @@ regular expressions. Modules 3 to 5 have not started.
 | Practice — exact grading, compare view, 61 exercises | ✅ P1.1 | any correct machine passes; witness + lockstep compare |
 | Pumping lemma game | ✅ P1.2 | attack and defend, CFL variant, exportable proof prose |
 | Grammars — derivations, ambiguity, left recursion | ✅ P1.3 | parse trees grow with the derivation |
-| Engine — PDA, TM | ❌ Not started | P1.4, P1.6 |
+| PDA — simulator, editor, acceptance conversions, CFG→PDA, DPDA checker | ✅ P1.4 | ID log in textbook notation, branch tree for guesses |
+| Engine — TM | ❌ Not started | P1.6 |
 | Vyakarana (Python package) | ❌ Not started | P1.8 |
 
 P0.3’s exit gate is the **grand round-trip**: 200 random NFAs pushed through
 `subset → minimise → state elimination → Thompson → ε-elimination → subset → minimise`, with the DFA that
 comes out required to accept exactly the language that went in. It is green.
 
-**691 tests**: 542 engine (97.3% line coverage, CI-gated at 90%), 43 renderer, 106 web app.
+**735 tests**: 571 engine (97.0% line coverage, CI-gated at 90%), 43 renderer, 121 web app.
 
 Every citation the engine emits has been checked against a printed copy of Hopcroft 2e rather than
 written from memory — the audit, including four corrections and two deliberate divergences, is in

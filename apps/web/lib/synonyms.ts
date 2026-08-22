@@ -45,6 +45,16 @@ export const TERMS: Term[] = [
     alternatives: ['NPDA', 'nondeterministic pushdown automaton', 'push-down automaton'],
   },
   {
+    canonical: 'DPDA',
+    expansion: 'deterministic pushdown automaton',
+    alternatives: ['deterministic PDA', 'deterministic push-down automaton'],
+  },
+  {
+    canonical: 'ID',
+    expansion: 'instantaneous description',
+    alternatives: ['instantaneous description', 'configuration'],
+  },
+  {
     canonical: 'TM',
     expansion: 'Turing machine',
     alternatives: ['Turing Machine', 'DTM', 'deterministic Turing machine'],

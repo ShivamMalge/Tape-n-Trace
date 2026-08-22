@@ -41,6 +41,7 @@ export {
   faTransitionId,
   freshStateId,
   parseSubsetStateName,
+  pdaTransitionId,
   productStateName,
   sortStateIds,
   subsetStateName,
@@ -188,3 +189,18 @@ export { detectAmbiguity, leftmostDerivationsOf, replay } from './cfg/ambiguity.
 
 export type { LeftRecursionSnapshot } from './cfg/leftRecursion.js'
 export { eliminateLeftRecursion, isLeftRecursive, primedName } from './cfg/leftRecursion.js'
+
+export type { PdaBranchNode, PdaSnapshot, SimulatePdaOptions } from './pda/simulate.js'
+export { acceptsPDA, idLog, idToText, simulatePDA, stackToText, validatePDA } from './pda/simulate.js'
+
+export type { PdaPreset } from './pda/gallery.js'
+export { PDA_PRESETS, pdaPreset } from './pda/gallery.js'
+
+export type { PdaAcceptanceSnapshot, PdaAcceptanceTrace } from './pda/acceptance.js'
+export { emptyStackToFinalState, finalStateToEmptyStack } from './pda/acceptance.js'
+
+export type { CfgToPdaSnapshot, CfgToPdaTrace } from './pda/fromCFG.js'
+export { cfgToPDA } from './pda/fromCFG.js'
+
+export type { DeterminismReport, DeterminismViolation } from './pda/determinism.js'
+export { checkDeterminism } from './pda/determinism.js'

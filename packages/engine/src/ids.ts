@@ -104,6 +104,21 @@ export function canonicalRenaming(
 }
 
 /**
+ * The canonical id of a PDA transition, mirroring the label the textbook puts
+ * on the arc: `q0-[a,X/YX]->q1` for δ(q0, a, X) ∋ (q1, YX). ε renders as the
+ * empty string in all three positions — read, pop, and an empty push.
+ */
+export function pdaTransitionId(
+  from: StateId,
+  read: Read,
+  pop: Read,
+  push: readonly string[],
+  to: StateId,
+): TransitionId {
+  return `${from}-[${read ?? ''},${pop ?? ''}/${push.join('')}]->${to}`
+}
+
+/**
  * A name not already taken, formed by suffixing the base. `q` with `q`, `q1`
  * taken yields `q2`. Deterministic: the same base and the same taken set always
  * produce the same name.

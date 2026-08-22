@@ -38,7 +38,7 @@ Updated in the same commit as the work it describes. ✅ done and pushed · 🔨
 | P1.1 Equivalence, exercises | v0.4 | ✅ | 2026-08-21 · 61 exercises, exact grading, compare view |
 | P1.2 Pumping game | v0.5 | ✅ | 2026-08-21 · both modes, CFL variant, proof export |
 | P1.3 Grammars, parse trees | v0.6 | ✅ | 2026-08-21 · derivations, ambiguity, left recursion |
-| P1.4 PDA | v0.7 | ⬜ | |
+| P1.4 PDA | v0.7 | ✅ | 2026-08-22 · 691 tests → 735 |
 | P1.5 CFL properties, CNF | v0.8 | ⬜ | |
 | P1.6 Turing machines | v0.9 | ⬜ | |
 | P1.7 Undecidability, hierarchy | v1.0 | ⬜ | |
@@ -519,7 +519,7 @@ quantifiers. Make the alternation literal and it becomes obvious.
 
 ---
 
-### P1.4 — Pushdown automata · 1.5 weeks · ships **v0.7, Module 3 complete**
+### P1.4 — Pushdown automata · 1.5 weeks · ships **v0.7, Module 3 complete** — **DONE**
 
 **Deliverables**
 
@@ -536,12 +536,17 @@ quantifiers. Make the alternation literal and it becomes obvious.
 
 **Acceptance criteria**
 
-- [ ] A PDA converted final-state to empty-stack accepts the same 200-string sample as the original, and
-      the reverse conversion likewise.
-- [ ] `cfgToPDA(G)` simulated accepts exactly the strings `G` derives, over a random sample.
-- [ ] The ID log is copy-pasteable and matches textbook notation on the worked example.
-- [ ] The DPDA checker's reported violations are exactly the transition pairs that overlap.
-- [ ] A nondeterministic PDA run renders its branch tree with dead branches flagged at death.
+- ✅ A PDA converted final-state to empty-stack accepts the same 200-string sample as the original, and
+      the reverse conversion likewise. *(Exhaustive to length 7 — 511 strings on aⁿbⁿ — both directions, plus a
+      round trip and the no-accepting-state edge case.)*
+- ✅ `cfgToPDA(G)` simulated accepts exactly the strings `G` derives, over a random sample. *(Exhaustive to a
+      length bound — strictly stronger — for three grammars, against `generatedStrings` as the oracle.)*
+- ✅ The ID log is copy-pasteable and matches textbook notation on the worked example. *(a³b³ asserted
+      character for character: `(q0, aaabbb, Z0) ⊢ … ⊢ (q2, ε, Z0)`; rejected strings log the furthest attempt.)*
+- ✅ The DPDA checker's reported violations are exactly the transition pairs that overlap. *(wwᴿ's six
+      ε-guess-versus-read pairs asserted as an exact set; wcwᴿ exactly empty; `pop: null` wildcard overlap too.)*
+- ✅ A nondeterministic PDA run renders its branch tree with dead branches flagged at death. *(Engine: every
+      dead node carries `diedAtStep` + reason, verified in the snapshot at that step. UI: `died @n` drawn.)*
 
 ---
 

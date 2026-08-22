@@ -37,6 +37,14 @@ coarse citation is honest; a plausible one is not.
 | 4.4.2 | Testing Equivalence of Regular Languages | 157 | `fa/equivalence.ts` |
 | 4.4.3 | Minimization of DFA's | 159 | `fa/minimize.ts` — pruning and merging |
 | 4.4.3, Thm 4.24 | Equivalent states partition the state set | 161 | `fa/minimize.ts` — the merge |
+| 5.1.4 | Leftmost and Rightmost Derivations | 175 | `cfg/derive.ts` — each applied production |
+| 5.2.3 | Inference, Derivations, and Parse Trees | 184 | `cfg/derive.ts` — the derivation ⟺ tree summary step |
+| 6.1.4 | Instantaneous Descriptions of a PDA | 224 | `pda/simulate.ts` — every ID step; the (q, w, γ) triple and ⊢ are this section's notation |
+| 6.2.2 | Acceptance by Empty Stack | 230 | `pda/gallery.ts` — the balanced-parentheses N(P) preset |
+| 6.2.3, Thm 6.9 | From Empty Stack to Final State | 231 | `pda/acceptance.ts` — `emptyStackToFinalState`; rules (1)–(3) implemented as printed |
+| 6.2.4, Thm 6.11 | From Final State to Empty Stack | 234 | `pda/acceptance.ts` — `finalStateToEmptyStack`; the drain state and per-symbol pops are rules (3)–(4) on p. 235 |
+| 6.3.1, Thm 6.13 | From Grammars to Pushdown Automata | 237, 239 | `pda/fromCFG.ts` — the one-state construction, δ(q, ε, A) and δ(q, a, a) exactly as printed |
+| 6.4.1 | Definition of a Deterministic PDA | 247 | `pda/determinism.ts` — the two conditions are checked verbatim; `pda/gallery.ts` wcwᴿ |
 
 Figure-level, verified:
 
@@ -46,16 +54,20 @@ Figure-level, verified:
 | Fig. 2.9 | NFA accepting strings ending in 01 | `fa/gallery.ts` — `nfaEndsIn01` |
 | Fig. 2.15 | NFA with no equivalent DFA under 2^n states | `test/conversions.test.ts` — the exponential case |
 | Fig. 3.16, 3.17 | Basis and induction of the ε-NFA construction | `regex/thompson.ts` |
+| Fig. 6.2 (Example 6.2) | The wwᴿ PDA as a transition diagram, p. 224 | `pda/gallery.ts` — `wwr`, arc for arc |
+| Fig. 6.11 (Example 6.16) | The deterministic wcwᴿ PDA, p. 248 | `pda/gallery.ts` — `wcwr`, arc for arc |
 
 ---
 
 ## Corrections made during verification
 
-Four citations were wrong and are fixed. All four were plausible, which is
+Six citations were wrong and are fixed. All were plausible, which is
 exactly why they survived until someone opened the book.
 
 | Module | Was | Is | Why |
 |---|---|---|---|
+| `pda/acceptance.ts` | 6.2.3, Thm 6.11 | 6.2.3, **Thm 6.9** | Empty stack → final state is Theorem 6.9 (p. 231). 6.11 was written from memory and belongs to the other direction. |
+| `pda/acceptance.ts` | 6.2.4, Thm 6.14 | 6.2.4, **Thm 6.11** | Final state → empty stack is Theorem 6.11 (p. 234). There is no Theorem 6.14 in this chapter's conversions at all. |
 | `fa/equivalence.ts` | 4.1.1 / 4.1.2 | 4.4.2 | §4.1 is **Proving Languages not to be Regular** — the pumping lemma. Equivalence of two machines is §4.4.2. |
 | `fa/minimize.ts` | 4.4.2, Thm 4.24 | 4.4.3, Thm 4.24 | The theorem number was right; §4.4.2 is the *equivalence* test, and the merge belongs to §4.4.3. |
 | `regex/stateElim.ts` | 3.2.2, Thm 3.4 | 3.2.2 | Theorem 3.4 belongs to §3.2.1, which **this scheme explicitly excludes** ("3.2 except 3.2.1"). Pointing a student there is worse than pointing nowhere. |

@@ -73,6 +73,9 @@ export default function RootLayout({ children }: { children: ReactNode }): React
             <a href="/grammar" style={{ fontSize: 14 }}>
               Grammars
             </a>
+            <a href="/simulate/pda" style={{ fontSize: 14 }}>
+              PDA
+            </a>
             <a href="/learn/strings" style={{ fontSize: 14 }}>
               Strings &amp; languages
             </a>
