@@ -11,10 +11,10 @@ Jupyter and Colab.
 
 ## ⚠ What actually works today
 
-**Modules 1–3 complete — v0.7.** Everything BTOCH503's first three modules examine is built, verified
+**Modules 1–4 complete — v0.8.** Everything BTOCH503's first four modules examine is built, verified
 and on screen: simulation, all the conversions, closure operations, keyword search, regular
-expressions, the practice bank, the pumping game, grammars, and now pushdown automata with the ID
-sequence written the way the answer sheet wants it. Modules 4 and 5 have not started.
+expressions, the practice bank, the pumping game, grammars, pushdown automata, and now the
+simplification pipeline to Chomsky Normal Form and the CFL closure lab. Module 5 has not started.
 
 | Area | Status | Notes |
 |---|---|---|
@@ -30,6 +30,7 @@ sequence written the way the answer sheet wants it. Modules 4 and 5 have not sta
 | Pumping lemma game | ✅ P1.2 | attack and defend, CFL variant, exportable proof prose |
 | Grammars — derivations, ambiguity, left recursion | ✅ P1.3 | parse trees grow with the derivation |
 | PDA — simulator, editor, acceptance conversions, CFG→PDA, DPDA checker | ✅ P1.4 | ID log in textbook notation, branch tree for guesses |
+| CFL properties — simplification pipeline, CNF, closure lab | ✅ P1.5 | the book's safe order, the grammar diffed per stage, the intersection that fails |
 | Engine — TM | ❌ Not started | P1.6 |
 | Vyakarana (Python package) | ❌ Not started | P1.8 |
 
@@ -37,10 +38,10 @@ P0.3’s exit gate is the **grand round-trip**: 200 random NFAs pushed through
 `subset → minimise → state elimination → Thompson → ε-elimination → subset → minimise`, with the DFA that
 comes out required to accept exactly the language that went in. It is green.
 
-**735 tests**: 571 engine (97.0% line coverage, CI-gated at 90%), 43 renderer, 121 web app.
+**776 tests**: 602 engine (96.8% line coverage, CI-gated at 90%), 43 renderer, 131 web app.
 
 Every citation the engine emits has been checked against a printed copy of Hopcroft 2e rather than
-written from memory — the audit, including four corrections and two deliberate divergences, is in
+written from memory — the audit, including six corrections and four deliberate divergences, is in
 [docs/citations.md](docs/citations.md).
 
 *This table is updated in the same commit as the feature it describes. A capability is never claimed here
@@ -87,7 +88,7 @@ RE ──Thompson──▶ ε-NFA ──ε-elimination──▶ NFA ──subset
  ▲                                                         │
  └──────────────── state elimination ─────────────────────┘
 
-Regular grammar ⇄ NFA          CFG ──useless──▶ ──ε-prod──▶ ──unit-prod──▶ CNF
+Regular grammar ⇄ NFA          CFG ──ε-prod──▶ ──unit-prod──▶ ──useless──▶ CNF
 CFG ──▶ PDA                    PDA(final state) ⇄ PDA(empty stack)
 CFG ──left-recursion──▶ CFG    multitape TM ──▶ single-tape TM
 ```

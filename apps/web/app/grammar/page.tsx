@@ -17,8 +17,9 @@ export default function GrammarPage(): React.JSX.Element {
         asserted.
       </p>
       <p className="tnt-muted" style={{ maxWidth: '64ch', fontSize: 14 }}>
-        Also here: <a href="/grammar/ambiguity">the ambiguity detector</a> and{' '}
-        <a href="/grammar/left-recursion">left recursion elimination</a>.
+        Also here: <a href="/grammar/ambiguity">the ambiguity detector</a>,{' '}
+        <a href="/grammar/left-recursion">left recursion elimination</a> and, for Module 4,{' '}
+        <a href="/grammar/simplify">the simplification pipeline and CNF</a>.
       </p>
       <DerivationWorkbench />
     </div>

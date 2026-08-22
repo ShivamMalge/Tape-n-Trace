@@ -83,8 +83,10 @@ function assertHighlightsResolve(trace: Trace<Step<unknown>>): void {
           ).toBe(true)
           break
         case 'symbolSet':
+          // A symbol set may name automaton states (ε-closures) or grammar
+          // symbols (generating / reachable / nullable) — `labels` pools both.
           for (const id of h.ids) {
-            expect(ids.states.has(id), `${where} names "${id}", absent from the snapshot`).toBe(true)
+            expect(ids.labels.has(id), `${where} names "${id}", absent from the snapshot`).toBe(true)
           }
           break
         case 'production':

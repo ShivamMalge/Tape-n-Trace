@@ -45,6 +45,19 @@ coarse citation is honest; a plausible one is not.
 | 6.2.4, Thm 6.11 | From Final State to Empty Stack | 234 | `pda/acceptance.ts` — `finalStateToEmptyStack`; the drain state and per-symbol pops are rules (3)–(4) on p. 235 |
 | 6.3.1, Thm 6.13 | From Grammars to Pushdown Automata | 237, 239 | `pda/fromCFG.ts` — the one-state construction, δ(q, ε, A) and δ(q, a, a) exactly as printed |
 | 6.4.1 | Definition of a Deterministic PDA | 247 | `pda/determinism.ts` — the two conditions are checked verbatim; `pda/gallery.ts` wcwᴿ |
+| 7.1.1, Thm 7.2 | Eliminating Useless Symbols | 256–257 | `cfg/useless.ts` — non-generating first, then unreachable; `wrongOrderUseless` is Example 7.1 |
+| 7.1.2, Thms 7.4, 7.6 | Computing the Generating and Reachable Symbols | 258–259 | `cfg/useless.ts` — both inductions |
+| 7.1.3, Thms 7.7, 7.9 | Eliminating ε-Productions | 259–261 | `cfg/epsilonProd.ts` — nullable induction; the 2^m versions minus the all-absent one; L(G₁) = L(G) − {ε} |
+| 7.1.4, Thms 7.11, 7.13 | Eliminating Unit Productions | 262–265 | `cfg/unitProd.ts` — unit pairs by the basis/induction, then A → α for every pair (A, B) and non-unit B → α |
+| 7.1, Thm 7.14 | The safe order: ε-productions, unit productions, useless symbols | 266 | `simplify-pipeline.tsx` — the stage order, and the docs card |
+| 7.1.5, Thm 7.16 | Chomsky Normal Form | 266–268 | `cfg/cnf.ts` — terminal isolation, then binarisation with one cascade per distinct body |
+| 7.2.2, Thm 7.18 | Statement of the Pumping Lemma (for CFLs) | 275 | `pumping/cfl.ts`; the closure lab's non-closure card |
+| 7.3.1, Thm 7.23 | Substitutions | 282–283 | `cfg/closure.ts` — `cflSubstitution`, variables renamed apart |
+| 7.3.2, Thm 7.24 | Applications of the Substitution Theorem | 284–285 | `cfg/closure.ts` — union, concatenation, closure, homomorphism |
+| 7.3.3, Thm 7.25 | Reversal | 285 | `cfg/closure.ts` — every body reversed |
+| 7.3.4, Thm 7.27 | Intersection With a Regular Language | 286–287 | `cfg/closure.ts` — the PDA × FA product, states (q, p) |
+| 7.3.4, Thm 7.29 | L − R is a CFL; complement and difference need not be | 289 | the closure lab's non-closure card |
+| 7.3.5, Thm 7.30 | Inverse Homomorphism | 290–291 | `cfg/closure.ts` — the buffer construction, states (q, x) |
 
 Figure-level, verified:
 
@@ -56,6 +69,12 @@ Figure-level, verified:
 | Fig. 3.16, 3.17 | Basis and induction of the ε-NFA construction | `regex/thompson.ts` |
 | Fig. 6.2 (Example 6.2) | The wwᴿ PDA as a transition diagram, p. 224 | `pda/gallery.ts` — `wwr`, arc for arc |
 | Fig. 6.11 (Example 6.16) | The deterministic wcwᴿ PDA, p. 248 | `pda/gallery.ts` — `wcwr`, arc for arc |
+| Example 7.1 | S → AB \| a, A → b: the wrong-order trap, p. 256 | `test/cfl.test.ts`, and the pipeline page's preset (with B → Bb so the text form can state B) |
+| Example 7.8 | ε-elimination worked through, p. 260 | `test/cfl.test.ts` — the output grammar asserted exactly |
+| Examples 7.10, 7.12, Fig. 7.1 | Unit pairs and the rewritten expression grammar, pp. 263–265 | `test/cfl.test.ts` — ten pairs and four production sets asserted exactly |
+| Example 7.15, Fig. 7.3 | The expression grammar in CNF, pp. 267–268 | `test/cfl.test.ts` — fifteen variables, three cascades, language equivalence |
+| Example 7.22 | Substitution into {01}, p. 282 | `test/cfl.test.ts`, the closure lab's substitution demo |
+| Example 7.26 | L₁ = {0ⁿ1ⁿ2ⁱ}, L₂ = {0ⁱ1ⁿ2ⁿ}, p. 285 | `cfg/closure.ts` — `CFL_INTERSECTION_DEMO`, letters renamed (see below) |
 
 ---
 
@@ -90,6 +109,17 @@ machines' states and runs table filling. That returns a yes or a no; walking the
 product breadth-first returns the **shortest separating string**, which is the
 thing worth showing a student. Table filling is still implemented, in
 `fa/minimize.ts`, where it is what the exam asks for.
+
+**Example 7.26 over a, b, c** (`cfg/closure.ts`). The book's grammars are over
+0, 1, 2. They are carried over a, b, c so the intersection is literally the
+pumping game's `abc-equal` preset, and the page says so. The grammars are
+otherwise the book's, production for production.
+
+**The pipeline's stage order** (`simplify-pipeline.tsx`). phases.md lists the
+four modules in the book's order of exposition (useless symbols first). The page
+runs Theorem 7.14's order of execution — ε-productions, unit productions,
+useless symbols, CNF — because the exposition order is precisely the trap the
+phase exists to teach.
 
 ---
 

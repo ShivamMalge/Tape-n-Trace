@@ -35,10 +35,12 @@ export const GRAMMAR_PRESETS: GrammarPreset[] = [
 export interface GrammarInputProps {
   initial?: string
   onGrammar: (grammar: CFG | null, source: string) => void
+  /** The preset chips to offer; the Module 3 grammars by default. */
+  presets?: GrammarPreset[]
 }
 
-export function GrammarInput({ initial, onGrammar }: GrammarInputProps): React.JSX.Element {
-  const [source, setSource] = useState(initial ?? GRAMMAR_PRESETS[0]?.source ?? '')
+export function GrammarInput({ initial, onGrammar, presets = GRAMMAR_PRESETS }: GrammarInputProps): React.JSX.Element {
+  const [source, setSource] = useState(initial ?? presets[0]?.source ?? '')
   const settled = useDebounced(source, 220)
 
   const outcome = useMemo(() => {
@@ -81,7 +83,7 @@ export function GrammarInput({ initial, onGrammar }: GrammarInputProps): React.J
         <span className="tnt-muted" style={{ fontSize: 13 }}>
           Presets:
         </span>
-        {GRAMMAR_PRESETS.map((preset) => (
+        {presets.map((preset) => (
           <button key={preset.id} type="button" onClick={() => setSource(preset.source)} style={chip}>
             {preset.title}
           </button>

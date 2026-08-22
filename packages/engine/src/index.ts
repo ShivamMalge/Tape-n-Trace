@@ -204,3 +204,29 @@ export { cfgToPDA } from './pda/fromCFG.js'
 
 export type { DeterminismReport, DeterminismViolation } from './pda/determinism.js'
 export { checkDeterminism } from './pda/determinism.js'
+
+export type { UselessSnapshot, UselessTrace } from './cfg/useless.js'
+export { eliminateUseless, generatingSymbols, reachableSymbols, wrongOrderUseless } from './cfg/useless.js'
+
+export type { EpsilonProdSnapshot, EpsilonProdTrace } from './cfg/epsilonProd.js'
+export { eliminateEpsilon, expandNullable, nullableSymbols } from './cfg/epsilonProd.js'
+
+export type { UnitSnapshot, UnitTrace } from './cfg/unitProd.js'
+export { eliminateUnit, isUnitProduction, unitPairs } from './cfg/unitProd.js'
+
+export type { CnfSnapshot, CnfTrace } from './cfg/cnf.js'
+export { cnfPreconditions, isCNF, toCNF } from './cfg/cnf.js'
+
+export type { GrammarOpSnapshot, GrammarOpTrace, PdaOpSnapshot, PdaOpTrace, Substitution } from './cfg/closure.js'
+export {
+  CFL_INTERSECTION_DEMO,
+  cflConcat,
+  cflHomomorphism,
+  cflReversal,
+  cflStar,
+  cflSubstitution,
+  cflInverseHomomorphism,
+  cflIntersectRegular,
+  cflUnion,
+  renameApart,
+} from './cfg/closure.js'

@@ -212,6 +212,8 @@ export type ClosureOp =
   | 'reverse'
   | 'homomorphism'
   | 'inverse-homomorphism'
+  /** Hopcroft §7.3.1 — the machinery the other CFL closures are proved with. */
+  | 'substitution'
 
 export type ClosureTraceKind = `closure.regular.${ClosureOp}` | `closure.cfl.${ClosureOp}`
 

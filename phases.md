@@ -39,7 +39,7 @@ Updated in the same commit as the work it describes. ✅ done and pushed · 🔨
 | P1.2 Pumping game | v0.5 | ✅ | 2026-08-21 · both modes, CFL variant, proof export |
 | P1.3 Grammars, parse trees | v0.6 | ✅ | 2026-08-21 · derivations, ambiguity, left recursion |
 | P1.4 PDA | v0.7 | ✅ | 2026-08-22 · 691 tests → 735 |
-| P1.5 CFL properties, CNF | v0.8 | ⬜ | |
+| P1.5 CFL properties, CNF | v0.8 | ✅ | 2026-08-22 · 735 tests → 776; pipeline runs the book’s safe order (Thm 7.14) |
 | P1.6 Turing machines | v0.9 | ⬜ | |
 | P1.7 Undecidability, hierarchy | v1.0 | ⬜ | |
 | P1.8 Vyakarana (Python) | pkg 0.1 | ⬜ | ADR-004 spike first |
@@ -550,7 +550,7 @@ quantifiers. Make the alternation literal and it becomes obvious.
 
 ---
 
-### P1.5 — CFL properties · 1 week · ships **v0.8, Module 4 complete**
+### P1.5 — CFL properties · 1 week · ships **v0.8, Module 4 complete** — **DONE**
 
 **Goal.** The four-stage simplification pipeline must be performed in exact order, and getting the order
 wrong is the most common lost-marks mistake in the subject. Showing the pipeline as a pipeline fixes it.
@@ -572,16 +572,25 @@ wrong is the most common lost-marks mistake in the subject. Showing the pipeline
   not a CFL.
 - CFL pumping lemma (7.2) wired to the P1.2 game.
 - **Not** `cfg/cyk.ts` or `cfg/properties.ts` — enrichment, see §2.3.
+- **Order note (2026-08-22).** The list above follows the book’s order of *exposition* (§7.1.1 comes first).
+  The book’s order of *execution* — Theorem 7.14, p. 266 — is ε-productions, then unit productions, then useless
+  symbols, then CNF, and that is the order the pipeline runs. Both order traps (this one, and
+  generating-before-reachable inside the useless pass, Theorem 7.2) are taught on the page.
 
 **Acceptance criteria**
 
-- [ ] The four-stage pipeline on the textbook's worked example reproduces the book's final CNF grammar,
+- ✅ The four-stage pipeline on the textbook's worked example reproduces the book's final CNF grammar,
       allowing for variable renaming, checked by language equivalence on a sample.
-- [ ] Every stage preserves the language (minus epsilon where applicable), verified on a random string
+      *(The expression grammar of Examples 7.12/7.15: unit pairs match Example 7.10 exactly, the unit-free grammar matches Example 7.12 exactly, the CNF has Fig. 7.3’s fifteen variables with one cascade per distinct body, and the languages agree on every string to length 5.)*
+- ✅ Every stage preserves the language (minus epsilon where applicable), verified on a random string
       sample after each stage, for 100 random grammars.
-- [ ] The wrong-order demo visibly leaves a useless symbol behind.
-- [ ] The CFL-intersect-regular construction agrees with brute-force membership on a bounded sample.
-- [ ] The docs panel lists the undecidable CFL questions with the reason, and claims nothing about them.
+      *(100 seeded random grammars, every string to length 5 after each of the four stages, in the safe order; an empty language is refused with the reason rather than “simplified”.)*
+- ✅ The wrong-order demo visibly leaves a useless symbol behind.
+      *(Example 7.1: reachability first leaves A and b, asserted in the engine and on the page.)*
+- ✅ The CFL-intersect-regular construction agrees with brute-force membership on a bounded sample.
+      *(PDA×DFA product vs. generatedStrings ∧ brute-force DFA membership on every string to length 8, twice; inverse homomorphism vs. P on h(w) for three homomorphisms.)*
+- ✅ The docs panel lists the undecidable CFL questions with the reason, and claims nothing about them.
+      *(Ambiguity, equivalence, intersection emptiness, Σ*, regularity, complement — each with why the tool stays silent; asserted in the UI test.)*
 
 ---
 

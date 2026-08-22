@@ -201,6 +201,28 @@ export const CATALOG: Tool[] = [
     verb: 'convert',
   },
   {
+    id: 'grammar-simplify',
+    title: 'Simplification and CNF',
+    summary:
+      'ε-productions, unit productions, useless symbols and Chomsky Normal Form as one pipeline in the safe order, the grammar diffed at each stage.',
+    href: '/grammar/simplify',
+    status: 'live',
+    phase: 'P1.5',
+    modules: [4],
+    verb: 'convert',
+  },
+  {
+    id: 'cfl-closure',
+    title: 'CFL closure lab',
+    summary:
+      'Union, concatenation, closure, reversal, substitution, intersection with a regular language, inverse homomorphism — and the intersection that fails.',
+    href: '/closure/cfl',
+    status: 'live',
+    phase: 'P1.5',
+    modules: [4],
+    verb: 'prove',
+  },
+  {
     id: 'turing-machines',
     title: 'Turing machines',
     summary: 'A tape, a head, and every configuration in between.',
