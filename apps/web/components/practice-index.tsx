@@ -42,29 +42,21 @@ export function PracticeIndex(): React.JSX.Element {
   }, [filter, gradedOnly])
 
   return (
-    <div style={{ display: 'grid', gap: 14 }}>
-      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
+    <div className="tnt-stack">
+      <div className="tnt-row tnt-row-tight">
         {FILTERS.map(({ id, label }) => (
           <button
             key={id}
             type="button"
+            className="tnt-chip"
             onClick={() => setFilter(id)}
             aria-pressed={filter === id}
-            style={{
-              fontSize: 13,
-              padding: '4px 12px',
-              borderRadius: 999,
-              border: `1px solid ${filter === id ? 'var(--tnt-current)' : 'var(--tnt-border)'}`,
-              background: filter === id ? 'var(--tnt-current)' : 'var(--tnt-bg)',
-              color: filter === id ? '#fff' : 'var(--tnt-text)',
-              cursor: 'pointer',
-            }}
           >
             {label}
           </button>
         ))}
 
-        <label style={{ display: 'flex', gap: 5, alignItems: 'center', fontSize: 13, marginLeft: 8 }}>
+        <label className="tnt-field-row" style={{ marginLeft: 'var(--tnt-space-2)' }}>
           <input
             type="checkbox"
             checked={gradedOnly}
@@ -74,7 +66,7 @@ export function PracticeIndex(): React.JSX.Element {
         </label>
       </div>
 
-      <p className="tnt-muted" style={{ margin: 0, fontSize: 13 }}>
+      <p className="tnt-muted tnt-sm" style={{ margin: 0 }}>
         {shown.length} of {EXERCISES.length} exercises
         {filter === 'CIE-I' || filter === 'CIE-II'
           ? ` — modules ${(CIE_SCOPES[filter] as readonly number[]).join(', ')}`
@@ -82,17 +74,19 @@ export function PracticeIndex(): React.JSX.Element {
         .
       </p>
 
-      <ul style={{ display: 'grid', gap: 10, listStyle: 'none', padding: 0, margin: 0 }}>
+      <ul className="tnt-stack" style={{ listStyle: 'none', padding: 0, margin: 0 }}>
         {shown.map((exercise) => {
           return (
             <li key={exercise.id}>
+              {/* `a.tnt-card` sets `display: block`, and that beats `.tnt-stack-sm`
+                  on specificity, so the two-line card layout stays inline. */}
               <a
                 href={`/practice/${exercise.id}`}
                 className="tnt-card"
-                style={{ display: 'grid', gap: 4, textDecoration: 'none', color: 'inherit' }}
+                style={{ display: 'grid', gap: 'var(--tnt-space-1)' }}
               >
-                <span style={{ fontSize: 15 }}>{exercise.prompt.split('\n')[0]}</span>
-                <span className="tnt-muted" style={{ fontSize: 12 }}>
+                <span>{exercise.prompt.split('\n')[0]}</span>
+                <span className="tnt-meta">
                   {exercise.marks} marks · {exercise.bloom} · {exercise.co} · Module{' '}
                   {moduleOf(exercise) ?? '?'} ·{' '}
                   {exercise.grader === 'manual' ? 'marked by hand' : 'auto-graded'} · {exercise.source}

@@ -27,24 +27,21 @@ export function SigmaStarWidget(): React.JSX.Element {
   const enumeration = useMemo(() => enumerateUpTo(alphabet, k, { limit: 512 }), [alphabet, k])
 
   return (
-    <section className="tnt-card" style={{ display: 'grid', gap: 12 }}>
-      <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'flex-end' }}>
-        <label style={{ display: 'grid', gap: 4 }}>
-          <span style={{ fontSize: 13 }} className="tnt-muted">
-            Alphabet Σ (comma separated)
-          </span>
+    <section className="tnt-card tnt-stack">
+      <div className="tnt-row tnt-row-end">
+        <label className="tnt-field">
+          <span className="tnt-muted">Alphabet Σ (comma separated)</span>
           <input
             value={alphabetText}
             onChange={(event) => setAlphabetText(event.target.value)}
             spellCheck={false}
-            style={inputStyle}
+            className="tnt-input tnt-input-mono"
+            style={{ width: 160 }}
           />
         </label>
 
-        <label style={{ display: 'grid', gap: 4 }}>
-          <span style={{ fontSize: 13 }} className="tnt-muted">
-            Maximum length k = {k}
-          </span>
+        <label className="tnt-field">
+          <span className="tnt-muted">Maximum length k = {k}</span>
           <input
             type="range"
             min={0}
@@ -57,11 +54,11 @@ export function SigmaStarWidget(): React.JSX.Element {
       </div>
 
       {alphabet.length === 0 ? (
-        <p className="tnt-muted" style={{ margin: 0, fontSize: 14 }}>
+        <p className="tnt-muted" style={{ margin: 0 }}>
           An empty alphabet has only one string over it: ε. Add a symbol to see more.
         </p>
       ) : (
-        <p style={{ margin: 0, fontSize: 14 }}>
+        <p style={{ margin: 0 }}>
           <strong>{countUpTo(alphabet.length, k).toLocaleString('en')}</strong> strings of length at most{' '}
           {k} over an alphabet of {alphabet.length}{' '}
           {alphabet.length === 1 ? 'symbol' : 'symbols'}.{' '}
@@ -73,24 +70,15 @@ export function SigmaStarWidget(): React.JSX.Element {
 
       <ol
         aria-label={`Strings of length at most ${k}`}
-        style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: 5,
-          listStyle: 'none',
-          margin: 0,
-          padding: 0,
-          maxHeight: 220,
-          overflowY: 'auto',
-        }}
+        className="tnt-row tnt-row-tight"
+        style={{ listStyle: 'none', margin: 0, padding: 0, maxHeight: 220, overflowY: 'auto' }}
       >
         {enumeration.words.map((word, i) => (
           <li
             key={i}
+            className="tnt-mono tnt-sm"
             style={{
-              fontFamily: 'var(--tnt-mono)',
-              fontSize: 13,
-              padding: '2px 7px',
+              padding: '2px var(--tnt-space-2)',
               borderRadius: 'var(--tnt-radius)',
               border: '1px solid var(--tnt-border)',
               background: word.length === 0 ? 'var(--tnt-current-soft)' : 'var(--tnt-bg)',
@@ -102,21 +90,10 @@ export function SigmaStarWidget(): React.JSX.Element {
       </ol>
 
       {enumeration.truncated === undefined ? null : (
-        <p className="tnt-muted" style={{ margin: 0, fontSize: 12 }}>
+        <p className="tnt-meta" style={{ margin: 0 }}>
           {enumeration.truncated.reason}
         </p>
       )}
     </section>
   )
-}
-
-const inputStyle: React.CSSProperties = {
-  fontFamily: 'var(--tnt-mono)',
-  fontSize: 14,
-  padding: '6px 8px',
-  borderRadius: 'var(--tnt-radius)',
-  border: '1px solid var(--tnt-border)',
-  background: 'var(--tnt-bg)',
-  color: 'var(--tnt-text)',
-  width: 160,
 }

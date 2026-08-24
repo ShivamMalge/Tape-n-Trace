@@ -10,8 +10,8 @@ export const metadata: Metadata = {
 export default function CfgToPdaPage(): React.JSX.Element {
   return (
     <div className="tnt-page">
-      <h1 style={{ fontSize: 26 }}>Grammar → PDA</h1>
-      <p style={{ maxWidth: '64ch' }}>
+      <h1>Grammar → PDA</h1>
+      <p className="tnt-prose">
         Hopcroft 2e §6.3.1, Thm 6.13. Grammars and pushdown automata define the same languages, and
         this construction is the easy half: one state, the start symbol on the stack, and the stack
         thereafter holds exactly the unmatched tail of a leftmost derivation. Run the machine it

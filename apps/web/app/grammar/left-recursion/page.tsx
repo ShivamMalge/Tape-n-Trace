@@ -9,11 +9,11 @@ export const metadata: Metadata = {
 export default function LeftRecursionPage(): React.JSX.Element {
   return (
     <div className="tnt-page">
-      <p style={{ fontSize: 13, margin: 0 }}>
+      <p className="tnt-sm" style={{ margin: 0 }}>
         <a href="/grammar">← Grammars and derivations</a>
       </p>
-      <h1 style={{ fontSize: 26, marginTop: 8 }}>Left recursion elimination</h1>
-      <p style={{ maxWidth: '64ch' }}>
+      <h1 style={{ marginTop: 'var(--tnt-space-2)' }}>Left recursion elimination</h1>
+      <p className="tnt-prose">
         Examined at 8 marks, and the exam&rsquo;s own expression grammar is the opening preset.
         Immediate recursion A → Aα | β becomes A → βA′ with A′ → αA′ | ε; indirect recursion is
         handled by substituting earlier variables out first, one variable per step.

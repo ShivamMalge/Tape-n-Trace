@@ -42,6 +42,40 @@
   --tnt-focus: #2563eb;
   --tnt-font: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
   --tnt-mono: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, monospace;
+
+  /*
+   * Type scale — six steps, ratio ≈ 1.22, anchored on 15px body.
+   *
+   * There were fifteen distinct font sizes in the app before this existed:
+   * every integer from 10 to 20, plus 22, 24, 26 and 30. That is not a scale,
+   * it is per-component guesswork, and it is why two cards that should have
+   * matched never quite did.
+   */
+  --tnt-text-xs: 11px;   /* captions, metadata, citation lines */
+  --tnt-text-sm: 13px;   /* controls, table cells, secondary prose */
+  --tnt-text-base: 15px; /* body */
+  --tnt-text-lg: 18px;   /* lead paragraph, section headings */
+  --tnt-text-xl: 22px;   /* h2 */
+  --tnt-text-2xl: 28px;  /* h1 */
+
+  /* Spacing — a 4px grid. Everything that was '7px 9px' becomes one of these. */
+  --tnt-space-1: 4px;
+  --tnt-space-2: 8px;
+  --tnt-space-3: 12px;
+  --tnt-space-4: 16px;
+  --tnt-space-5: 24px;
+  --tnt-space-6: 32px;
+  --tnt-space-7: 48px;
+
+  --tnt-radius-sm: 4px;
+  --tnt-radius-full: 999px;
+
+  /* The readable measure for running prose. Machine diagrams ignore it. */
+  --tnt-measure: 68ch;
+
+  /* Chrome that reacts to the pointer. Kept separate from the highlight roles. */
+  --tnt-hover: #eef1f6;
+  --tnt-active: #e3e8f0;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -71,6 +105,8 @@
     --tnt-consumed: #4b5563;
     --tnt-read: #60a5fa;
     --tnt-lookahead: #9aa3b2;
+    --tnt-hover: #1e2430;
+    --tnt-active: #262d3b;
   }
 }
 
@@ -100,6 +136,8 @@
   --tnt-consumed: #4b5563;
   --tnt-read: #60a5fa;
   --tnt-lookahead: #9aa3b2;
+  --tnt-hover: #1e2430;
+  --tnt-active: #262d3b;
 }
 
 /* Respect a reader who has asked the OS to stop things moving. */

@@ -40,8 +40,6 @@ import {
   DFA_PRESETS,
   OPS,
   SUBSTITUTION_DEMO,
-  chip,
-  field,
   finalStatePda,
   runDfa,
   verdict,
@@ -145,50 +143,43 @@ export function CflClosureLab(): React.JSX.Element {
   }, [op, resultPda, sourcePda, dfa, invText])
 
   return (
-    <div style={{ display: 'grid', gap: 16 }}>
-      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }} role="group" aria-label="Operation">
+    <div className="tnt-stack">
+      <div className="tnt-row tnt-row-tight" role="group" aria-label="Operation">
         {OPS.map((o) => (
           <button
             key={o.id}
             type="button"
+            className="tnt-btn"
             aria-pressed={o.id === op}
             onClick={() => setOp(o.id)}
-            style={{
-              fontSize: 13,
-              padding: '6px 12px',
-              borderRadius: 'var(--tnt-radius)',
-              border: o.id === op ? '1px solid var(--tnt-current)' : '1px solid var(--tnt-border)',
-              background: o.id === op ? 'var(--tnt-current-soft)' : 'var(--tnt-bg)',
-              color: 'var(--tnt-text)',
-              cursor: 'pointer',
-            }}
           >
             {o.title}
           </button>
         ))}
       </div>
 
-      <p className="tnt-muted" style={{ margin: 0, fontSize: 13 }}>
+      <p className="tnt-meta" style={{ margin: 0 }}>
         Hopcroft 2e {operation.citation}.
       </p>
 
       {op === 'substitution' ? (
-        <div className="tnt-card" style={{ fontSize: 14 }}>
+        <div className="tnt-card">
           Example 7.22: L = {'{01}'}, s(0) = {'{aⁿbⁿ | n ≥ 1}'}, s(1) = {'{aa, bb}'}. The result generates
           s(L): every aⁿbⁿ followed by aa or bb.
         </div>
       ) : op === 'inverse-homomorphism' ? (
-        <div className="tnt-card" style={{ display: 'grid', gap: 8 }}>
-          <span style={{ fontSize: 14 }}>P is the gallery’s aⁿbⁿ PDA (by final state). Choose h on {'{x, y}'}:</span>
-          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+        <div className="tnt-card tnt-stack-sm">
+          <span>P is the gallery’s aⁿbⁿ PDA (by final state). Choose h on {'{x, y}'}:</span>
+          <div className="tnt-row">
             {(['x', 'y'] as const).map((s) => (
-              <label key={s} style={{ display: 'flex', gap: 6, alignItems: 'center', fontSize: 14 }}>
+              <label key={s} className="tnt-field-row">
                 h({s}) =
                 <input
                   value={invText[s] ?? ''}
                   onChange={(event) => setInvText((prev) => ({ ...prev, [s]: event.target.value }))}
                   aria-label={`h(${s})`}
-                  style={field}
+                  className="tnt-input tnt-input-mono"
+                  style={{ width: 90 }}
                   spellCheck={false}
                 />
               </label>
@@ -196,36 +187,37 @@ export function CflClosureLab(): React.JSX.Element {
           </div>
         </div>
       ) : (
-        <div style={{ display: 'grid', gap: 10 }}>
+        <div className="tnt-stack">
           <OperandPicker label={operation.arity === 2 ? 'L₁' : 'L'} value={left.id} onChange={setLeftId} />
           {operation.arity === 2 ? <OperandPicker label="L₂" value={right.id} onChange={setRightId} /> : null}
           {op === 'intersection' ? (
-            <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
-              <span className="tnt-muted" style={{ fontSize: 13 }}>
+            <div className="tnt-row tnt-row-tight">
+              <span className="tnt-sm tnt-muted">
                 R (a DFA over {'{a, b}'}):
               </span>
               {DFA_PRESETS.map((d) => (
-                <button key={d.id} type="button" aria-pressed={d.id === dfa.id} onClick={() => setDfaId(d.id)} style={chip(d.id === dfa.id)}>
+                <button key={d.id} type="button" className="tnt-chip" aria-pressed={d.id === dfa.id} onClick={() => setDfaId(d.id)}>
                   {d.title}
                 </button>
               ))}
             </div>
           ) : null}
           {op === 'homomorphism' ? (
-            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
+            <div className="tnt-row">
               {left.grammar.terminals.map((t) => (
-                <label key={t} style={{ display: 'flex', gap: 6, alignItems: 'center', fontSize: 14 }}>
+                <label key={t} className="tnt-field-row">
                   h({t}) =
                   <input
                     value={hText[t] ?? ''}
                     onChange={(event) => setHText((prev) => ({ ...prev, [t]: event.target.value }))}
                     aria-label={`h(${t})`}
-                    style={field}
+                    className="tnt-input tnt-input-mono"
+                    style={{ width: 90 }}
                     spellCheck={false}
                   />
                 </label>
               ))}
-              <span className="tnt-muted" style={{ fontSize: 12 }}>
+              <span className="tnt-meta">
                 (empty = ε)
               </span>
             </div>
@@ -236,8 +228,8 @@ export function CflClosureLab(): React.JSX.Element {
       <ValidationErrors errors={outcome.errors} />
 
       {snapshot?.grammar !== undefined ? (
-        <div className="tnt-card" style={{ background: 'var(--tnt-bg)' }}>
-          <div className="tnt-muted" style={{ fontSize: 12, marginBottom: 6 }}>
+        <div className="tnt-card tnt-card-plain">
+          <div className="tnt-meta" style={{ marginBottom: 'var(--tnt-space-2)' }}>
             The grammar being built — start symbol {snapshot.grammar.start}
           </div>
           <ProductionList grammar={snapshot.grammar} litIndices={litIndices} />
@@ -245,18 +237,18 @@ export function CflClosureLab(): React.JSX.Element {
       ) : null}
 
       {snapshot?.target !== undefined ? (
-        <div style={{ display: 'grid', gap: 12, gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))' }}>
+        <div className="tnt-panels">
           {snapshot.source !== undefined ? (
             <section>
-              <h2 style={{ fontSize: 15 }}>P</h2>
-              <div className="tnt-card" style={{ background: 'var(--tnt-bg)' }}>
+              <h2>P</h2>
+              <div className="tnt-card tnt-card-plain">
                 <AutomatonRenderer machine={pdaToDrawable(snapshot.source)} step={step} instanceId="cfl-src" />
               </div>
             </section>
           ) : null}
           <section>
-            <h2 style={{ fontSize: 15 }}>P′</h2>
-            <div className="tnt-card" style={{ background: 'var(--tnt-bg)' }}>
+            <h2>P′</h2>
+            <div className="tnt-card tnt-card-plain">
               <AutomatonRenderer machine={pdaToDrawable(snapshot.target)} step={step} instanceId="cfl-tgt" />
             </div>
           </section>
@@ -285,7 +277,7 @@ export function CflClosureLab(): React.JSX.Element {
         <>
           {agreement === null ? null : <AgreementTable rows={agreement} op={op} />}
           <section aria-label="Run the result">
-            <h2 style={{ fontSize: 15 }}>Run P′</h2>
+            <h2>Run P′</h2>
             <PdaRunner key={resultPda.states.join('|')} machine={resultPda} />
           </section>
         </>
@@ -299,12 +291,12 @@ export function CflClosureLab(): React.JSX.Element {
 
 function OperandPicker({ label, value, onChange }: { label: string; value: string; onChange: (id: string) => void }): React.JSX.Element {
   return (
-    <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
-      <span className="tnt-muted" style={{ fontSize: 13 }}>
+    <div className="tnt-row tnt-row-tight">
+      <span className="tnt-sm tnt-muted">
         {label}:
       </span>
       {CFL_PRESETS.map((p) => (
-        <button key={p.id} type="button" aria-pressed={p.id === value} onClick={() => onChange(p.id)} style={chip(p.id === value)}>
+        <button key={p.id} type="button" className="tnt-chip" aria-pressed={p.id === value} onClick={() => onChange(p.id)}>
           {p.title}
         </button>
       ))}

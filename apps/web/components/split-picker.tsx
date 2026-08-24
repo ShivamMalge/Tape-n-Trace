@@ -30,13 +30,11 @@ export function SplitPicker({ w, n, onSubmit }: SplitPickerProps): React.JSX.Ele
   const z = w.slice(clampedYEnd)
 
   return (
-    <div className="tnt-card" style={{ display: 'grid', gap: 10 }}>
+    <div className="tnt-card tnt-stack">
       <Segments x={x} y={y} z={z} />
 
-      <label style={{ display: 'grid', gap: 3 }}>
-        <span className="tnt-muted" style={{ fontSize: 12 }}>
-          End of x — currently |x| = {x.length}
-        </span>
+      <label className="tnt-field">
+        <span className="tnt-meta">End of x — currently |x| = {x.length}</span>
         <input
           type="range"
           min={0}
@@ -48,8 +46,8 @@ export function SplitPicker({ w, n, onSubmit }: SplitPickerProps): React.JSX.Ele
         />
       </label>
 
-      <label style={{ display: 'grid', gap: 3 }}>
-        <span className="tnt-muted" style={{ fontSize: 12 }}>
+      <label className="tnt-field">
+        <span className="tnt-meta">
           End of y — currently |y| = {y.length}, and |xy| = {x.length + y.length} ≤ {n}
         </span>
         <input
@@ -63,7 +61,12 @@ export function SplitPicker({ w, n, onSubmit }: SplitPickerProps): React.JSX.Ele
         />
       </label>
 
-      <button type="button" onClick={() => onSubmit({ x, y, z })} style={submit}>
+      <button
+        type="button"
+        className="tnt-btn tnt-btn-primary"
+        onClick={() => onSubmit({ x, y, z })}
+        style={{ justifySelf: 'start' }}
+      >
         Play this decomposition
       </button>
     </div>
@@ -78,7 +81,7 @@ export function Segments({ x, y, z }: { x: string; y: string; z: string }): Reac
       style={{
         display: 'inline-grid',
         gap: 1,
-        padding: '3px 6px',
+        padding: 'var(--tnt-space-1) var(--tnt-space-2)',
         borderRadius: 'var(--tnt-radius)',
         border: `1px solid ${color}`,
         background,
@@ -86,27 +89,18 @@ export function Segments({ x, y, z }: { x: string; y: string; z: string }): Reac
         textAlign: 'center',
       }}
     >
-      <code style={{ fontSize: 16 }}>{text === '' ? 'ε' : text}</code>
-      <span style={{ fontSize: 10, color }}>{label}</span>
+      <code className="tnt-lg">{text === '' ? 'ε' : text}</code>
+      <span className="tnt-xs" style={{ color }}>
+        {label}
+      </span>
     </span>
   )
 
   return (
-    <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', alignItems: 'center' }}>
+    <div className="tnt-row tnt-row-tight">
       {piece(x, 'x', 'var(--tnt-text-muted)', 'var(--tnt-bg)')}
       {piece(y, 'y', 'var(--tnt-marked)', 'var(--tnt-surface)')}
       {piece(z, 'z', 'var(--tnt-text-muted)', 'var(--tnt-bg)')}
     </div>
   )
-}
-
-const submit: React.CSSProperties = {
-  justifySelf: 'start',
-  padding: '7px 15px',
-  borderRadius: 'var(--tnt-radius)',
-  border: '1px solid var(--tnt-current)',
-  background: 'var(--tnt-current)',
-  color: '#fff',
-  fontSize: 14,
-  cursor: 'pointer',
 }

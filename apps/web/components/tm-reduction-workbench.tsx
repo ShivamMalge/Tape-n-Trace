@@ -50,10 +50,10 @@ export function TmReductionWorkbench(): React.JSX.Element {
   }, [snapshot, k])
 
   return (
-    <div style={{ display: 'grid', gap: 16 }}>
-      <div className="tnt-card" style={{ display: 'grid', gap: 6 }}>
-        <strong style={{ fontSize: 15 }}>{preset.title}</strong>
-        <p style={{ margin: 0, fontSize: 14 }}>{preset.blurb}</p>
+    <div className="tnt-stack">
+      <div className="tnt-card tnt-stack-sm">
+        <strong>{preset.title}</strong>
+        <p style={{ margin: 0 }}>{preset.blurb}</p>
       </div>
 
       <form
@@ -61,60 +61,31 @@ export function TmReductionWorkbench(): React.JSX.Element {
           event.preventDefault()
           run(input)
         }}
-        style={{ display: 'flex', gap: 8, alignItems: 'flex-end', flexWrap: 'wrap' }}
+        className="tnt-row tnt-row-end"
       >
-        <label style={{ display: 'grid', gap: 4, flex: '1 1 220px' }}>
-          <span className="tnt-muted" style={{ fontSize: 13 }}>
-            Input string
-          </span>
+        <label className="tnt-field" style={{ flex: '1 1 220px' }}>
+          <span className="tnt-muted">Input string</span>
           <input
             value={input}
             onChange={(event) => setInput(event.target.value)}
             spellCheck={false}
             autoComplete="off"
-            style={{
-              fontFamily: 'var(--tnt-mono)',
-              fontSize: 15,
-              padding: '7px 9px',
-              borderRadius: 'var(--tnt-radius)',
-              border: '1px solid var(--tnt-border)',
-              background: 'var(--tnt-bg)',
-              color: 'var(--tnt-text)',
-              width: '100%',
-            }}
+            className="tnt-input tnt-input-mono"
+            style={{ width: '100%' }}
           />
         </label>
-        <button
-          type="submit"
-          style={{
-            padding: '8px 16px',
-            borderRadius: 'var(--tnt-radius)',
-            border: '1px solid var(--tnt-current)',
-            background: 'var(--tnt-current)',
-            color: '#fff',
-            fontSize: 14,
-            cursor: 'pointer',
-          }}
-        >
+        <button type="submit" className="tnt-btn tnt-btn-primary">
           Run both
         </button>
         {preset.suggested.map((w) => (
           <button
             key={w || 'empty'}
             type="button"
+            className="tnt-chip"
+            style={{ fontFamily: 'var(--tnt-mono)' }}
             onClick={() => {
               setInput(w)
               run(w)
-            }}
-            style={{
-              fontFamily: 'var(--tnt-mono)',
-              fontSize: 13,
-              padding: '3px 9px',
-              borderRadius: 999,
-              border: '1px solid var(--tnt-border)',
-              background: 'var(--tnt-bg)',
-              color: 'var(--tnt-text)',
-              cursor: 'pointer',
             }}
           >
             {w === '' ? 'ε' : w}
@@ -126,29 +97,33 @@ export function TmReductionWorkbench(): React.JSX.Element {
 
       {snapshot === null ? null : (
         <>
-          <section aria-label="Running time" className="tnt-card" style={{ display: 'flex', gap: 24, flexWrap: 'wrap', alignItems: 'baseline' }}>
+          <section
+            aria-label="Running time"
+            className="tnt-card tnt-row tnt-row-baseline"
+            style={{ gap: 'var(--tnt-space-5)' }}
+          >
             <Counter label="Moves of M" value={snapshot.mMoves} />
             <Counter label="Moves of N" value={snapshot.nMoves} />
             <Counter label="Theorem 8.10's bound so far" value={bound} hint={`Σ (4n + 2k), k = ${k}`} />
-            <span className="tnt-muted" style={{ fontSize: 13, flexBasis: '100%' }}>
+            <span className="tnt-muted tnt-sm" style={{ flexBasis: '100%' }}>
               Each simulated move costs N at most 4n + 2k of its own after n moves of M — so n moves of M cost
               N O(n²). The ratio grows as the run goes on; watch the two counters drift apart.
             </span>
           </section>
 
-          <div style={{ display: 'grid', gap: 12, gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))' }}>
+          <div className="tnt-panels">
             <section aria-label="M">
-              <h2 style={{ fontSize: 15 }}>M — {k} tapes</h2>
-              <div className="tnt-card" style={{ background: 'var(--tnt-bg)', display: 'grid', gap: 10 }}>
+              <h2>M — {k} tapes</h2>
+              <div className="tnt-card tnt-stack tnt-card-plain">
                 {snapshot.mConfig.tapes.map((tape, i) => (
                   <TapeStrip key={i} tape={tape} blank={preset.machine.blank} radius={6} tapeIndex={i} state={i === 0 ? snapshot.mConfig.state : undefined} label={`Tape ${i + 1}`} />
                 ))}
-                <div style={{ fontFamily: 'var(--tnt-mono)', fontSize: 13 }}>{tmIdText(snapshot.mConfig, preset.machine.blank)}</div>
+                <div className="tnt-mono tnt-sm">{tmIdText(snapshot.mConfig, preset.machine.blank)}</div>
               </div>
             </section>
             <section aria-label="N">
-              <h2 style={{ fontSize: 15 }}>N — one tape, {2 * k} tracks</h2>
-              <div className="tnt-card" style={{ background: 'var(--tnt-bg)', display: 'grid', gap: 10 }}>
+              <h2>N — one tape, {2 * k} tracks</h2>
+              <div className="tnt-card tnt-stack tnt-card-plain">
                 {snapshot.current.tapes.map((tape, i) => (
                   <TapeStrip
                     key={i}
@@ -162,8 +137,8 @@ export function TmReductionWorkbench(): React.JSX.Element {
                     label="N's tape"
                   />
                 ))}
-                <div className="tnt-muted" style={{ fontSize: 12 }}>
-                  ▲ marks where each head of M is; N's own state is <span style={{ fontFamily: 'var(--tnt-mono)' }}>{snapshot.current.state}</span>.
+                <div className="tnt-muted tnt-xs">
+                  ▲ marks where each head of M is; N's own state is <span className="tnt-mono">{snapshot.current.state}</span>.
                 </div>
               </div>
             </section>
@@ -184,7 +159,7 @@ export function TmReductionWorkbench(): React.JSX.Element {
       <NarrationPanel step={step} />
 
       {trace === null ? null : (
-        <p role="status" className="tnt-card" style={{ margin: 0, fontSize: 14 }}>
+        <p role="status" className="tnt-card" style={{ margin: 0 }}>
           {trace.result.type === 'acceptance'
             ? trace.result.note
             : trace.result.type === 'incomplete'
@@ -199,11 +174,11 @@ export function TmReductionWorkbench(): React.JSX.Element {
 function Counter({ label, value, hint }: { label: string; value: number; hint?: string }): React.JSX.Element {
   return (
     <div>
-      <div className="tnt-muted" style={{ fontSize: 12 }}>
+      <div className="tnt-meta">
         {label}
         {hint === undefined ? '' : ` (${hint})`}
       </div>
-      <div style={{ fontFamily: 'var(--tnt-mono)', fontSize: 22 }} data-counter={label}>
+      <div className="tnt-mono" style={{ fontSize: 'var(--tnt-text-xl)' }} data-counter={label}>
         {value}
       </div>
     </div>

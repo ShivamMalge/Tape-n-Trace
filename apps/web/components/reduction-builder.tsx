@@ -47,8 +47,8 @@ export function ReductionBuilder(): React.JSX.Element {
   const to = problemById(toId)
 
   return (
-    <div style={{ display: 'grid', gap: 16 }}>
-      <div style={{ display: 'grid', gap: 12, gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))' }}>
+    <div className="tnt-stack">
+      <div className="tnt-panels">
         <ProblemPicker
           legend="Start from a problem already known to be undecidable"
           hint="P₁ in Fig. 8.7 — the hard problem whose hardness is being carried across."
@@ -65,21 +65,17 @@ export function ReductionBuilder(): React.JSX.Element {
       </div>
 
       {from === undefined || to === undefined ? null : (
-        <p style={{ margin: 0, fontSize: 14 }}>
+        <p style={{ margin: 0 }}>
           Building <strong>{from.name}</strong> ≤ <strong>{to.name}</strong>: if there were an algorithm for{' '}
           {to.name.toLowerCase()}, there would be one for {from.name.toLowerCase()}.
         </p>
       )}
 
       {isErr(built) ? (
-        <div
-          role="alert"
-          className="tnt-card"
-          style={{ borderLeft: '4px solid var(--tnt-marked)', display: 'grid', gap: 6 }}
-        >
-          <strong style={{ fontSize: 14 }}>This reduction would prove nothing.</strong>
+        <div role="alert" className="tnt-card tnt-stack-sm" style={{ borderLeft: '4px solid var(--tnt-marked)' }}>
+          <strong>This reduction would prove nothing.</strong>
           {built.errors.map((error) => (
-            <p key={error.code} style={{ margin: 0, fontSize: 14 }}>
+            <p key={error.code} style={{ margin: 0 }}>
               {error.message}
             </p>
           ))}
@@ -117,17 +113,16 @@ function ProblemPicker({
   markDecidable?: boolean
 }): React.JSX.Element {
   return (
-    <fieldset style={{ border: '1px solid var(--tnt-border)', borderRadius: 'var(--tnt-radius)', padding: 12, margin: 0 }}>
-      <legend style={{ fontSize: 13, fontWeight: 600, padding: '0 6px' }}>{legend}</legend>
-      <p className="tnt-muted" style={{ margin: '0 0 8px', fontSize: 12 }}>
+    <fieldset className="tnt-card" style={{ margin: 0 }}>
+      <legend className="tnt-sm" style={{ fontWeight: 600, padding: '0 var(--tnt-space-2)' }}>
+        {legend}
+      </legend>
+      <p className="tnt-meta" style={{ margin: '0 0 var(--tnt-space-2)' }}>
         {hint}
       </p>
-      <div style={{ display: 'grid', gap: 4 }}>
+      <div className="tnt-stack-sm">
         {PROBLEMS.map((problem) => (
-          <label
-            key={problem.id}
-            style={{ display: 'flex', gap: 8, alignItems: 'baseline', fontSize: 13, cursor: 'pointer' }}
-          >
+          <label key={problem.id} className="tnt-field-row" style={{ alignItems: 'baseline', cursor: 'pointer' }}>
             <input
               type="radio"
               name={legend}
@@ -136,11 +131,11 @@ function ProblemPicker({
             />
             <span>
               {problem.name}{' '}
-              <span style={{ color: STATUS_COLOUR[problem.status], fontSize: 11 }}>
+              <span className="tnt-xs" style={{ color: STATUS_COLOUR[problem.status] }}>
                 ({STATUS_LABEL[problem.status]})
               </span>
               {markDecidable && !isKnownHard(problem) ? (
-                <span className="tnt-muted" style={{ fontSize: 11 }}> — no reduction may start here</span>
+                <span className="tnt-muted tnt-xs"> — no reduction may start here</span>
               ) : null}
             </span>
           </label>
@@ -169,20 +164,8 @@ function ContradictionDiagram({
   const atEnd = total > 0 && reached >= total - 1
 
   return (
-    <figure style={{ margin: 0, display: 'grid', gap: 8 }}>
-      <div
-        style={{
-          display: 'flex',
-          gap: 8,
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          fontSize: 13,
-          padding: 12,
-          border: '1px solid var(--tnt-border)',
-          borderRadius: 'var(--tnt-radius)',
-          background: 'var(--tnt-surface)',
-        }}
-      >
+    <figure className="tnt-stack-sm" style={{ margin: 0 }}>
+      <div className="tnt-card tnt-row tnt-sm">
         <Box label={`instance of ${from.name}`} />
         <span aria-hidden>→</span>
         <Box label="Construct" strong />
@@ -191,9 +174,9 @@ function ContradictionDiagram({
         <span aria-hidden>→</span>
         <Box label="Decide" strong dashed />
         <span aria-hidden>→</span>
-        <span style={{ fontFamily: 'var(--tnt-mono)' }}>yes / no</span>
+        <span className="tnt-mono">yes / no</span>
       </div>
-      <figcaption className="tnt-muted" style={{ fontSize: 12 }}>
+      <figcaption className="tnt-meta">
         Fig. 8.7. The dashed box is the algorithm assumed to exist.{' '}
         {atEnd
           ? `It does not: the chain would decide ${from.name.toLowerCase()}, and nothing does.`

@@ -56,8 +56,8 @@ export function PdaAcceptanceWorkbench(): React.JSX.Element {
   const sample = preset?.suggested ?? []
 
   return (
-    <div style={{ display: 'grid', gap: 16 }}>
-      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }} role="group" aria-label="Direction">
+    <div className="tnt-stack">
+      <div className="tnt-row" role="group" aria-label="Direction">
         {(
           [
             ['final-to-empty', 'Final state → empty stack (Thm 6.11)'],
@@ -67,42 +67,26 @@ export function PdaAcceptanceWorkbench(): React.JSX.Element {
           <button
             key={value}
             type="button"
+            className="tnt-btn"
             aria-pressed={direction === value}
             onClick={() => setDirection(value)}
-            style={{
-              fontSize: 13,
-              padding: '6px 12px',
-              borderRadius: 'var(--tnt-radius)',
-              border: direction === value ? '1px solid var(--tnt-current)' : '1px solid var(--tnt-border)',
-              background: direction === value ? 'var(--tnt-current-soft)' : 'var(--tnt-bg)',
-              color: 'var(--tnt-text)',
-              cursor: 'pointer',
-            }}
           >
             {label}
           </button>
         ))}
       </div>
 
-      <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
-        <span className="tnt-muted" style={{ fontSize: 13 }}>
+      <div className="tnt-row tnt-row-tight">
+        <span className="tnt-sm tnt-muted">
           Machine ({wanted === 'finalState' ? 'accepts by final state' : 'accepts by empty stack'}):
         </span>
         {eligible.map((p) => (
           <button
             key={p.id}
             type="button"
+            className="tnt-chip"
             aria-pressed={p.id === preset?.id}
             onClick={() => setPresetId(p.id)}
-            style={{
-              fontSize: 13,
-              padding: '3px 10px',
-              borderRadius: 999,
-              border: p.id === preset?.id ? '1px solid var(--tnt-current)' : '1px solid var(--tnt-border)',
-              background: p.id === preset?.id ? 'var(--tnt-current-soft)' : 'var(--tnt-bg)',
-              color: 'var(--tnt-text)',
-              cursor: 'pointer',
-            }}
           >
             {p.title}
           </button>
@@ -110,16 +94,16 @@ export function PdaAcceptanceWorkbench(): React.JSX.Element {
       </div>
 
       {snapshot === null ? null : (
-        <div style={{ display: 'grid', gap: 12, gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))' }}>
+        <div className="tnt-panels">
           <section>
-            <h2 style={{ fontSize: 15 }}>Original — {wanted === 'finalState' ? 'L(P)' : 'N(P)'}</h2>
-            <div className="tnt-card" style={{ background: 'var(--tnt-bg)' }}>
+            <h2>Original — {wanted === 'finalState' ? 'L(P)' : 'N(P)'}</h2>
+            <div className="tnt-card tnt-card-plain">
               <AutomatonRenderer machine={pdaToDrawable(snapshot.source)} step={step} instanceId="acc-src" />
             </div>
           </section>
           <section>
-            <h2 style={{ fontSize: 15 }}>Converted — {wanted === 'finalState' ? 'N(P′)' : 'L(P′)'}</h2>
-            <div className="tnt-card" style={{ background: 'var(--tnt-bg)' }}>
+            <h2>Converted — {wanted === 'finalState' ? 'N(P′)' : 'L(P′)'}</h2>
+            <div className="tnt-card tnt-card-plain">
               <AutomatonRenderer machine={pdaToDrawable(snapshot.target)} step={step} instanceId="acc-tgt" />
             </div>
           </section>
@@ -141,28 +125,26 @@ export function PdaAcceptanceWorkbench(): React.JSX.Element {
 
       {target === null || preset === undefined ? null : (
         <section aria-label="Sample agreement">
-          <h2 style={{ fontSize: 15 }}>Both machines on the same strings</h2>
-          <p className="tnt-muted" style={{ fontSize: 13, marginTop: 0 }}>
+          <h2>Both machines on the same strings</h2>
+          <p className="tnt-sm tnt-muted" style={{ marginTop: 0 }}>
             The theorem says the languages are equal; here is a sample of it. (A sample is evidence,
             not the proof — the proof is the construction above.)
           </p>
-          <div className="tnt-card" style={{ background: 'var(--tnt-bg)', overflowX: 'auto' }}>
-            <table style={{ borderCollapse: 'collapse', fontSize: 13, fontFamily: 'var(--tnt-mono)' }}>
+          <div className="tnt-card tnt-scroll-x tnt-card-plain">
+            <table className="tnt-table tnt-mono">
               <thead>
                 <tr>
                   {['w', 'original', 'converted'].map((h) => (
-                    <th key={h} style={{ textAlign: 'left', padding: '4px 14px 4px 0', borderBottom: '1px solid var(--tnt-border)' }}>
-                      {h}
-                    </th>
+                    <th key={h}>{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {sample.map((word) => (
                   <tr key={word || 'ε'}>
-                    <td style={{ padding: '3px 14px 3px 0' }}>{word === '' ? 'ε' : word}</td>
-                    <td style={{ padding: '3px 14px 3px 0' }}>{verdictText(preset.machine, word)}</td>
-                    <td style={{ padding: '3px 14px 3px 0' }}>{verdictText(target, word)}</td>
+                    <td>{word === '' ? 'ε' : word}</td>
+                    <td>{verdictText(preset.machine, word)}</td>
+                    <td>{verdictText(target, word)}</td>
                   </tr>
                 ))}
               </tbody>

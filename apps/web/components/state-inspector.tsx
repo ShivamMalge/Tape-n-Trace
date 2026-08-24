@@ -43,20 +43,20 @@ export function StateInspector({
   }
 
   return (
-    <section style={{ display: 'grid', gap: 8 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-        <h2 style={{ fontSize: 15, margin: 0 }}>States</h2>
-        <button type="button" onClick={onAdd} style={smallButton} title="Add a state (A)">
+    <section className="tnt-stack-sm">
+      <div className="tnt-row tnt-row-baseline" style={{ justifyContent: 'space-between' }}>
+        <h2 style={{ margin: 0 }}>States</h2>
+        <button type="button" onClick={onAdd} className="tnt-btn" title="Add a state (A)">
           Add state
         </button>
       </div>
 
       {machine.states.length === 0 ? (
-        <p className="tnt-muted" style={{ fontSize: 13, margin: 0 }}>
+        <p className="tnt-muted tnt-sm" style={{ margin: 0 }}>
           No states yet. Add one, or click the canvas.
         </p>
       ) : (
-        <table style={{ borderCollapse: 'collapse', width: '100%', fontSize: 14 }}>
+        <table className="tnt-table" style={{ width: '100%' }}>
           <thead>
             <tr>
               <Th>State</Th>
@@ -69,14 +69,8 @@ export function StateInspector({
           </thead>
           <tbody>
             {machine.states.map((id) => (
-              <tr
-                key={id}
-                style={{
-                  borderTop: '1px solid var(--tnt-border)',
-                  background: selected === id ? 'var(--tnt-current-soft)' : undefined,
-                }}
-              >
-                <td style={cell}>
+              <tr key={id} style={{ background: selected === id ? 'var(--tnt-current-soft)' : undefined }}>
+                <td>
                   {renaming?.id === id ? (
                     <input
                       value={renaming.text}
@@ -88,7 +82,8 @@ export function StateInspector({
                         if (event.key === 'Escape') setRenaming(null)
                       }}
                       aria-label={`Rename state ${id}`}
-                      style={nameInput}
+                      className="tnt-input tnt-input-mono"
+                      style={{ width: 110, borderColor: 'var(--tnt-current)' }}
                     />
                   ) : (
                     <button
@@ -98,6 +93,7 @@ export function StateInspector({
                         setRenaming({ id, text: id })
                       }}
                       title={`Select ${id}, or edit its name`}
+                      className="tnt-mono"
                       style={nameButton}
                     >
                       {id}
@@ -105,7 +101,7 @@ export function StateInspector({
                   )}
                 </td>
 
-                <td style={cell}>
+                <td>
                   <input
                     type="radio"
                     name="start-state"
@@ -115,7 +111,7 @@ export function StateInspector({
                   />
                 </td>
 
-                <td style={cell}>
+                <td>
                   <input
                     type="checkbox"
                     checked={machine.accepting.includes(id)}
@@ -124,12 +120,12 @@ export function StateInspector({
                   />
                 </td>
 
-                <td style={{ ...cell, textAlign: 'right' }}>
+                <td style={{ textAlign: 'right' }}>
                   <button
                     type="button"
                     onClick={() => onRemove(id)}
                     aria-label={`Delete state ${id} and every transition touching it`}
-                    style={smallButton}
+                    className="tnt-btn"
                   >
                     Delete
                   </button>
@@ -145,42 +141,20 @@ export function StateInspector({
 
 function Th({ children }: { children: React.ReactNode }): React.JSX.Element {
   return (
-    <th scope="col" style={{ ...cell, textAlign: 'left', fontSize: 12, color: 'var(--tnt-text-muted)' }}>
+    <th scope="col" className="tnt-muted">
       {children}
     </th>
   )
 }
 
-const cell: React.CSSProperties = { padding: '4px 8px' }
-
-const smallButton: React.CSSProperties = {
-  padding: '3px 9px',
-  borderRadius: 'var(--tnt-radius)',
-  border: '1px solid var(--tnt-border)',
-  background: 'var(--tnt-bg)',
-  color: 'var(--tnt-text)',
-  fontSize: 12,
-  cursor: 'pointer',
-}
-
+/** A button shaped like a link, which no primitive covers: the row's own name. */
 const nameButton: React.CSSProperties = {
-  fontFamily: 'var(--tnt-mono)',
-  fontSize: 14,
+  // A button does not inherit its font size; the family comes from `.tnt-mono`.
+  fontSize: 'inherit',
   background: 'none',
   border: 'none',
   padding: 0,
   color: 'var(--tnt-current)',
   cursor: 'pointer',
   textDecoration: 'underline',
-}
-
-const nameInput: React.CSSProperties = {
-  fontFamily: 'var(--tnt-mono)',
-  fontSize: 14,
-  width: 110,
-  padding: '2px 5px',
-  borderRadius: 'var(--tnt-radius)',
-  border: '1px solid var(--tnt-current)',
-  background: 'var(--tnt-bg)',
-  color: 'var(--tnt-text)',
 }

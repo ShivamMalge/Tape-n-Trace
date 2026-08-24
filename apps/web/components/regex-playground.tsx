@@ -31,12 +31,10 @@ export function RegexPlayground(): React.JSX.Element {
   const accepted = panels.membership.filter((row) => row.accepted)
 
   return (
-    <div style={{ display: 'grid', gap: 16 }}>
-      <section className="tnt-card" style={{ display: 'grid', gap: 10 }}>
-        <label style={{ display: 'grid', gap: 5 }}>
-          <span style={{ fontSize: 13 }} className="tnt-muted">
-            Regular expression
-          </span>
+    <div className="tnt-stack">
+      <section className="tnt-card tnt-stack">
+        <label className="tnt-field">
+          <span className="tnt-muted">Regular expression</span>
           <input
             value={source}
             onChange={(event) => setSource(event.target.value)}
@@ -44,42 +42,37 @@ export function RegexPlayground(): React.JSX.Element {
             autoComplete="off"
             aria-invalid={panels.errors.length > 0}
             aria-describedby="re-help"
+            className="tnt-input tnt-input-mono"
             style={{
-              fontFamily: 'var(--tnt-mono)',
-              fontSize: 19,
-              padding: '9px 11px',
-              borderRadius: 'var(--tnt-radius)',
-              border: `1px solid ${panels.errors.length > 0 ? 'var(--tnt-marked)' : 'var(--tnt-border)'}`,
-              background: 'var(--tnt-bg)',
-              color: 'var(--tnt-text)',
+              fontSize: 'var(--tnt-text-lg)',
+              padding: 'var(--tnt-space-2) var(--tnt-space-3)',
+              borderColor: panels.errors.length > 0 ? 'var(--tnt-marked)' : undefined,
             }}
           />
         </label>
 
-        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
-          <span className="tnt-muted" style={{ fontSize: 13 }}>
-            Try:
-          </span>
+        <div className="tnt-row tnt-row-tight">
+          <span className="tnt-sm tnt-muted">Try:</span>
           {SAMPLE_REGEXES.map((sample) => (
             <button
               key={sample.id}
               type="button"
+              className="tnt-chip tnt-mono"
               onClick={() => setSource(sample.source)}
               title={sample.note}
-              style={chip}
             >
               {sample.source}
             </button>
           ))}
         </div>
 
-        <p id="re-help" className="tnt-muted" style={{ margin: 0, fontSize: 12 }}>
+        <p id="re-help" className="tnt-meta" style={{ margin: 0 }}>
           Union is <code>+</code> or <code>|</code>, star is <code>*</code>. Star binds tightest, then
           concatenation, then union — so <code>01*</code> is <code>0(1*)</code>, not <code>(01)*</code>.
         </p>
 
         {panels.errors.length > 0 ? (
-          <p role="alert" style={{ margin: 0, fontSize: 13, color: 'var(--tnt-marked)' }}>
+          <p role="alert" className="tnt-sm" style={{ margin: 0, color: 'var(--tnt-marked)' }}>
             {panels.errors[0]?.message}
           </p>
         ) : null}
@@ -89,9 +82,10 @@ export function RegexPlayground(): React.JSX.Element {
           mid-edit they hold the last good expression rather than flickering. */}
       <div
         aria-busy={pending}
-        style={{ display: 'grid', gap: 16, opacity: pending ? 0.55 : 1, transition: 'opacity 120ms ease' }}
+        className="tnt-stack"
+        style={{ opacity: pending ? 0.55 : 1, transition: 'opacity 120ms ease' }}
       >
-        <div style={{ display: 'grid', gap: 16, gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
+        <div className="tnt-panels">
           <Panel title="Parse tree" note="How the expression is read — this is the precedence, drawn.">
             {panels.tree.length === 0 ? (
               <Empty />
@@ -112,7 +106,7 @@ export function RegexPlayground(): React.JSX.Element {
           </Panel>
         </div>
 
-        <div style={{ display: 'grid', gap: 16, gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
+        <div className="tnt-panels">
           <Panel
             title="Minimal DFA"
             note={
@@ -133,26 +127,17 @@ export function RegexPlayground(): React.JSX.Element {
             ) : (
               <ul
                 aria-label="Strings and whether they are accepted"
-                style={{
-                  display: 'flex',
-                  flexWrap: 'wrap',
-                  gap: 4,
-                  listStyle: 'none',
-                  margin: 0,
-                  padding: 0,
-                  maxHeight: 260,
-                  overflowY: 'auto',
-                }}
+                className="tnt-row tnt-row-tight"
+                style={{ listStyle: 'none', margin: 0, padding: 0, maxHeight: 260, overflowY: 'auto' }}
               >
                 {panels.membership.map((row) => (
                   <li
                     key={row.word}
                     data-accepted={row.accepted}
                     title={row.accepted ? 'accepted' : 'rejected'}
+                    className="tnt-mono tnt-sm"
                     style={{
-                      fontFamily: 'var(--tnt-mono)',
-                      fontSize: 13,
-                      padding: '2px 8px',
+                      padding: '2px var(--tnt-space-2)',
                       borderRadius: 'var(--tnt-radius)',
                       border: `1px solid ${row.accepted ? 'var(--tnt-accepting)' : 'var(--tnt-border)'}`,
                       background: row.accepted ? 'var(--tnt-accepting-soft)' : 'var(--tnt-bg)',
@@ -181,14 +166,16 @@ function Panel({
   children: React.ReactNode
 }): React.JSX.Element {
   return (
-    <section style={{ display: 'grid', gap: 6, minWidth: 0 }}>
-      <h2 style={{ fontSize: 13, margin: 0, textTransform: 'uppercase', letterSpacing: 0.6 }}>{title}</h2>
-      <p className="tnt-muted" style={{ margin: 0, fontSize: 12 }}>
+    <section className="tnt-stack-sm">
+      <h2 className="tnt-label" style={{ margin: 0 }}>
+        {title}
+      </h2>
+      <p className="tnt-meta" style={{ margin: 0 }}>
         {note}
       </p>
       <div
-        className="tnt-card"
-        style={{ background: 'var(--tnt-bg)', minWidth: 0, overflowX: 'auto', minHeight: 140 }}
+        className="tnt-card tnt-scroll-x"
+        style={{ background: 'var(--tnt-bg)', minWidth: 0, minHeight: 140 }}
       >
         {children}
       </div>
@@ -198,19 +185,8 @@ function Panel({
 
 function Empty(): React.JSX.Element {
   return (
-    <p className="tnt-muted" style={{ fontSize: 13, margin: 0 }}>
+    <p className="tnt-sm tnt-muted" style={{ margin: 0 }}>
       Nothing to show until the expression parses.
     </p>
   )
-}
-
-const chip: React.CSSProperties = {
-  fontFamily: 'var(--tnt-mono)',
-  fontSize: 13,
-  padding: '3px 9px',
-  borderRadius: 999,
-  border: '1px solid var(--tnt-border)',
-  background: 'var(--tnt-bg)',
-  color: 'var(--tnt-text)',
-  cursor: 'pointer',
 }

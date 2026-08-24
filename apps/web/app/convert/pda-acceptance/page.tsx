@@ -10,8 +10,8 @@ export const metadata: Metadata = {
 export default function PdaAcceptancePage(): React.JSX.Element {
   return (
     <div className="tnt-page">
-      <h1 style={{ fontSize: 26 }}>Final state ↔ empty stack</h1>
-      <p style={{ maxWidth: '64ch' }}>
+      <h1>Final state ↔ empty stack</h1>
+      <p className="tnt-prose">
         Hopcroft 2e §6.2.3–6.2.4. A PDA can accept by reaching a final state or by draining its
         stack, and the two are interconvertible. Both constructions turn on one new stack symbol,
         pushed <em>underneath</em> everything: going one way it is the tripwire that reveals the

@@ -22,25 +22,11 @@ export function VerdictBanner({
   if (verdict === null) return null
 
   return (
-    <div
-      role="status"
-      style={{
-        display: 'grid',
-        gap: 4,
-        padding: '10px 14px',
-        borderRadius: 'var(--tnt-radius)',
-        border: `1px solid ${verdict.color}`,
-        background: verdict.background,
-      }}
-    >
-      <strong style={{ color: verdict.color, fontSize: 15 }}>{verdict.headline}</strong>
-      {verdict.detail === null ? null : (
-        <span style={{ fontSize: 13 }}>{verdict.detail}</span>
-      )}
+    <div role="status" className={`tnt-note ${verdict.variant} tnt-stack-sm`}>
+      <strong style={{ color: verdict.color }}>{verdict.headline}</strong>
+      {verdict.detail === null ? null : <span>{verdict.detail}</span>}
       {meta.truncated === undefined ? null : (
-        <span style={{ fontSize: 12 }} className="tnt-muted">
-          {meta.truncated.reason}
-        </span>
+        <span className="tnt-meta">{meta.truncated.reason}</span>
       )}
     </div>
   )
@@ -49,8 +35,10 @@ export function VerdictBanner({
 interface Verdict {
   headline: string
   detail: string | null
+  /** The verdict colour, applied to the headline. Semantic, so it stays inline. */
   color: string
-  background: string
+  /** The `.tnt-note` variant that colours the rule down the left edge. */
+  variant: string
 }
 
 function describe(result: TraceResult): Verdict | null {
@@ -61,13 +49,13 @@ function describe(result: TraceResult): Verdict | null {
             headline: 'Accepted',
             detail: result.note ?? null,
             color: 'var(--tnt-accepting)',
-            background: 'var(--tnt-accepting-soft)',
+            variant: 'tnt-note-good',
           }
         : {
             headline: 'Rejected',
             detail: result.note ?? null,
             color: 'var(--tnt-marked)',
-            background: 'var(--tnt-surface)',
+            variant: 'tnt-note-warn',
           }
 
     case 'incomplete':
@@ -75,7 +63,7 @@ function describe(result: TraceResult): Verdict | null {
         headline: 'Stopped without a verdict',
         detail: `${result.reason} The run was cut short, so this is not a rejection — the string may well be in the language.`,
         color: 'var(--tnt-marked)',
-        background: 'var(--tnt-surface)',
+        variant: 'tnt-note-warn',
       }
 
     default:

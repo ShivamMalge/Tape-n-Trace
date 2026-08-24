@@ -19,23 +19,32 @@ export function AutomatonDocs({ machine }: { machine: FiniteAutomaton }): React.
   const synonyms = alsoWrittenAs(doc.canonical)
 
   return (
-    <aside style={{ display: 'grid', gap: 14, alignContent: 'start' }}>
+    <aside className="tnt-stack" style={{ alignContent: 'start' }}>
       <section className="tnt-card">
-        <h2 style={{ fontSize: 15, marginTop: 0 }}>{doc.title}</h2>
-        <p style={{ fontSize: 14, margin: '0 0 8px' }}>{doc.summary}</p>
-        <p className="tnt-muted" style={{ fontSize: 12, margin: 0 }}>
+        <h2>{doc.title}</h2>
+        <p style={{ margin: '0 0 var(--tnt-space-2)' }}>{doc.summary}</p>
+        <p className="tnt-meta" style={{ margin: 0 }}>
           Hopcroft 2e, {doc.citation}
         </p>
         {synonyms.length === 0 ? null : (
-          <p className="tnt-muted" style={{ fontSize: 12, margin: '8px 0 0' }}>
+          <p className="tnt-meta" style={{ margin: 'var(--tnt-space-2) 0 0' }}>
             Also written <strong>{synonyms.slice(0, 2).join(', ')}</strong> in the question papers.
           </p>
         )}
       </section>
 
       <section className="tnt-card">
-        <h2 style={{ fontSize: 15, marginTop: 0 }}>This machine</h2>
-        <dl style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '4px 12px', margin: 0, fontSize: 14 }}>
+        <h2>This machine</h2>
+        {/* Term beside definition, both hugging their content — a two-column
+            definition grid, which no layout primitive covers. */}
+        <dl
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'auto 1fr',
+            gap: 'var(--tnt-space-1) var(--tnt-space-3)',
+            margin: 0,
+          }}
+        >
           <Dt>Q</Dt>
           <Dd>{`{${machine.states.join(', ')}}`}</Dd>
           <Dt>Σ</Dt>
@@ -50,8 +59,8 @@ export function AutomatonDocs({ machine }: { machine: FiniteAutomaton }): React.
       </section>
 
       <section className="tnt-card">
-        <h2 style={{ fontSize: 15, marginTop: 0 }}>How to read the run</h2>
-        <ul style={{ margin: 0, paddingLeft: 18, fontSize: 14, display: 'grid', gap: 5 }}>
+        <h2>How to read the run</h2>
+        <ul className="tnt-stack-sm" style={{ margin: 0, paddingLeft: 18 }}>
           {doc.reading.map((line) => (
             <li key={line}>{line}</li>
           ))}
@@ -109,9 +118,13 @@ const DOCS: Record<FiniteAutomaton['kind'], KindDoc> = {
 }
 
 function Dt({ children }: { children: React.ReactNode }): React.JSX.Element {
-  return <dt style={{ fontFamily: 'var(--tnt-mono)', color: 'var(--tnt-text-muted)' }}>{children}</dt>
+  return <dt className="tnt-mono tnt-muted">{children}</dt>
 }
 
 function Dd({ children }: { children: React.ReactNode }): React.JSX.Element {
-  return <dd style={{ margin: 0, fontFamily: 'var(--tnt-mono)', wordBreak: 'break-word' }}>{children}</dd>
+  return (
+    <dd className="tnt-mono" style={{ margin: 0, wordBreak: 'break-word' }}>
+      {children}
+    </dd>
+  )
 }

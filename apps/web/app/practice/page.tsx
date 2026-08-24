@@ -9,8 +9,8 @@ export const metadata: Metadata = {
 export default function PracticePage(): React.JSX.Element {
   return (
     <div className="tnt-page">
-      <h1 style={{ fontSize: 26 }}>Practice</h1>
-      <p style={{ maxWidth: '64ch' }}>
+      <h1>Practice</h1>
+      <p className="tnt-prose">
         The department&rsquo;s own question bank. Construction exercises are graded{' '}
         <strong>exactly</strong>: any correct machine passes, and a wrong one gets the shortest string
         it fails on — with both machines run on it side by side. Prose questions say so rather than

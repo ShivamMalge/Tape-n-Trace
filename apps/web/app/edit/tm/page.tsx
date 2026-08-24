@@ -9,8 +9,8 @@ export const metadata: Metadata = {
 export default function TmEditPage(): React.JSX.Element {
   return (
     <div className="tnt-page">
-      <h1 style={{ fontSize: 26 }}>Build a Turing machine</h1>
-      <p style={{ maxWidth: '64ch' }}>
+      <h1>Build a Turing machine</h1>
+      <p className="tnt-prose">
         Hopcroft 2e §8.2.2–8.2.4. Type δ the way the book tabulates it — one move per line — and the
         diagram, the checks and the run follow. Single-tape heads must move; give a multitape machine
         one symbol per tape and S is allowed.

@@ -39,14 +39,14 @@ export function AppliedCaseView({ caseId }: { caseId: string }): React.JSX.Eleme
   }
 
   return (
-    <div style={{ display: 'grid', gap: 16 }}>
+    <div className="tnt-stack">
       {derived.regex === null ? null : (
-        <section className="tnt-card" style={{ display: 'grid', gap: 6 }}>
-          <h2 style={{ fontSize: 13, margin: 0, textTransform: 'uppercase', letterSpacing: 0.6 }}>
+        <section className="tnt-card tnt-stack-sm">
+          <h2 className="tnt-label" style={{ margin: 0 }}>
             The expression
           </h2>
-          <code style={{ fontSize: 18 }}>{derived.regex}</code>
-          <p className="tnt-muted" style={{ margin: 0, fontSize: 13 }}>
+          <code className="tnt-lg">{derived.regex}</code>
+          <p className="tnt-muted tnt-sm" style={{ margin: 0 }}>
             The machine below is its minimal DFA — {derived.machine.states.length} states over{' '}
             {`{${derived.machine.alphabet.join(', ')}}`}. Open it in the{' '}
             <a href="/regex">playground</a> to see the parse tree and the ε-NFA it came from.
@@ -56,7 +56,7 @@ export function AppliedCaseView({ caseId }: { caseId: string }): React.JSX.Eleme
 
       {/* A static view of the machine, so the diagram is readable before any
           string is loaded into the controller below it. */}
-      <section className="tnt-card" style={{ background: 'var(--tnt-bg)', overflowX: 'auto' }}>
+      <section className="tnt-card tnt-scroll-x tnt-card-plain">
         <AutomatonRenderer machine={derived.machine} instanceId="applied" />
       </section>
 

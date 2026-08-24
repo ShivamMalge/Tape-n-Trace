@@ -116,12 +116,13 @@ export function SimplifyPipeline(): React.JSX.Element {
   )
 
   return (
-    <div style={{ display: 'grid', gap: 16 }}>
+    <div className="tnt-stack">
       <GrammarInput presets={PIPELINE_PRESETS} onGrammar={(g) => setGrammar(g)} />
 
       <ol
         aria-label="Pipeline stages"
-        style={{ display: 'flex', gap: 8, flexWrap: 'wrap', listStyle: 'none', padding: 0, margin: 0 }}
+        className="tnt-row"
+        style={{ listStyle: 'none', padding: 0, margin: 0 }}
       >
         {STAGES.map((stage, i) => {
           const state = runs[i]
@@ -130,21 +131,12 @@ export function SimplifyPipeline(): React.JSX.Element {
             <li key={stage.id}>
               <button
                 type="button"
+                className="tnt-btn"
                 aria-pressed={i === active}
                 disabled={state === undefined}
                 onClick={() => {
                   setActive(i)
                   setShowWrongOrder(false)
-                }}
-                style={{
-                  fontSize: 13,
-                  padding: '6px 12px',
-                  borderRadius: 'var(--tnt-radius)',
-                  border: i === active ? '1px solid var(--tnt-current)' : '1px solid var(--tnt-border)',
-                  background: i === active ? 'var(--tnt-current-soft)' : 'var(--tnt-bg)',
-                  color: 'var(--tnt-text)',
-                  cursor: state === undefined ? 'default' : 'pointer',
-                  opacity: state === undefined ? 0.6 : 1,
                 }}
               >
                 {i + 1}. {stage.title} {status === 'done' ? '✓' : status === 'refused' ? '✗' : ''}
@@ -155,10 +147,10 @@ export function SimplifyPipeline(): React.JSX.Element {
       </ol>
 
       {run === null ? null : (
-        <section aria-label={run.stage.title} style={{ display: 'grid', gap: 12 }}>
-          <h2 style={{ fontSize: 17, margin: 0 }}>
+        <section aria-label={run.stage.title} className="tnt-stack">
+          <h2 style={{ margin: 0 }}>
             Stage {active + 1}: {run.stage.title}{' '}
-            <span className="tnt-muted" style={{ fontSize: 13, fontWeight: 400 }}>
+            <span className="tnt-meta" style={{ fontWeight: 400 }}>
               Hopcroft 2e {run.stage.citation}
             </span>
           </h2>
@@ -168,14 +160,14 @@ export function SimplifyPipeline(): React.JSX.Element {
           {run.output === null ? null : <GrammarDiff before={run.input} after={run.output} />}
 
           {snapshot === null ? null : (
-            <div style={{ display: 'grid', gap: 10, gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))' }}>
-              <div className="tnt-card" style={{ background: 'var(--tnt-bg)' }}>
-                <div className="tnt-muted" style={{ fontSize: 12, marginBottom: 6 }}>
+            <div className="tnt-panels">
+              <div className="tnt-card tnt-card-plain">
+                <div className="tnt-meta" style={{ marginBottom: 'var(--tnt-space-2)' }}>
                   The grammar at this step
                 </div>
                 <ProductionList grammar={snapshot.grammar} litIndices={litIndices} />
               </div>
-              <div className="tnt-card" style={{ background: 'var(--tnt-bg)', display: 'grid', gap: 6, alignContent: 'start' }}>
+              <div className="tnt-card tnt-stack-sm" style={{ background: 'var(--tnt-bg)', alignContent: 'start' }}>
                 {snapshot.generating !== undefined ? <SymbolChips label="Generating" symbols={snapshot.generating} /> : null}
                 {snapshot.reachable !== undefined ? <SymbolChips label="Reachable" symbols={snapshot.reachable} /> : null}
                 {snapshot.nullable !== undefined ? <SymbolChips label="Nullable" symbols={snapshot.nullable} /> : null}
@@ -183,7 +175,7 @@ export function SimplifyPipeline(): React.JSX.Element {
                   <SymbolChips label="Unit pairs" symbols={snapshot.pairs.map(([a, b]) => `(${a}, ${b})`)} />
                 ) : null}
                 {snapshot.generating === undefined && snapshot.nullable === undefined && snapshot.pairs === undefined ? (
-                  <span className="tnt-muted" style={{ fontSize: 13 }}>
+                  <span className="tnt-sm tnt-muted">
                     {run.stage.id === 'cnf' ? 'New variables appear as the bodies are reshaped.' : 'Nothing to track at this stage.'}
                   </span>
                 ) : null}
@@ -208,9 +200,9 @@ export function SimplifyPipeline(): React.JSX.Element {
           )}
 
           {run.stage.id === 'useless' ? (
-            <div className="tnt-card" style={{ display: 'grid', gap: 8 }}>
-              <strong style={{ fontSize: 14 }}>Why generating comes before reachable</strong>
-              <p style={{ margin: 0, fontSize: 14 }}>
+            <div className="tnt-card tnt-stack-sm">
+              <strong>Why generating comes before reachable</strong>
+              <p style={{ margin: 0 }}>
                 Theorem 7.2 orders the two passes. Run them the other way and a symbol can survive
                 both: removing a non-generating symbol in the second pass can leave a variable nothing
                 reaches any more. Example 7.1 is the smallest case.
@@ -218,28 +210,21 @@ export function SimplifyPipeline(): React.JSX.Element {
               <div>
                 <button
                   type="button"
+                  className="tnt-btn"
+                  aria-pressed={showWrongOrder}
                   onClick={() => setShowWrongOrder((v) => !v)}
-                  style={{
-                    fontSize: 13,
-                    padding: '5px 12px',
-                    borderRadius: 'var(--tnt-radius)',
-                    border: '1px solid var(--tnt-border)',
-                    background: 'var(--tnt-bg)',
-                    color: 'var(--tnt-text)',
-                    cursor: 'pointer',
-                  }}
                 >
                   {showWrongOrder ? 'Hide the wrong order' : 'Try reachability first'}
                 </button>
               </div>
               {wrongOrder === null ? null : (
-                <div role="status" style={{ display: 'grid', gap: 6 }}>
-                  <p style={{ margin: 0, fontSize: 14 }}>
+                <div role="status" className="tnt-stack-sm">
+                  <p style={{ margin: 0 }}>
                     {wrongOrder.residual.length === 0
                       ? 'On this grammar the wrong order happens to give the same answer — it is not wrong in general, only unreliable.'
                       : `Reachability first, then generating, leaves ${wrongOrder.residual.join(', ')} behind — still useless, still in the grammar.`}
                   </p>
-                  <ol style={{ margin: 0, paddingLeft: 22, fontFamily: 'var(--tnt-mono)', fontSize: 13 }}>
+                  <ol className="tnt-mono tnt-sm" style={{ margin: 0, paddingLeft: 'var(--tnt-space-5)' }}>
                     {wrongOrder.grammar.productions.map((p, i) => (
                       <li key={i} data-residual={p.body.some((s) => wrongOrder.residual.includes(s)) || wrongOrder.residual.includes(p.head) ? 'true' : undefined}>
                         {productionToText(p)}
@@ -254,13 +239,13 @@ export function SimplifyPipeline(): React.JSX.Element {
       )}
 
       {final === null || grammar === null ? null : (
-        <section aria-label="Pipeline result" className="tnt-card" style={{ display: 'grid', gap: 8, borderLeft: '3px solid var(--tnt-accepting)' }}>
-          <strong style={{ fontSize: 14 }}>
+        <section aria-label="Pipeline result" className="tnt-card tnt-stack-sm" style={{ borderLeft: '3px solid var(--tnt-accepting)' }}>
+          <strong>
             {isCNF(final) ? 'In Chomsky Normal Form' : 'Not in Chomsky Normal Form'} — {final.productions.length} productions,{' '}
             {final.variables.length} variables
           </strong>
           {sample === null ? null : (
-            <p className="tnt-muted" style={{ margin: 0, fontSize: 13 }}>
+            <p className="tnt-sm tnt-muted" style={{ margin: 0 }}>
               Shortest strings of the original: {sample.before.join(', ') || '—'}. Of the result:{' '}
               {sample.after.join(', ') || '—'}. The languages agree except for ε, which no CNF grammar
               generates (Theorem 7.16) — a sample, the theorem is the proof.
@@ -269,16 +254,16 @@ export function SimplifyPipeline(): React.JSX.Element {
         </section>
       )}
 
-      <section aria-label="The safe order" className="tnt-card" style={{ display: 'grid', gap: 8 }}>
-        <strong style={{ fontSize: 14 }}>The safe order (Theorem 7.14) — and the two order traps</strong>
-        <p style={{ margin: 0, fontSize: 14 }}>
+      <section aria-label="The safe order" className="tnt-card tnt-stack-sm">
+        <strong>The safe order (Theorem 7.14) — and the two order traps</strong>
+        <p style={{ margin: 0 }}>
           The book <em>introduces</em> useless symbols first (§7.1.1) but <em>prescribes</em> running the
           eliminations as ε-productions, then unit productions, then useless symbols. Eliminating
           ε-productions can create unit productions (A → B | ε becomes A → B); eliminating unit
           productions can leave a variable nothing reaches. Done in the safe order, each pass only
           removes, and nothing the earlier passes removed comes back.
         </p>
-        <p style={{ margin: 0, fontSize: 14 }}>
+        <p style={{ margin: 0 }}>
           Inside the useless-symbol pass there is a second order: non-generating symbols first, then
           unreachable ones (Theorem 7.2). Both traps cost exactly the marks they look like they cost.
         </p>

@@ -16,7 +16,7 @@ import { afterEach, describe, expect, it } from 'vitest'
 import { cleanup, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { CANONICAL_LANGUAGES, LANGUAGE_CLASSES } from '@tape-n-trace/engine'
-import { CATALOG, NAV } from '../lib/catalog'
+import { CATALOG, NAV, navLinks } from '../lib/catalog'
 import { TOPICS, topicById } from '../lib/topics'
 import {
   DEFAULT_SCHEME,
@@ -140,15 +140,24 @@ describe('the catalog is the only list of tools', () => {
     }
   })
 
-  it('gives every header link a route that exists', () => {
-    for (const link of NAV) {
-      expect(resolves(link.href), `the header links to ${link.href}`).toBe(true)
+  it('gives every rail link a route that exists', () => {
+    for (const link of navLinks()) {
+      expect(resolves(link.href), `the rail links to ${link.href}`).toBe(true)
     }
   })
 
-  it('has unique ids and no duplicate header entries', () => {
+  it('has unique ids and no duplicate rail entries', () => {
     expect(new Set(CATALOG.map((t) => t.id)).size).toBe(CATALOG.length)
-    expect(new Set(NAV.map((l) => l.href)).size).toBe(NAV.length)
+    expect(new Set(navLinks().map((l) => l.href)).size).toBe(navLinks().length)
+    expect(new Set(NAV.map((g) => g.id)).size).toBe(NAV.length)
+  })
+
+  it('groups the rail by the verbs the product is built on', () => {
+    expect(NAV.map((g) => g.id)).toEqual(['simulate', 'convert', 'prove', 'practice', 'learn'])
+    for (const group of NAV) {
+      expect(group.links.length, `${group.id} is empty`).toBeGreaterThan(0)
+      expect(group.label, group.id).toBeTruthy()
+    }
   })
 
   /**
@@ -162,10 +171,10 @@ describe('the catalog is the only list of tools', () => {
     expect(hardcoded.filter((href) => href !== '/'), 'nav links belong in catalog.ts, not in layout.tsx').toEqual([])
   })
 
-  it('reaches every live tool from the header or the home page', () => {
+  it('reaches every live tool from the rail or the home page', () => {
     // The home page renders CATALOG directly, so a live tool is reachable by
     // being in it; this states that rather than leaving it implied.
-    const reachable = new Set([...NAV.map((l) => l.href), ...CATALOG.filter((t) => t.status === 'live').map((t) => t.href)])
+    const reachable = new Set([...navLinks().map((l) => l.href), ...CATALOG.filter((t) => t.status === 'live').map((t) => t.href)])
     for (const tool of CATALOG.filter((t) => t.status === 'live')) {
       expect(reachable.has(tool.href), `${tool.id} is unreachable`).toBe(true)
     }

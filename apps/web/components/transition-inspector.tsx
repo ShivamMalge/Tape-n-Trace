@@ -40,10 +40,10 @@ export function TransitionInspector({
   }
 
   return (
-    <section style={{ display: 'grid', gap: 8 }}>
-      <h2 style={{ fontSize: 15, margin: 0 }}>Transitions (δ)</h2>
+    <section className="tnt-stack-sm">
+      <h2 style={{ margin: 0 }}>Transitions (δ)</h2>
 
-      <form onSubmit={submit} style={{ display: 'flex', gap: 6, alignItems: 'flex-end', flexWrap: 'wrap' }}>
+      <form onSubmit={submit} className="tnt-row tnt-row-end">
         <Picker label="From" value={from} onChange={setFrom} options={states} />
         <Picker
           label="Reads"
@@ -53,17 +53,17 @@ export function TransitionInspector({
           extra={machine.kind === 'ENFA' ? { value: EPSILON_VALUE, label: EPSILON_GLYPH } : null}
         />
         <Picker label="To" value={to} onChange={setTo} options={states} />
-        <button type="submit" disabled={!canAdd} style={smallButton(!canAdd)}>
+        <button type="submit" disabled={!canAdd} className="tnt-btn">
           Add transition
         </button>
       </form>
 
       {machine.transitions.length === 0 ? (
-        <p className="tnt-muted" style={{ fontSize: 13, margin: 0 }}>
+        <p className="tnt-muted tnt-sm" style={{ margin: 0 }}>
           No transitions yet. Drag from one state to another on the diagram, or use the form above.
         </p>
       ) : (
-        <table style={{ borderCollapse: 'collapse', width: '100%', fontSize: 14 }}>
+        <table className="tnt-table" style={{ width: '100%' }}>
           <thead>
             <tr>
               <Th>From</Th>
@@ -76,16 +76,16 @@ export function TransitionInspector({
           </thead>
           <tbody>
             {machine.transitions.map((t) => (
-              <tr key={t.id} style={{ borderTop: '1px solid var(--tnt-border)' }}>
-                <td style={mono}>{t.from}</td>
-                <td style={mono}>{t.read ?? EPSILON_GLYPH}</td>
-                <td style={mono}>{t.to}</td>
-                <td style={{ ...cell, textAlign: 'right' }}>
+              <tr key={t.id}>
+                <td className="tnt-mono">{t.from}</td>
+                <td className="tnt-mono">{t.read ?? EPSILON_GLYPH}</td>
+                <td className="tnt-mono">{t.to}</td>
+                <td style={{ textAlign: 'right' }}>
                   <button
                     type="button"
                     onClick={() => onRemove(t.id)}
                     aria-label={`Delete the transition from ${t.from} to ${t.to} on ${t.read ?? 'epsilon'}`}
-                    style={smallButton(false)}
+                    className="tnt-btn"
                   >
                     Delete
                   </button>
@@ -113,11 +113,14 @@ function Picker({
   extra?: { value: string; label: string } | null
 }): React.JSX.Element {
   return (
-    <label style={{ display: 'grid', gap: 3 }}>
-      <span style={{ fontSize: 12 }} className="tnt-muted">
-        {label}
-      </span>
-      <select value={value} onChange={(event) => onChange(event.target.value)} style={select}>
+    <label className="tnt-field">
+      <span className="tnt-meta">{label}</span>
+      <select
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        className="tnt-input tnt-input-mono"
+        style={{ minWidth: 66 }}
+      >
         <option value="">—</option>
         {options.map((option) => (
           <option key={option} value={option}>
@@ -132,35 +135,8 @@ function Picker({
 
 function Th({ children }: { children: React.ReactNode }): React.JSX.Element {
   return (
-    <th scope="col" style={{ ...cell, textAlign: 'left', fontSize: 12, color: 'var(--tnt-text-muted)' }}>
+    <th scope="col" className="tnt-muted">
       {children}
     </th>
   )
-}
-
-const cell: React.CSSProperties = { padding: '4px 8px' }
-const mono: React.CSSProperties = { ...cell, fontFamily: 'var(--tnt-mono)' }
-
-const select: React.CSSProperties = {
-  fontFamily: 'var(--tnt-mono)',
-  fontSize: 13,
-  padding: '3px 5px',
-  minWidth: 66,
-  borderRadius: 'var(--tnt-radius)',
-  border: '1px solid var(--tnt-border)',
-  background: 'var(--tnt-bg)',
-  color: 'var(--tnt-text)',
-}
-
-function smallButton(disabled: boolean): React.CSSProperties {
-  return {
-    padding: '4px 11px',
-    borderRadius: 'var(--tnt-radius)',
-    border: '1px solid var(--tnt-border)',
-    background: 'var(--tnt-bg)',
-    color: 'var(--tnt-text)',
-    fontSize: 12,
-    cursor: disabled ? 'not-allowed' : 'pointer',
-    opacity: disabled ? 0.45 : 1,
-  }
 }

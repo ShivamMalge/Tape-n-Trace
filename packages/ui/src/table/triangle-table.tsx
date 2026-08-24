@@ -48,19 +48,11 @@ export function TriangleTable({
 
   return (
     <div className={className} style={{ overflow: 'auto' }}>
-      <table
-        style={{ borderCollapse: 'collapse', fontSize: 13, fontFamily: 'var(--tnt-mono)' }}
-        aria-label="Table of state distinguishabilities"
-      >
+      <table className="tnt-triangle" aria-label="Table of state distinguishabilities">
         <tbody>
           {rows.map((row, r) => (
             <tr key={row}>
-              <th
-                scope="row"
-                style={{ padding: '3px 8px', textAlign: 'right', color: 'var(--tnt-text-muted)' }}
-              >
-                {row}
-              </th>
+              <th scope="row">{row}</th>
               {columns.map((col, c) =>
                 // Only the lower triangle: a pair appears once, and never with itself.
                 c > r ? (

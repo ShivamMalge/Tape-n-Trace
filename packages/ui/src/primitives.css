@@ -1,0 +1,644 @@
+/**
+ * Primitives — the layer between the design tokens and the components.
+ *
+ * `tokens.css` says what the colours and scales *are*. This says what a button,
+ * a chip, a card and a table *look like*, once, so that sixty components stop
+ * each deciding for themselves. Before it existed the app carried 951 inline
+ * style objects against 344 classNames, fifteen distinct font sizes, and the
+ * same pill button written out twenty-two times in twenty-one files.
+ *
+ * **Notebook safety is the binding constraint.** These rules ship inside the
+ * Vyakarana widget, and `anywidget` injects CSS into the host notebook's own
+ * document (architecture.md §10.2). So every selector here begins with a
+ * `.tnt-` class. There are no bare element selectors, no `*` reset, and nothing
+ * that can repaint a cell the widget does not own. Page-level chrome — the
+ * shell, the nav, `html`/`body` — lives in the web app's `globals.css`, which
+ * the widget never loads.
+ *
+ * **State comes from ARIA, not from a second class.** A toggle is styled off
+ * `[aria-pressed="true"]` and a disabled control off `[disabled]`, so the
+ * attribute that makes the control accessible is the same one that makes it
+ * look pressed. They cannot drift apart, because there is only one of them.
+ */
+
+/* ---------------------------------------------------------------------------
+ * Text
+ * ------------------------------------------------------------------------ */
+
+/* The single-property utilities are defined at the very bottom of this file —
+   see "Utilities" there for why their position matters. */
+
+/** Metadata under a heading: citations, "Module 5 · §8.2", counts. */
+.tnt-meta {
+  font-size: var(--tnt-text-xs);
+  color: var(--tnt-text-muted);
+  letter-spacing: 0.02em;
+}
+
+/** A small all-caps label above a group. */
+.tnt-label {
+  font-size: var(--tnt-text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--tnt-text-muted);
+}
+
+/** Running prose, held to a readable measure. Diagrams and tables opt out. */
+.tnt-prose {
+  max-width: var(--tnt-measure);
+}
+
+.tnt-prose p { margin: 0 0 var(--tnt-space-3); }
+.tnt-prose > :last-child { margin-bottom: 0; }
+
+
+/* ---------------------------------------------------------------------------
+ * Layout helpers
+ * ------------------------------------------------------------------------ */
+
+.tnt-stack { display: grid; gap: var(--tnt-space-3); }
+.tnt-stack-sm { display: grid; gap: var(--tnt-space-2); }
+.tnt-stack-lg { display: grid; gap: var(--tnt-space-5); }
+
+/*
+ * A stack spaces its children with `gap`, so their own block margins have
+ * nothing left to do — and margins do not collapse in a grid, so a paragraph's
+ * default margin would *add* to the gap rather than merge with it. That is the
+ * bug every `style={{ margin: 0 }}` in this codebase was written to avoid, one
+ * element at a time. Stated once, in the place that owns the spacing.
+ */
+.tnt-stack > *,
+.tnt-stack-sm > *,
+.tnt-stack-lg > * {
+  margin-block: 0;
+}
+
+.tnt-row {
+  display: flex;
+  gap: var(--tnt-space-2);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.tnt-row-baseline { align-items: baseline; }
+.tnt-row-tight { gap: var(--tnt-space-1); }
+
+/** A row of label-above-control fields ending in a button: align on the bottom. */
+.tnt-row-end { align-items: flex-end; }
+
+/** A hairline between two groups of controls in a toolbar. */
+.tnt-divider {
+  width: 1px;
+  align-self: stretch;
+  min-height: 20px;
+  background: var(--tnt-border);
+}
+
+/** The two-or-more-panel layout used by every workbench in the app. */
+.tnt-panels {
+  display: grid;
+  gap: var(--tnt-space-3);
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+/*
+ * A grid item's default `min-width: auto` refuses to shrink below its content,
+ * so one wide parse tree or ID log pushes the whole column past the viewport
+ * instead of scrolling inside it. Every panel opts out.
+ */
+.tnt-panels > *,
+.tnt-panels-aside > * {
+  min-width: 0;
+}
+
+.tnt-panels-narrow {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+/**
+ * A wide working area with a narrow aside — a machine beside its docs, a
+ * stepper beside its artifact table. `tnt-panels` would equalise the two, which
+ * is wrong when one column holds a diagram and the other holds notes.
+ *
+ * It collapses at the same breakpoint as the shell. The fixed two-column
+ * versions this replaces had no breakpoint at all and overflowed sideways on a
+ * phone rather than stacking.
+ */
+.tnt-panels-aside {
+  display: grid;
+  gap: var(--tnt-space-4);
+  grid-template-columns: minmax(0, 2.4fr) minmax(220px, 1fr);
+  align-items: start;
+}
+
+@media (max-width: 860px) {
+  .tnt-panels-aside { grid-template-columns: minmax(0, 1fr); }
+}
+
+/** Vertical separation between the sections of a page. */
+.tnt-section { margin-top: var(--tnt-space-6); }
+
+/** Anything that may outgrow its column: tables, diagrams, ID logs. */
+.tnt-scroll-x {
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+/* ---------------------------------------------------------------------------
+ * Surfaces
+ * ------------------------------------------------------------------------ */
+
+.tnt-card {
+  border: 1px solid var(--tnt-border);
+  border-radius: var(--tnt-radius);
+  background: var(--tnt-surface);
+  padding: var(--tnt-space-4);
+}
+
+/** A card that is a link. Only the hover differs. */
+a.tnt-card {
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 120ms ease, background-color 120ms ease;
+}
+
+/*
+ * An anchor is inline by default, so a link card needs a block display — but
+ * `a.tnt-card` would score (0,1,1) and silently outrank a layout class like
+ * `.tnt-stack-sm` at (0,1,0), leaving the card's own gap unapplied. `:where()`
+ * contributes nothing to specificity, so this scores (0,0,1) and any layout
+ * class the caller adds wins, which is what a caller expects.
+ */
+a:where(.tnt-card) { display: block; }
+
+a.tnt-card:hover {
+  border-color: var(--tnt-current);
+  background: var(--tnt-hover);
+}
+
+/** An aside that comments on what is beside it, without boxing it. */
+.tnt-note {
+  border-left: 3px solid var(--tnt-current);
+  padding: var(--tnt-space-1) 0 var(--tnt-space-1) var(--tnt-space-3);
+  font-size: var(--tnt-text-sm);
+}
+
+.tnt-note-warn { border-left-color: var(--tnt-marked); }
+.tnt-note-bad { border-left-color: var(--tnt-dead); }
+.tnt-note-good { border-left-color: var(--tnt-accepting); }
+
+/**
+ * A card with no tint. Two uses, both common:
+ * a card nested inside another card, and any surface a diagram, tape or tree is
+ * drawn on — those want the page background behind them, not the grey.
+ */
+.tnt-card-plain { background: var(--tnt-bg); }
+
+/**
+ * A card carrying a verdict, as a left rule.
+ *
+ * `.tnt-note` has the same rule but also its own padding and type size, which
+ * fight a card's. These are the border alone, so a card keeps being a card.
+ */
+.tnt-card-good { border-left: 3px solid var(--tnt-accepting); }
+.tnt-card-warn { border-left: 3px solid var(--tnt-marked); }
+.tnt-card-bad { border-left: 3px solid var(--tnt-dead); }
+
+/** The small label above a list or a block of notation inside a card. */
+.tnt-caption {
+  font-size: var(--tnt-text-xs);
+  color: var(--tnt-text-muted);
+  letter-spacing: 0.02em;
+  margin: 0 0 var(--tnt-space-2);
+}
+
+/** A border round something that brings its own padding — a table, a grid. */
+.tnt-frame {
+  border: 1px solid var(--tnt-border);
+  border-radius: var(--tnt-radius);
+}
+
+.tnt-rule {
+  border: 0;
+  border-top: 1px solid var(--tnt-border);
+  margin: var(--tnt-space-2) 0;
+}
+
+/**
+ * A heading sized down without changing its level.
+ *
+ * An aside's heading is still an `<h2>` in the document outline; it just should
+ * not be set at 22px inside a 220px column. Reaching for a smaller element to
+ * get a smaller size is how heading levels end up describing the layout instead
+ * of the structure.
+ */
+.tnt-heading-sm { font-size: var(--tnt-text-base); }
+
+/* ---------------------------------------------------------------------------
+ * Controls
+ * ------------------------------------------------------------------------ */
+
+.tnt-btn,
+.tnt-chip {
+  font: inherit;
+  color: var(--tnt-text);
+  background: var(--tnt-bg);
+  border: 1px solid var(--tnt-border);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--tnt-space-2);
+  text-decoration: none;
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+
+.tnt-btn {
+  font-size: var(--tnt-text-sm);
+  padding: var(--tnt-space-2) var(--tnt-space-3);
+  border-radius: var(--tnt-radius-sm);
+}
+
+/** The pill. Twenty-two hand-rolled copies collapsed into this. */
+.tnt-chip {
+  font-size: var(--tnt-text-sm);
+  padding: var(--tnt-space-1) var(--tnt-space-3);
+  border-radius: var(--tnt-radius-full);
+  line-height: 1.4;
+}
+
+.tnt-btn:hover,
+.tnt-chip:hover {
+  background: var(--tnt-hover);
+  border-color: var(--tnt-text-muted);
+}
+
+.tnt-btn:active,
+.tnt-chip:active {
+  background: var(--tnt-active);
+}
+
+/* The selected state of a toggle, taken straight off the ARIA attribute. */
+.tnt-btn[aria-pressed='true'],
+.tnt-chip[aria-pressed='true'] {
+  background: var(--tnt-current-soft);
+  border-color: var(--tnt-current);
+  color: var(--tnt-text);
+}
+
+.tnt-btn[disabled],
+.tnt-chip[disabled] {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.tnt-btn[disabled]:hover,
+.tnt-chip[disabled]:hover {
+  background: var(--tnt-bg);
+  border-color: var(--tnt-border);
+}
+
+.tnt-btn-primary {
+  background: var(--tnt-current);
+  border-color: var(--tnt-current);
+  color: var(--tnt-bg);
+}
+
+.tnt-btn-primary:hover {
+  background: var(--tnt-current);
+  border-color: var(--tnt-text);
+  filter: brightness(1.08);
+}
+
+/**
+ * A button with no chrome: styled text that happens to be a control.
+ *
+ * Disclosure headings and grid cells need this, and undoing `.tnt-btn` property
+ * by property at each call site is how six components end up with six slightly
+ * different bare buttons. The focus ring stays — that is the one piece of chrome
+ * a bare button must not lose.
+ */
+.tnt-btn-bare {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+  cursor: pointer;
+}
+
+.tnt-btn-bare:focus-visible {
+  outline: 2px solid var(--tnt-focus);
+  outline-offset: 2px;
+}
+
+.tnt-btn-bare[disabled] { cursor: not-allowed; opacity: 0.5; }
+
+/** A square icon button — the transport controls. */
+.tnt-btn-icon {
+  min-width: 32px;
+  height: 30px;
+  padding: 0;
+  justify-content: center;
+  font-size: var(--tnt-text-sm);
+  line-height: 1;
+}
+
+/** The transport bar, which sits under nearly every diagram in the product. */
+.tnt-transport {
+  display: flex;
+  align-items: center;
+  gap: var(--tnt-space-3);
+  flex-wrap: wrap;
+  padding: var(--tnt-space-2) var(--tnt-space-3);
+  border: 1px solid var(--tnt-border);
+  border-radius: var(--tnt-radius);
+  background: var(--tnt-surface);
+  font-family: var(--tnt-font);
+}
+
+.tnt-transport-scrub {
+  flex: 1 1 160px;
+  min-width: 120px;
+  accent-color: var(--tnt-current);
+}
+
+.tnt-transport-count {
+  font-family: var(--tnt-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--tnt-text-sm);
+  color: var(--tnt-text-muted);
+  white-space: nowrap;
+}
+
+.tnt-select {
+  font-family: var(--tnt-font);
+  font-size: var(--tnt-text-sm);
+  padding: 2px var(--tnt-space-1);
+  border-radius: var(--tnt-radius-sm);
+  border: 1px solid var(--tnt-border);
+  background: var(--tnt-bg);
+  color: var(--tnt-text);
+  cursor: pointer;
+}
+
+.tnt-select:hover { border-color: var(--tnt-text-muted); }
+.tnt-select:focus-visible { outline: 2px solid var(--tnt-focus); outline-offset: 2px; }
+.tnt-select[disabled] { cursor: not-allowed; opacity: 0.5; }
+
+/** A chip that is a static tag rather than a control. */
+.tnt-tag {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--tnt-space-1);
+  padding: 2px var(--tnt-space-2);
+  border-radius: var(--tnt-radius-full);
+  border: 1px solid var(--tnt-border);
+  background: var(--tnt-bg);
+  font-size: var(--tnt-text-xs);
+  color: var(--tnt-text-muted);
+  white-space: nowrap;
+}
+
+/* ---------------------------------------------------------------------------
+ * Fields
+ * ------------------------------------------------------------------------ */
+
+.tnt-field {
+  display: grid;
+  gap: var(--tnt-space-1);
+  font-size: var(--tnt-text-sm);
+}
+
+.tnt-field-row {
+  display: flex;
+  align-items: center;
+  gap: var(--tnt-space-2);
+  font-size: var(--tnt-text-sm);
+}
+
+.tnt-input {
+  font: inherit;
+  font-size: var(--tnt-text-sm);
+  color: var(--tnt-text);
+  background: var(--tnt-bg);
+  border: 1px solid var(--tnt-border);
+  border-radius: var(--tnt-radius-sm);
+  padding: var(--tnt-space-1) var(--tnt-space-2);
+}
+
+.tnt-input:hover { border-color: var(--tnt-text-muted); }
+
+/**
+ * The primary notation field of a page — the regular expression, the pumping
+ * game's w, the lexer's snippet. These are what the page is about, and setting
+ * them at control size buries them.
+ */
+.tnt-input-lg {
+  font-size: var(--tnt-text-lg);
+  padding: var(--tnt-space-2) var(--tnt-space-3);
+}
+
+.tnt-input-mono {
+  font-family: var(--tnt-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------------------------------------------------------------------------
+ * Tables
+ * ------------------------------------------------------------------------ */
+
+.tnt-table {
+  border-collapse: collapse;
+  font-size: var(--tnt-text-sm);
+}
+
+.tnt-table th,
+.tnt-table td {
+  border: 1px solid var(--tnt-border);
+  padding: var(--tnt-space-2) var(--tnt-space-3);
+  text-align: left;
+  vertical-align: top;
+}
+
+.tnt-table th {
+  background: var(--tnt-surface);
+  font-weight: 600;
+  font-size: var(--tnt-text-xs);
+}
+
+.tnt-table caption {
+  caption-side: top;
+  text-align: left;
+  padding-bottom: var(--tnt-space-2);
+  font-size: var(--tnt-text-xs);
+  color: var(--tnt-text-muted);
+}
+
+/** A grid of single characters — Fig. 9.1, subset tables, the triangle. */
+.tnt-table-grid td { padding: 0; text-align: center; }
+.tnt-table-grid th { text-align: center; }
+
+/**
+ * The scrolling artifact table under every conversion stepper.
+ *
+ * The highlight state is read off the data attributes the renderer already
+ * emits — `data-lit` on a cell the engine's `tableCell` highlight named, and
+ * `data-role` on a row the construction is acting upon. Those attributes exist
+ * so tests and the engine can address a cell; making them the styling contract
+ * too means the colour cannot disagree with what the trace said.
+ */
+.tnt-data-table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: var(--tnt-text-sm);
+}
+
+.tnt-data-table th {
+  position: sticky;
+  top: 0;
+  text-align: left;
+  padding: var(--tnt-space-1) var(--tnt-space-2);
+  font-size: var(--tnt-text-xs);
+  font-weight: 600;
+  color: var(--tnt-text-muted);
+  background: var(--tnt-surface);
+  border-bottom: 1px solid var(--tnt-border);
+  white-space: nowrap;
+}
+
+.tnt-data-table td {
+  padding: var(--tnt-space-1) var(--tnt-space-2);
+  white-space: nowrap;
+  font-family: var(--tnt-mono);
+  font-variant-numeric: tabular-nums;
+  transition: background-color 140ms ease;
+}
+
+.tnt-data-table td[data-mono='false'] { font-family: inherit; }
+
+.tnt-data-table tbody tr { border-bottom: 1px solid var(--tnt-border); }
+.tnt-data-table tbody tr[data-role='current'] { background: var(--tnt-current-soft); }
+.tnt-data-table tbody tr[data-role='new'] { background: var(--tnt-accepting-soft); }
+.tnt-data-table tbody tr[data-role='dead'] { background: var(--tnt-dead-soft); }
+
+.tnt-data-table td[data-lit='true'] {
+  background: var(--tnt-current-soft);
+  color: var(--tnt-current);
+  font-weight: 600;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tnt-data-table td { transition: none; }
+}
+
+/** The table-filling triangle of §4.4.1: a lower-triangular grid of pairs. */
+.tnt-triangle {
+  border-collapse: collapse;
+  font-size: var(--tnt-text-sm);
+  font-family: var(--tnt-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.tnt-triangle th {
+  padding: 3px var(--tnt-space-2);
+  color: var(--tnt-text-muted);
+  font-weight: 400;
+}
+
+.tnt-triangle th[scope='row'] { text-align: right; }
+
+/* ---------------------------------------------------------------------------
+ * Code
+ * ------------------------------------------------------------------------ */
+
+.tnt-code {
+  font-family: var(--tnt-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.92em;
+  background: var(--tnt-surface);
+  border-radius: var(--tnt-radius-sm);
+  padding: 1px 5px;
+}
+
+/** A block of notation — an ID log, a grammar, a machine code. */
+.tnt-code-block {
+  font-family: var(--tnt-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--tnt-text-sm);
+  line-height: 1.7;
+  background: var(--tnt-surface);
+  border: 1px solid var(--tnt-border);
+  border-radius: var(--tnt-radius);
+  padding: var(--tnt-space-3);
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ---------------------------------------------------------------------------
+ * Focus — one ring, everywhere, and never removed
+ * ------------------------------------------------------------------------ */
+
+.tnt-btn:focus-visible,
+.tnt-chip:focus-visible,
+.tnt-input:focus-visible,
+a.tnt-card:focus-visible {
+  outline: 2px solid var(--tnt-focus);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tnt-btn,
+  .tnt-chip,
+  a.tnt-card {
+    transition: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Utilities — deliberately last
+ *
+ * These are single-property overrides, and every one of them scores (0,1,0) —
+ * exactly the same as the component classes above. At equal specificity the
+ * later rule wins, so their position in this file is what makes
+ * `className="tnt-input tnt-lg"` and `className="tnt-chip tnt-mono"` do what a
+ * caller plainly means.
+ *
+ * Defined at the top, they silently lost: a control sets its font with the
+ * `font` shorthand — the right way to escape the browser's default button
+ * font, but it also clears `font-family` — so the monospace never applied, and
+ * `.tnt-input`'s own `font-size` beat `.tnt-lg`. Neither failed loudly. Keep
+ * this block at the bottom, and keep each rule to one property.
+ * ------------------------------------------------------------------------ */
+
+.tnt-xs { font-size: var(--tnt-text-xs); }
+.tnt-sm { font-size: var(--tnt-text-sm); }
+.tnt-lg { font-size: var(--tnt-text-lg); }
+
+.tnt-muted { color: var(--tnt-text-muted); }
+
+/**
+ * Machine notation. Tabular figures matter here: an ID log, a subset table and
+ * a step counter all read as columns, and proportional digits make them wobble.
+ */
+.tnt-mono {
+  font-family: var(--tnt-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/**
+ * Undo the casing a `.tnt-label` ancestor imposes.
+ *
+ * `text-transform`, `letter-spacing` and `font-weight` all inherit, so a
+ * subtitle or a verdict tag sitting inside a label heading arrives uppercase
+ * and tracked. This is the escape hatch, rather than every such child
+ * respelling the three resets.
+ */
+.tnt-normal {
+  text-transform: none;
+  letter-spacing: normal;
+  font-weight: 400;
+}

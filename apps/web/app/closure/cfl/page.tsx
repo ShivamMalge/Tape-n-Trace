@@ -10,8 +10,8 @@ export const metadata: Metadata = {
 export default function CflClosurePage(): React.JSX.Element {
   return (
     <div className="tnt-page">
-      <h1 style={{ fontSize: 26 }}>CFL closure lab</h1>
-      <p style={{ maxWidth: '64ch' }}>
+      <h1>CFL closure lab</h1>
+      <p className="tnt-prose">
         Hopcroft 2e §7.3. What the context-free languages are closed under, each built in front of you —
         and what they are not: two grammars whose intersection is aⁿbⁿcⁿ, with the pumping game that
         proves it. For the regular languages’ version, see <a href="/closure">the closure lab</a>.

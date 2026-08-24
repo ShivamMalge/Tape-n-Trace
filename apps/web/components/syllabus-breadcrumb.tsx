@@ -26,20 +26,7 @@ export function SyllabusBreadcrumb(): React.JSX.Element | null {
   const sections = [...new Set(topics.flatMap((topic) => topic.sections))]
 
   return (
-    <nav
-      aria-label="Syllabus"
-      style={{
-        maxWidth: 1120,
-        margin: '0 auto',
-        padding: '6px 20px',
-        fontSize: 12,
-        display: 'flex',
-        gap: 6,
-        flexWrap: 'wrap',
-        alignItems: 'baseline',
-      }}
-      className="tnt-muted"
-    >
+    <nav aria-label="Syllabus" className="tnt-crumb">
       <a href="/syllabus">{DEFAULT_SCHEME.code}</a>
       <span aria-hidden>·</span>
       <a href="/syllabus">

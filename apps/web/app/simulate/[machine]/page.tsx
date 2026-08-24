@@ -28,21 +28,20 @@ export default async function SimulateMachinePage({ params }: PageProps): Promis
 
   return (
     <div className="tnt-page">
-      <p style={{ fontSize: 13, margin: 0 }}>
+      <p className="tnt-sm" style={{ margin: 0 }}>
         <a href="/simulate">← All machines</a>
       </p>
 
-      <h1 style={{ fontSize: 24, marginTop: 8 }}>{entry.title}</h1>
-      <p style={{ maxWidth: '62ch', marginTop: 0 }}>{entry.language}</p>
+      <h1 style={{ marginTop: 'var(--tnt-space-2)' }}>{entry.title}</h1>
+      <p className="tnt-prose" style={{ marginTop: 0 }}>{entry.language}</p>
 
       {/* The triad: controller (state + engine), renderer (inside it), docs. */}
       <div
+        className="tnt-stack-lg"
         style={{
-          display: 'grid',
-          gap: 24,
           gridTemplateColumns: 'minmax(0, 2fr) minmax(240px, 1fr)',
           alignItems: 'start',
-          marginTop: 20,
+          marginTop: 'var(--tnt-space-5)',
         }}
       >
         <AutomatonController

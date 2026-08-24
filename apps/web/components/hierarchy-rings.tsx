@@ -54,42 +54,36 @@ export function HierarchyRings({
 
     return (
       <div
+        className="tnt-card tnt-stack-sm"
         style={{
           border: `2px solid ${index === rings.length - 1 ? 'var(--tnt-text-muted)' : 'var(--tnt-current)'}`,
-          borderRadius: 'var(--tnt-radius)',
-          padding: 12,
           background: index % 2 === 0 ? 'var(--tnt-bg)' : 'var(--tnt-surface)',
-          display: 'grid',
-          gap: 8,
         }}
       >
         <button
           type="button"
           onClick={() => setOpen(isOpen ? null : ring.id)}
           aria-expanded={isOpen}
+          className="tnt-row tnt-row-baseline"
           style={{
             font: 'inherit',
             fontWeight: 600,
-            fontSize: 14,
             textAlign: 'left',
             background: 'none',
             border: 'none',
             padding: 0,
             color: 'var(--tnt-text)',
             cursor: 'pointer',
-            display: 'flex',
-            gap: 8,
-            alignItems: 'baseline',
           }}
         >
           <span>{ring.title}</span>
-          <span className="tnt-muted" style={{ fontSize: 11, fontWeight: 400 }}>
+          <span className="tnt-meta" style={{ fontWeight: 400 }}>
             {ring.citation === null ? 'outside the prescribed sections' : `§${ring.citation}`} · {isOpen ? 'hide' : 'show'} detail
           </span>
         </button>
 
         {languages.length === 0 ? null : (
-          <ul style={{ display: 'flex', gap: 6, flexWrap: 'wrap', listStyle: 'none', margin: 0, padding: 0 }}>
+          <ul className="tnt-row tnt-row-tight" style={{ listStyle: 'none', margin: 0, padding: 0 }}>
             {languages.map((language) => (
               <LanguageChip key={language.id} language={language} />
             ))}
@@ -97,7 +91,7 @@ export function HierarchyRings({
         )}
 
         {ring.id === UNWITNESSED_SEPARATION.outer && rings.some((r) => r.id === UNWITNESSED_SEPARATION.inner) ? (
-          <p className="tnt-muted" style={{ margin: 0, fontSize: 12, fontStyle: 'italic' }}>
+          <p className="tnt-meta" style={{ margin: 0, fontStyle: 'italic' }}>
             Nothing is plotted here. {UNWITNESSED_SEPARATION.why}
           </p>
         ) : null}
@@ -110,11 +104,9 @@ export function HierarchyRings({
   }
 
   return (
-    <figure style={{ margin: 0, display: 'grid', gap: 8 }}>
+    <figure className="tnt-stack-sm" style={{ margin: 0 }}>
       {build(rings.length - 1)}
-      <figcaption className="tnt-muted" style={{ fontSize: 12 }}>
-        {caption}
-      </figcaption>
+      <figcaption className="tnt-meta">{caption}</figcaption>
     </figure>
   )
 }
@@ -123,21 +115,24 @@ function LanguageChip({ language }: { language: CanonicalLanguage }): React.JSX.
   const topic = language.proofTopic === undefined ? undefined : topicById(language.proofTopic)
   const body = (
     <>
-      <code style={{ fontSize: 12 }}>{language.notation}</code>
-      <span className="tnt-muted" style={{ fontSize: 11 }}>
-        {language.citation === null ? '' : ` §${language.citation}`}
-      </span>
+      <code className="tnt-xs">{language.notation}</code>
+      <span className="tnt-muted tnt-xs">{language.citation === null ? '' : ` §${language.citation}`}</span>
     </>
   )
 
   return (
     <li>
       {topic === undefined ? (
-        <span style={chip} title={language.why}>
+        <span className="tnt-tag" title={language.why}>
           {body}
         </span>
       ) : (
-        <a href={topic.href} style={{ ...chip, textDecoration: 'none' }} title={`${language.why} — ${topic.title}`}>
+        <a
+          href={topic.href}
+          className="tnt-tag"
+          style={{ textDecoration: 'none' }}
+          title={`${language.why} — ${topic.title}`}
+        >
           {body}
         </a>
       )}
@@ -160,22 +155,22 @@ function ClassDetail({ ring }: { ring: LanguageClass }): React.JSX.Element {
   })
 
   return (
-    <div className="tnt-card" style={{ display: 'grid', gap: 8, background: 'var(--tnt-bg)' }}>
-      <dl style={{ display: 'grid', gap: 6, margin: 0 }}>
+    <div className="tnt-card tnt-stack-sm tnt-card-plain">
+      <dl className="tnt-stack-sm" style={{ margin: 0 }}>
         {rows.map(([term, value]) =>
           value === undefined ? null : (
-            <div key={term} style={{ display: 'grid', gap: 1 }}>
-              <dt className="tnt-muted" style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: 0.5 }}>
-                {term}
-              </dt>
-              <dd style={{ margin: 0, fontSize: 13 }}>{value}</dd>
+            <div key={term} className="tnt-stack-sm">
+              <dt className="tnt-label">{term}</dt>
+              <dd className="tnt-sm" style={{ margin: 0 }}>
+                {value}
+              </dd>
             </div>
           ),
         )}
       </dl>
 
       {ring.citation === null ? (
-        <p className="tnt-muted" style={{ margin: 0, fontSize: 12, fontStyle: 'italic' }}>
+        <p className="tnt-meta" style={{ margin: 0, fontStyle: 'italic' }}>
           The prescribed sections do not cover this class, so no section is cited for it. It is on the map because the
           syllabus’s own tutorial component — language classification across regular, CFL, CSL, recursive and RE — names
           it.
@@ -183,7 +178,7 @@ function ClassDetail({ ring }: { ring: LanguageClass }): React.JSX.Element {
       ) : null}
 
       {tools.length === 0 ? null : (
-        <p style={{ margin: 0, fontSize: 13 }}>
+        <p className="tnt-sm" style={{ margin: 0 }}>
           Work in this class:{' '}
           {tools.map((topic, n) => (
             <span key={topic.id}>
@@ -195,15 +190,4 @@ function ClassDetail({ ring }: { ring: LanguageClass }): React.JSX.Element {
       )}
     </div>
   )
-}
-
-const chip: React.CSSProperties = {
-  display: 'inline-flex',
-  gap: 4,
-  alignItems: 'baseline',
-  padding: '3px 8px',
-  borderRadius: 999,
-  border: '1px solid var(--tnt-border)',
-  background: 'var(--tnt-bg)',
-  color: 'var(--tnt-text)',
 }

@@ -18,37 +18,36 @@ export interface StackColumnProps {
 export function StackColumn({ stack, label = 'Stack' }: StackColumnProps): React.JSX.Element {
   return (
     <div role="img" aria-label={stack.length === 0 ? `${label}: empty` : `${label}, top first: ${stack.join(', ')}`}>
-      <div className="tnt-muted" style={{ fontSize: 12, marginBottom: 4 }}>
-        {label} <span style={{ fontSize: 11 }}>(top first)</span>
+      <div className="tnt-meta" style={{ marginBottom: 'var(--tnt-space-1)' }}>
+        {label} <span>(top first)</span>
       </div>
       {stack.length === 0 ? (
         <div
+          className="tnt-mono tnt-muted"
           style={{
-            fontFamily: 'var(--tnt-mono)',
-            fontSize: 14,
-            padding: '6px 12px',
+            display: 'inline-block',
+            padding: 'var(--tnt-space-2) var(--tnt-space-3)',
             border: '1px dashed var(--tnt-border)',
             borderRadius: 'var(--tnt-radius)',
-            color: 'var(--tnt-text-muted)',
-            display: 'inline-block',
           }}
         >
           ε — empty
         </div>
       ) : (
+        // The cell geometry is the drawing, not the type scale: a fixed column
+        // width and a 2px seam between cells, so the stack reads as a stack.
         <div style={{ display: 'inline-grid', gap: 2 }}>
           {stack.map((symbol, depth) => (
             <div
               key={depth}
               data-depth={depth}
+              className="tnt-mono"
               style={{
-                fontFamily: 'var(--tnt-mono)',
-                fontSize: 14,
                 textAlign: 'center',
                 minWidth: 44,
                 padding: '4px 10px',
                 border: '1px solid var(--tnt-border)',
-                borderRadius: 4,
+                borderRadius: 'var(--tnt-radius-sm)',
                 background: depth === stack.length - 1 ? 'var(--tnt-current-soft)' : 'var(--tnt-bg)',
               }}
             >

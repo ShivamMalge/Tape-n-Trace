@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 export default function StringsPrimerPage(): React.JSX.Element {
   return (
     <div className="tnt-page" style={{ maxWidth: 820 }}>
-      <h1 style={{ fontSize: 26 }}>Strings and languages</h1>
+      <h1>Strings and languages</h1>
       <p className="tnt-muted" style={{ marginTop: 0 }}>
         Hopcroft 2e, §1.5 — the vocabulary the rest of the subject is written in.
       </p>
@@ -39,7 +39,7 @@ export default function StringsPrimerPage(): React.JSX.Element {
           Σ<sup>k</sup> is the set of strings of length exactly <em>k</em>. So Σ<sup>1</sup> is
           essentially Σ itself, Σ<sup>2</sup> is every pair, and:
         </p>
-        <p style={{ fontFamily: 'var(--tnt-mono)', background: 'var(--tnt-surface)', padding: '8px 12px', borderRadius: 'var(--tnt-radius)' }}>
+        <p className="tnt-code-block">
           Σ<sup>0</sup> = {'{ε}'}
         </p>
         <p>
@@ -79,27 +79,21 @@ export default function StringsPrimerPage(): React.JSX.Element {
           The question papers and the textbook do not always agree on names. These all mean the same
           thing, and this tool accepts either spelling.
         </p>
-        <table style={{ borderCollapse: 'collapse', fontSize: 14, width: '100%' }}>
+        <table className="tnt-table" style={{ width: '100%' }}>
           <thead>
             <tr>
-              <th scope="col" style={thStyle}>
-                Textbook
-              </th>
-              <th scope="col" style={thStyle}>
-                Also written
-              </th>
+              <th scope="col">Textbook</th>
+              <th scope="col">Also written</th>
             </tr>
           </thead>
           <tbody>
             {TERMS.map((term) => (
-              <tr key={term.canonical} style={{ borderTop: '1px solid var(--tnt-border)' }}>
-                <td style={{ padding: '5px 8px' }}>
+              <tr key={term.canonical}>
+                <td>
                   <strong>{term.canonical}</strong>{' '}
                   <span className="tnt-muted">— {term.expansion}</span>
                 </td>
-                <td style={{ padding: '5px 8px' }} className="tnt-muted">
-                  {term.alternatives.join(', ')}
-                </td>
+                <td className="tnt-muted">{term.alternatives.join(', ')}</td>
               </tr>
             ))}
           </tbody>
@@ -111,16 +105,9 @@ export default function StringsPrimerPage(): React.JSX.Element {
 
 function Section({ title, children }: { title: string; children: React.ReactNode }): React.JSX.Element {
   return (
-    <section style={{ marginTop: 28 }}>
-      <h2 style={{ fontSize: 19 }}>{title}</h2>
+    <section className="tnt-section">
+      <h2>{title}</h2>
       {children}
     </section>
   )
-}
-
-const thStyle: React.CSSProperties = {
-  textAlign: 'left',
-  padding: '5px 8px',
-  fontSize: 12,
-  color: 'var(--tnt-text-muted)',
 }

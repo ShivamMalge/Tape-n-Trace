@@ -63,18 +63,11 @@ export function PumpingGame({ languageId, mode, variant = 'regular' }: PumpingGa
   const over = session.phase === 'won' || session.phase === 'lost'
 
   return (
-    <div style={{ display: 'grid', gap: 14 }}>
+    <div className="tnt-stack">
       {/* The conversation so far — every move, in the engine's own words. */}
-      <section className="tnt-card" style={{ display: 'grid', gap: 8, maxHeight: 300, overflowY: 'auto' }}>
+      <section className="tnt-card tnt-stack-sm" style={{ maxHeight: 300, overflowY: 'auto' }}>
         {session.events.map((event, i) => (
-          <p
-            key={i}
-            style={{
-              margin: 0,
-              fontSize: 14,
-              opacity: i === session.events.length - 1 ? 1 : 0.65,
-            }}
-          >
+          <p key={i} style={{ margin: 0, opacity: i === session.events.length - 1 ? 1 : 0.65 }}>
             {event.narration}
           </p>
         ))}
@@ -85,7 +78,7 @@ export function PumpingGame({ languageId, mode, variant = 'regular' }: PumpingGa
       ) : null}
 
       {error === null ? null : (
-        <p role="alert" style={{ margin: 0, fontSize: 13, color: 'var(--tnt-marked)' }}>
+        <p role="alert" className="tnt-sm" style={{ margin: 0, color: 'var(--tnt-marked)' }}>
           {error}
         </p>
       )}
@@ -96,29 +89,24 @@ export function PumpingGame({ languageId, mode, variant = 'regular' }: PumpingGa
             e.preventDefault()
             play({ type: 'choose-w', w: wInput })
           }}
-          style={{ display: 'flex', gap: 8, alignItems: 'flex-end', flexWrap: 'wrap' }}
+          className="tnt-row tnt-row-end"
         >
-          <label style={{ display: 'grid', gap: 4 }}>
-            <span className="tnt-muted" style={{ fontSize: 13 }}>
-              Your string w ∈ L, |w| ≥ {session.n}
-            </span>
+          <label className="tnt-field">
+            <span className="tnt-muted">Your string w ∈ L, |w| ≥ {session.n}</span>
             <input
               value={wInput}
               onChange={(e) => setWInput(e.target.value)}
               spellCheck={false}
               autoComplete="off"
               placeholder={language.suggestedW(session.n)}
-              style={input}
+              className="tnt-input tnt-input-mono"
+              style={{ minWidth: 220, fontSize: 'var(--tnt-text-lg)' }}
             />
           </label>
-          <button type="submit" style={primary}>
+          <button type="submit" className="tnt-btn tnt-btn-primary">
             Challenge
           </button>
-          <button
-            type="button"
-            onClick={() => setWInput(language.suggestedW(session.n))}
-            style={plain}
-          >
+          <button type="button" className="tnt-btn" onClick={() => setWInput(language.suggestedW(session.n))}>
             Suggest one
           </button>
         </form>
@@ -130,22 +118,21 @@ export function PumpingGame({ languageId, mode, variant = 'regular' }: PumpingGa
             e.preventDefault()
             play({ type: 'choose-n', n: nInput })
           }}
-          style={{ display: 'flex', gap: 8, alignItems: 'flex-end', flexWrap: 'wrap' }}
+          className="tnt-row tnt-row-end"
         >
-          <label style={{ display: 'grid', gap: 4 }}>
-            <span className="tnt-muted" style={{ fontSize: 13 }}>
-              Your claimed pumping length n (1–8)
-            </span>
+          <label className="tnt-field">
+            <span className="tnt-muted">Your claimed pumping length n (1–8)</span>
             <input
               type="number"
               min={1}
               max={8}
               value={nInput}
               onChange={(e) => setNInput(Number(e.target.value))}
-              style={{ ...input, width: 90 }}
+              className="tnt-input tnt-input-mono"
+              style={{ width: 90, fontSize: 'var(--tnt-text-lg)' }}
             />
           </label>
-          <button type="submit" style={primary}>
+          <button type="submit" className="tnt-btn tnt-btn-primary">
             Claim it
           </button>
         </form>
@@ -161,37 +148,37 @@ export function PumpingGame({ languageId, mode, variant = 'regular' }: PumpingGa
             e.preventDefault()
             play({ type: 'choose-i', i: iInput })
           }}
-          style={{ display: 'flex', gap: 8, alignItems: 'flex-end', flexWrap: 'wrap' }}
+          className="tnt-row tnt-row-end"
         >
-          <label style={{ display: 'grid', gap: 4 }}>
-            <span className="tnt-muted" style={{ fontSize: 13 }}>
-              Your i (0–12, and never 1)
-            </span>
+          <label className="tnt-field">
+            <span className="tnt-muted">Your i (0–12, and never 1)</span>
             <input
               type="number"
               min={0}
               max={12}
               value={iInput}
               onChange={(e) => setIInput(Number(e.target.value))}
-              style={{ ...input, width: 90 }}
+              className="tnt-input tnt-input-mono"
+              style={{ width: 90, fontSize: 'var(--tnt-text-lg)' }}
             />
           </label>
-          <button type="submit" style={primary}>
+          <button type="submit" className="tnt-btn tnt-btn-primary">
             Pump
           </button>
-          <button type="button" onClick={() => play({ type: 'concede' })} style={plain}>
+          <button type="button" className="tnt-btn" onClick={() => play({ type: 'concede' })}>
             Concede
           </button>
         </form>
       ) : null}
 
       {over ? (
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-          <button type="button" onClick={restart} style={primary}>
+        <div className="tnt-row">
+          <button type="button" className="tnt-btn tnt-btn-primary" onClick={restart}>
             Play again
           </button>
           <button
             type="button"
+            className="tnt-btn"
             onClick={() =>
               downloadText(
                 serialise(sessionTrace(language, session)),
@@ -199,7 +186,6 @@ export function PumpingGame({ languageId, mode, variant = 'regular' }: PumpingGa
                 'application/json',
               )
             }
-            style={plain}
             title="The whole session as a trace — the same format every simulation uses"
           >
             Download the session
@@ -208,13 +194,16 @@ export function PumpingGame({ languageId, mode, variant = 'regular' }: PumpingGa
       ) : null}
 
       {proof === null ? null : (
-        <section className="tnt-card" style={{ display: 'grid', gap: 8 }}>
-          <h2 style={{ fontSize: 14, margin: 0 }}>The proof, written out</h2>
-          <p style={{ margin: 0, fontSize: 14, lineHeight: 1.7 }}>{proof}</p>
+        <section className="tnt-card tnt-stack-sm">
+          <h2 style={{ margin: 0 }}>The proof, written out</h2>
+          <p className="tnt-prose" style={{ margin: 0, lineHeight: 1.7 }}>
+            {proof}
+          </p>
           <button
             type="button"
+            className="tnt-btn"
             onClick={() => downloadText(proof, `proof-${language.id}.txt`, 'text/plain')}
-            style={{ ...plain, justifySelf: 'start' }}
+            style={{ justifySelf: 'start' }}
           >
             Download as text
           </button>
@@ -222,42 +211,11 @@ export function PumpingGame({ languageId, mode, variant = 'regular' }: PumpingGa
       )}
 
       {latest?.phase === 'won' && session.mode === 'defend' ? (
-        <p className="tnt-muted" style={{ margin: 0, fontSize: 13 }}>
+        <p className="tnt-sm tnt-muted" style={{ margin: 0 }}>
           The language pumped — but note carefully: that does <strong>not</strong> prove it regular.
           The lemma runs one way only.
         </p>
       ) : null}
     </div>
   )
-}
-
-const input: React.CSSProperties = {
-  fontFamily: 'var(--tnt-mono)',
-  fontSize: 16,
-  padding: '7px 9px',
-  borderRadius: 'var(--tnt-radius)',
-  border: '1px solid var(--tnt-border)',
-  background: 'var(--tnt-bg)',
-  color: 'var(--tnt-text)',
-  minWidth: 220,
-}
-
-const primary: React.CSSProperties = {
-  padding: '8px 16px',
-  borderRadius: 'var(--tnt-radius)',
-  border: '1px solid var(--tnt-current)',
-  background: 'var(--tnt-current)',
-  color: '#fff',
-  fontSize: 14,
-  cursor: 'pointer',
-}
-
-const plain: React.CSSProperties = {
-  padding: '8px 16px',
-  borderRadius: 'var(--tnt-radius)',
-  border: '1px solid var(--tnt-border)',
-  background: 'var(--tnt-bg)',
-  color: 'var(--tnt-text)',
-  fontSize: 14,
-  cursor: 'pointer',
 }

@@ -53,33 +53,12 @@ export function DataTable({
 
   return (
     <div className={className} style={{ overflow: 'auto', maxHeight }}>
-      <table style={{ borderCollapse: 'collapse', width: '100%', fontSize: 13 }}>
-        {caption === undefined ? null : (
-          <caption
-            className="tnt-muted"
-            style={{ textAlign: 'left', fontSize: 12, paddingBottom: 6 }}
-          >
-            {caption}
-          </caption>
-        )}
+      <table className="tnt-data-table">
+        {caption === undefined ? null : <caption className="tnt-meta">{caption}</caption>}
         <thead>
           <tr>
             {columns.map((column) => (
-              <th
-                key={column.key}
-                scope="col"
-                style={{
-                  position: 'sticky',
-                  top: 0,
-                  textAlign: 'left',
-                  padding: '5px 9px',
-                  fontSize: 12,
-                  color: 'var(--tnt-text-muted)',
-                  background: 'var(--tnt-surface)',
-                  borderBottom: '1px solid var(--tnt-border)',
-                  whiteSpace: 'nowrap',
-                }}
-              >
+              <th key={column.key} scope="col">
                 {column.label}
               </th>
             ))}
@@ -87,56 +66,27 @@ export function DataTable({
         </thead>
         <tbody>
           {rows.map((row) => (
-            <tr
-              key={row.key}
-              data-row-key={row.key}
-              data-role={row.role ?? 'idle'}
-              style={{ borderBottom: '1px solid var(--tnt-border)', background: rowBackground(row.role) }}
-            >
-              {columns.map((column) => {
-                const highlighted = lit.has(`${row.key} ${column.key}`)
-                return (
-                  <td
-                    key={column.key}
-                    data-cell={`${row.key} ${column.key}`}
-                    data-lit={highlighted ? 'true' : undefined}
-                    style={{
-                      padding: '4px 9px',
-                      fontFamily: column.mono === false ? 'inherit' : 'var(--tnt-mono)',
-                      whiteSpace: 'nowrap',
-                      background: highlighted ? 'var(--tnt-current-soft)' : undefined,
-                      color: highlighted ? 'var(--tnt-current)' : undefined,
-                      fontWeight: highlighted ? 600 : undefined,
-                      transition: 'background 140ms ease',
-                    }}
-                  >
-                    {row.cells[column.key] ?? ''}
-                  </td>
-                )
-              })}
+            <tr key={row.key} data-row-key={row.key} data-role={row.role ?? 'idle'}>
+              {columns.map((column) => (
+                <td
+                  key={column.key}
+                  data-cell={`${row.key} ${column.key}`}
+                  data-mono={column.mono === false ? 'false' : 'true'}
+                  {...(lit.has(`${row.key} ${column.key}`) ? { 'data-lit': 'true' } : {})}
+                >
+                  {row.cells[column.key] ?? ''}
+                </td>
+              ))}
             </tr>
           ))}
         </tbody>
       </table>
 
       {rows.length === 0 ? (
-        <p className="tnt-muted" style={{ fontSize: 13, margin: '8px 0 0' }}>
+        <p className="tnt-muted tnt-sm" style={{ margin: 'var(--tnt-space-2) 0 0' }}>
           Nothing in the table yet.
         </p>
       ) : null}
     </div>
   )
-}
-
-function rowBackground(role: TableRow['role']): string | undefined {
-  switch (role) {
-    case 'current':
-      return 'var(--tnt-current-soft)'
-    case 'new':
-      return 'var(--tnt-accepting-soft)'
-    case 'dead':
-      return 'var(--tnt-dead-soft)'
-    default:
-      return undefined
-  }
 }

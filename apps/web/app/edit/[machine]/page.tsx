@@ -24,12 +24,12 @@ export default async function EditMachinePage({ params }: PageProps): Promise<Re
 
   return (
     <div className="tnt-page">
-      <p style={{ fontSize: 13, margin: 0 }}>
+      <p className="tnt-sm" style={{ margin: 0 }}>
         <a href="/edit">← Draw from scratch</a> · <a href={`/simulate/${entry.id}`}>Simulate this machine</a>
       </p>
 
-      <h1 style={{ fontSize: 24, marginTop: 8 }}>Edit — {entry.title}</h1>
-      <p className="tnt-muted" style={{ maxWidth: '62ch', marginTop: 0 }}>
+      <h1 style={{ marginTop: 'var(--tnt-space-2)' }}>Edit — {entry.title}</h1>
+      <p className="tnt-prose tnt-muted" style={{ marginTop: 0 }}>
         Changes here stay in this tab. Export a <code>.tnt</code> file to keep them.
       </p>
 

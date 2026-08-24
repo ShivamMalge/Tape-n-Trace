@@ -65,28 +65,20 @@ export function TmWorkbench({ initialId = 'zeros-ones' }: { initialId?: string }
   const note = TECHNIQUE_NOTES[preset.technique]
 
   return (
-    <div style={{ display: 'grid', gap: 16 }}>
-      <div style={{ display: 'grid', gap: 8 }} role="group" aria-label="Machines">
+    <div className="tnt-stack">
+      <div className="tnt-stack-sm" role="group" aria-label="Machines">
         {GROUPS.map((group) => (
-          <div key={group.title} style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
-            <span className="tnt-muted" style={{ fontSize: 12, minWidth: 190 }}>
+          <div key={group.title} className="tnt-row tnt-row-tight">
+            <span className="tnt-meta" style={{ minWidth: 190 }}>
               {group.title}:
             </span>
             {TM_PRESETS.filter((p) => group.techniques.includes(p.technique)).map((p) => (
               <button
                 key={p.id}
                 type="button"
+                className="tnt-chip"
                 aria-pressed={p.id === preset.id}
                 onClick={() => setPresetId(p.id)}
-                style={{
-                  fontSize: 13,
-                  padding: '4px 10px',
-                  borderRadius: 999,
-                  border: p.id === preset.id ? '1px solid var(--tnt-current)' : '1px solid var(--tnt-border)',
-                  background: p.id === preset.id ? 'var(--tnt-current-soft)' : 'var(--tnt-bg)',
-                  color: 'var(--tnt-text)',
-                  cursor: 'pointer',
-                }}
               >
                 {p.title}
               </button>
@@ -95,25 +87,25 @@ export function TmWorkbench({ initialId = 'zeros-ones' }: { initialId?: string }
         ))}
       </div>
 
-      <div style={{ display: 'grid', gap: 10, gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
-        <div className="tnt-card" style={{ display: 'grid', gap: 6 }}>
-          <strong style={{ fontSize: 15 }}>{preset.title}</strong>
-          <p style={{ margin: 0, fontSize: 14 }}>{preset.blurb}</p>
-          <span className="tnt-muted" style={{ fontSize: 12 }}>
-            Hopcroft 2e §{preset.citation}
-          </span>
+      <div className="tnt-panels">
+        <div className="tnt-card tnt-stack-sm">
+          <strong>{preset.title}</strong>
+          <p className="tnt-sm" style={{ margin: 0 }}>
+            {preset.blurb}
+          </p>
+          <span className="tnt-meta">Hopcroft 2e §{preset.citation}</span>
           {preset.nonHalting === undefined ? null : (
-            <p role="note" style={{ margin: 0, fontSize: 13, padding: '6px 10px', borderLeft: '3px solid var(--tnt-marked)' }}>
+            <p role="note" className="tnt-note tnt-note-warn" style={{ margin: 0 }}>
               <strong>Does not halt</strong> on {preset.nonHalting.inputs}: {preset.nonHalting.why} The run is stopped at
               the move cap and says so; it is never reported as rejected.
             </p>
           )}
           {preset.subroutine === undefined ? null : (
-            <details style={{ fontSize: 13 }}>
+            <details className="tnt-sm">
               <summary style={{ cursor: 'pointer' }}>
                 Subroutine <strong>{preset.subroutine.name}</strong> — {preset.subroutine.states.length} states
               </summary>
-              <p style={{ margin: '6px 0 0' }}>
+              <p style={{ margin: 'var(--tnt-space-1) 0 0' }}>
                 States {preset.subroutine.states.join(', ')}: entered at {preset.subroutine.states[0]}, returning
                 through {preset.subroutine.states.at(-1)}, which has no moves of its own. Inside it the tape panel says
                 so.
@@ -121,12 +113,12 @@ export function TmWorkbench({ initialId = 'zeros-ones' }: { initialId?: string }
             </details>
           )}
         </div>
-        <div className="tnt-card" style={{ display: 'grid', gap: 6 }}>
-          <strong style={{ fontSize: 14 }}>{note.title}</strong>
-          <p style={{ margin: 0, fontSize: 14 }}>{note.body}</p>
-          <span className="tnt-muted" style={{ fontSize: 12 }}>
-            {note.citation}
-          </span>
+        <div className="tnt-card tnt-stack-sm">
+          <strong>{note.title}</strong>
+          <p className="tnt-sm" style={{ margin: 0 }}>
+            {note.body}
+          </p>
+          <span className="tnt-meta">{note.citation}</span>
         </div>
       </div>
 

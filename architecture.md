@@ -115,7 +115,8 @@ tape-n-trace/
 │   │       ├── tree/               # parse tree, branch tree, derivation tree
 │   │       ├── table/              # subset table, table-filling triangle, generic grid
 │   │       ├── controls/           # transport bar (play/pause/step/scrub/speed)
-│   │       └── tokens.css          # design tokens, shared with the widget build
+│   │       ├── tokens.css          # design tokens, shared with the widget build
+│   │       └── primitives.css      # .tnt-* component classes, likewise shared (§10.3)
 │   │
 │   └── cli/                        # [P2] `tnt run machine.tnt "0110"` — grading pipelines
 │
@@ -501,6 +502,35 @@ Tailwind for the widget is built with a **scoped, Preflight-disabled** config (`
 because anywidget injects CSS into the host notebook document. This bug has been paid for once already
 in Pratyaksha.
 
+### 10.3 Styling
+
+Three layers, and which layer a rule belongs to is decided by **who else has to load it**.
+
+| Layer | File | Loaded by | May contain |
+|---|---|---|---|
+| Tokens | `packages/ui/src/tokens.css` | web app, widget | Custom properties only. Colours, the type scale, the spacing scale |
+| Primitives | `packages/ui/src/primitives.css` | web app, widget | `.tnt-`-prefixed classes: buttons, chips, cards, tables, fields, code |
+| Chrome | `apps/web/app/globals.css` | web app only | The document reset, `html`/`body`, headings, the shell grid, the nav rail |
+
+**The notebook is the binding constraint.** `anywidget` injects the first two layers into a host
+notebook's own document. So neither may contain a bare element selector, a `*` reset, or anything else
+that can repaint a cell the widget does not own — every selector starts with a `.tnt-` class. The
+document reset that a web page legitimately needs lives in `globals.css`, which the widget never loads.
+Getting this wrong does not fail a test; it silently restyles somebody's notebook.
+
+**State is read off the attribute that already carries it.** A toggle is styled from
+`[aria-pressed="true"]`, a highlighted table cell from the `data-lit` the renderer emits for the
+engine's `tableCell` highlight, a row from its `data-role`. There is no parallel `.is-active` class to
+fall out of step with the accessible state, because there is only one source for both.
+
+**Specificity is kept deliberately low** so a caller's layout class always wins. `a:where(.tnt-card)`
+rather than `a.tnt-card` for the display rule, because the second scores (0,1,1) and would silently
+outrank a `.tnt-stack-sm` at (0,1,0) — the card's own gap would go missing with nothing to show why.
+
+**Inline `style` is for what genuinely varies**: a colour that depends on a verdict, a computed
+position, an SVG transform, a grid metric. Where it is used it references a token rather than a literal.
+Anything static that appears twice belongs in the primitives layer.
+
 ---
 
 ## 11. Testing architecture
@@ -610,12 +640,14 @@ anywidget to the browser; plain values cannot, at least not synchronously.
 |---|---|---|---|
 | Round-trip through the frontend | No — `await` | No | Free, but breaks nbconvert and pytest |
 | Embed a JS runtime (QuickJS / V8 bindings) | Yes | Yes | One binary dependency; needs a Pyodide story for the P2 browser IDE |
+| Engine compiled to WASM, run under `wasmtime-py` | Yes | Yes | Pure-Python wheels on every platform; one more build step; needs the engine to build to WASM |
 | Pure-Python reimplementation of predicates | Yes | Yes | Violates §2; two implementations to keep in sync forever |
 
-**Status.** Unresolved. A one-day spike in P1.8 evaluates embedded-runtime options and records the
-outcome as ADR-004-final **before** the Python API is frozen. The pure-Python option is the last resort;
-if it is ever taken, the fallback is confined to `accepts()` and gated behind a CI test that compares it
-against the engine on a shared fixture corpus on every run.
+**Status.** Unresolved. A one-day spike — phase V0 of [phases-vyakarana.md](phases-vyakarana.md), which
+sets out the four measurements it must produce and the fallback if the timebox expires — evaluates the
+options and records the outcome as ADR-004-final **before** the Python API is frozen. The pure-Python
+option is the last resort; if it is ever taken, the fallback is confined to `accepts()` and gated behind
+a CI test that compares it against the engine on a shared fixture corpus on every run.
 
 ### ADR-005 — Hopcroft 2nd edition is the citation baseline
 

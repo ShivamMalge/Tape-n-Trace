@@ -51,21 +51,21 @@ export function CfgToPdaWorkbench(): React.JSX.Element {
   }, [grammar, machine])
 
   return (
-    <div style={{ display: 'grid', gap: 16 }}>
+    <div className="tnt-stack">
       <GrammarInput onGrammar={(g) => setGrammar(g)} />
       <ValidationErrors errors={outcome.errors} />
 
       {snapshot === null ? null : (
-        <div style={{ display: 'grid', gap: 12, gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
+        <div className="tnt-panels">
           <section>
-            <h2 style={{ fontSize: 15 }}>The productions</h2>
-            <div className="tnt-card" style={{ background: 'var(--tnt-bg)' }}>
+            <h2>The productions</h2>
+            <div className="tnt-card tnt-card-plain">
               <ProductionList grammar={snapshot.grammar} litIndices={litIndices} />
             </div>
           </section>
           <section>
-            <h2 style={{ fontSize: 15 }}>The one-state PDA</h2>
-            <div className="tnt-card" style={{ background: 'var(--tnt-bg)' }}>
+            <h2>The one-state PDA</h2>
+            <div className="tnt-card tnt-card-plain">
               <AutomatonRenderer machine={pdaToDrawable(snapshot.target)} step={step} instanceId="cfg-pda" />
             </div>
           </section>
@@ -87,12 +87,12 @@ export function CfgToPdaWorkbench(): React.JSX.Element {
 
       {machine === null ? null : (
         <section aria-label="Run the machine it built">
-          <h2 style={{ fontSize: 15 }}>Run the machine it built</h2>
-          <p className="tnt-muted" style={{ fontSize: 13, marginTop: 0 }}>
+          <h2>Run the machine it built</h2>
+          <p className="tnt-sm tnt-muted" style={{ marginTop: 0 }}>
             Accepts by empty stack. Watch the stack: a variable on top is expanded by guessing a
             production, a terminal on top must match the input — the stack is the unmatched tail of
             a leftmost derivation. (Type inputs symbol by symbol; multi-character terminals like{' '}
-            <code>id</code> cannot be typed into the run box.)
+            <code className="tnt-code">id</code> cannot be typed into the run box.)
           </p>
           <PdaRunner key={JSON.stringify(machine.startStack) + machine.transitions.length} machine={machine} suggested={suggested} />
         </section>

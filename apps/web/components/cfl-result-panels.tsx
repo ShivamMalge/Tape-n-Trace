@@ -11,12 +11,12 @@ import { shortest, type Op } from '../lib/cfl-lab'
 
 export function ResultSample({ grammar }: { grammar: CFG }): React.JSX.Element {
   return (
-    <section aria-label="Result sample" className="tnt-card" style={{ display: 'grid', gap: 6 }}>
-      <strong style={{ fontSize: 14 }}>The shortest strings the result generates</strong>
-      <p style={{ margin: 0, fontFamily: 'var(--tnt-mono)', fontSize: 13 }}>
+    <section aria-label="Result sample" className="tnt-card tnt-stack-sm">
+      <strong>The shortest strings the result generates</strong>
+      <p className="tnt-mono tnt-sm" style={{ margin: 0 }}>
         {shortest(grammar).map((w) => (w === '' ? 'ε' : w)).join('  ') || '—'}
       </p>
-      <p className="tnt-muted" style={{ margin: 0, fontSize: 12 }}>
+      <p className="tnt-meta" style={{ margin: 0 }}>
         Productions: {grammar.productions.map((p) => productionToText(p)).join(' ; ')}
       </p>
     </section>
@@ -31,13 +31,13 @@ export interface AgreementRow {
 
 export function AgreementTable({ rows, op }: { rows: readonly AgreementRow[]; op: Op }): React.JSX.Element {
   return (
-    <section aria-label="Agreement" className="tnt-card" style={{ overflowX: 'auto' }}>
-      <strong style={{ fontSize: 14 }}>P′ against what the theorem says it should accept</strong>
-      <table style={{ borderCollapse: 'collapse', fontSize: 13, fontFamily: 'var(--tnt-mono)', marginTop: 6 }}>
+    <section aria-label="Agreement" className="tnt-card tnt-scroll-x">
+      <strong>P′ against what the theorem says it should accept</strong>
+      <table className="tnt-table tnt-mono" style={{ marginTop: 'var(--tnt-space-2)' }}>
         <thead>
           <tr>
             {['w', op === 'intersection' ? 'P · R' : 'P on h(w)', 'P′'].map((h) => (
-              <th key={h} style={{ textAlign: 'left', padding: '3px 14px 3px 0', borderBottom: '1px solid var(--tnt-border)' }}>
+              <th key={h}>
                 {h}
               </th>
             ))}
@@ -46,9 +46,9 @@ export function AgreementTable({ rows, op }: { rows: readonly AgreementRow[]; op
         <tbody>
           {rows.map((row) => (
             <tr key={row.w || 'ε'}>
-              <td style={{ padding: '3px 14px 3px 0' }}>{row.w === '' ? 'ε' : row.w}</td>
-              <td style={{ padding: '3px 14px 3px 0' }}>{row.left}</td>
-              <td style={{ padding: '3px 14px 3px 0' }}>{row.right}</td>
+              <td>{row.w === '' ? 'ε' : row.w}</td>
+              <td>{row.left}</td>
+              <td>{row.right}</td>
             </tr>
           ))}
         </tbody>

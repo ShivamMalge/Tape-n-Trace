@@ -24,33 +24,24 @@ export default async function AppliedCasePage({ params }: PageProps): Promise<Re
 
   return (
     <div className="tnt-page">
-      <p style={{ fontSize: 13, margin: 0 }}>
+      <p className="tnt-sm" style={{ margin: 0 }}>
         <a href="/applied">← All case studies</a>
       </p>
 
-      <h1 style={{ fontSize: 24, marginTop: 8 }}>{study.title}</h1>
+      <h1 style={{ marginTop: 'var(--tnt-space-2)' }}>{study.title}</h1>
 
-      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', margin: '0 0 12px' }}>
+      <div className="tnt-row" style={{ margin: '0 0 var(--tnt-space-3)' }}>
         {[study.co, study.bloom, study.sdg, `Module ${study.module}`].map((tag) => (
-          <span
-            key={tag}
-            style={{
-              fontSize: 12,
-              padding: '2px 9px',
-              borderRadius: 999,
-              border: '1px solid var(--tnt-border)',
-              background: 'var(--tnt-surface)',
-            }}
-          >
+          <span key={tag} className="tnt-tag">
             {tag}
           </span>
         ))}
       </div>
 
-      <p style={{ maxWidth: '68ch' }}>{study.framing}</p>
+      <p className="tnt-prose">{study.framing}</p>
 
       {study.id === 'keyword-search' ? (
-        <p style={{ maxWidth: '62ch' }}>
+        <p className="tnt-prose">
           This one has a page of its own: <a href="/search">text and keyword search</a>.
         </p>
       ) : null}

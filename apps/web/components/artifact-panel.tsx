@@ -22,9 +22,9 @@ export function ArtifactPanel({
   if (artifact.kind === 'none') return null
 
   return (
-    <section style={{ display: 'grid', gap: 8 }}>
-      <h2 style={{ fontSize: 15, margin: 0 }}>{title(artifact)}</h2>
-      <div className="tnt-card" style={{ background: 'var(--tnt-bg)' }}>
+    <section className="tnt-stack-sm">
+      <h2 style={{ margin: 0 }}>{title(artifact)}</h2>
+      <div className="tnt-card tnt-card-plain">
         {artifact.kind === 'table' ? (
           <DataTable
             columns={artifact.columns}

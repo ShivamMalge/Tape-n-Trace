@@ -32,59 +32,46 @@ export function AmbiguityWorkbench(): React.JSX.Element {
   }
 
   return (
-    <div style={{ display: 'grid', gap: 16 }}>
+    <div className="tnt-stack">
       <GrammarInput initial="E -> E + E | E * E | ( E ) | id" onGrammar={onGrammar} />
 
       <button
         type="button"
+        className="tnt-btn tnt-btn-primary"
         onClick={run}
         disabled={grammar === null}
-        style={{
-          justifySelf: 'start',
-          padding: '9px 18px',
-          borderRadius: 'var(--tnt-radius)',
-          border: '1px solid var(--tnt-current)',
-          background: 'var(--tnt-current)',
-          color: '#fff',
-          fontSize: 15,
-          cursor: grammar === null ? 'not-allowed' : 'pointer',
-          opacity: grammar === null ? 0.5 : 1,
-        }}
+        style={{ justifySelf: 'start' }}
       >
         Search for an ambiguous string
       </button>
 
       {result === null ? null : result.ambiguous ? (
-        <section style={{ display: 'grid', gap: 12 }}>
+        <section className="tnt-stack">
           <div
             role="status"
-            style={{
-              padding: '11px 14px',
-              borderRadius: 'var(--tnt-radius)',
-              border: '1px solid var(--tnt-marked)',
-              background: 'var(--tnt-surface)',
-            }}
+            className="tnt-card"
+            style={{ borderColor: 'var(--tnt-marked)' }}
           >
-            <strong style={{ color: 'var(--tnt-marked)', fontSize: 15 }}>
+            <strong style={{ color: 'var(--tnt-marked)' }}>
               Ambiguous — proven.
             </strong>{' '}
-            <span style={{ fontSize: 14 }}>
+            <span>
               The string{' '}
-              <code style={{ fontSize: 15 }}>{result.witness.join(' ')}</code> has two distinct
+              <code className="tnt-code">{result.witness.join(' ')}</code> has two distinct
               leftmost derivations, drawn below. One witness is a complete proof.
             </span>
           </div>
 
-          <div style={{ display: 'grid', gap: 14, gridTemplateColumns: 'repeat(auto-fit, minmax(290px, 1fr))' }}>
+          <div className="tnt-panels">
             {result.trees.map((tree, i) => (
-              <section key={i} style={{ display: 'grid', gap: 6, minWidth: 0 }}>
-                <h2 style={{ fontSize: 13, margin: 0, textTransform: 'uppercase', letterSpacing: 0.6 }}>
+              <section key={i} className="tnt-stack-sm">
+                <h2 className="tnt-label" style={{ margin: 0 }}>
                   Parse tree {i + 1}
                 </h2>
-                <div className="tnt-card" style={{ background: 'var(--tnt-bg)', overflowX: 'auto' }}>
+                <div className="tnt-card tnt-scroll-x tnt-card-plain">
                   <ParseTree nodes={toRenderTree(tree)} />
                 </div>
-                <p className="tnt-muted" style={{ margin: 0, fontSize: 13, fontFamily: 'var(--tnt-mono)' }}>
+                <p className="tnt-sm tnt-muted tnt-mono" style={{ margin: 0 }}>
                   yield: {treeYield(tree).join(' ')}
                 </p>
               </section>
@@ -92,25 +79,15 @@ export function AmbiguityWorkbench(): React.JSX.Element {
           </div>
         </section>
       ) : (
-        <div
-          role="status"
-          style={{
-            padding: '11px 14px',
-            borderRadius: 'var(--tnt-radius)',
-            border: '1px solid var(--tnt-border)',
-            background: 'var(--tnt-surface)',
-            display: 'grid',
-            gap: 6,
-          }}
-        >
-          <strong style={{ fontSize: 15 }}>No counterexample within bounds.</strong>
-          <p style={{ margin: 0, fontSize: 14 }}>{result.note}</p>
+        <div role="status" className="tnt-card tnt-stack-sm">
+          <strong>No counterexample within bounds.</strong>
+          <p style={{ margin: 0 }}>{result.note}</p>
         </div>
       )}
 
-      <section className="tnt-card" style={{ display: 'grid', gap: 6 }}>
-        <h2 style={{ fontSize: 14, margin: 0 }}>Why the answers are asymmetric</h2>
-        <p className="tnt-muted" style={{ margin: 0, fontSize: 13 }}>
+      <section className="tnt-card tnt-stack-sm">
+        <h2 style={{ margin: 0 }}>Why the answers are asymmetric</h2>
+        <p className="tnt-sm tnt-muted" style={{ margin: 0 }}>
           Finding a string with two parse trees settles the question forever. Finding none settles
           nothing: whether a grammar is ambiguous is undecidable in general, and some languages are{' '}
           <em>inherently</em> ambiguous — every grammar for them is ambiguous (Hopcroft 2e §5.4.4) —

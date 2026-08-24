@@ -16,12 +16,12 @@ import type { Step } from '@tape-n-trace/engine'
 export function NarrationPanel({ step }: { step: Step | null }): React.JSX.Element {
   return (
     <section
-      className="tnt-card"
+      className="tnt-card tnt-stack-sm"
       aria-live="polite"
       aria-atomic="true"
-      style={{ minHeight: 74, display: 'grid', gap: 6, alignContent: 'start' }}
+      style={{ minHeight: 74, alignContent: 'start' }}
     >
-      <h2 style={{ fontSize: 13, margin: 0, textTransform: 'uppercase', letterSpacing: 0.6 }} className="tnt-muted">
+      <h2 className="tnt-label" style={{ margin: 0 }}>
         What just happened
       </h2>
 
@@ -31,9 +31,9 @@ export function NarrationPanel({ step }: { step: Step | null }): React.JSX.Eleme
         </p>
       ) : (
         <>
-          <p style={{ margin: 0, fontSize: 15 }}>{step.narration}</p>
+          <p style={{ margin: 0 }}>{step.narration}</p>
           {step.citation === undefined ? null : (
-            <p className="tnt-muted" style={{ margin: 0, fontSize: 12 }}>
+            <p className="tnt-meta" style={{ margin: 0 }}>
               Hopcroft 2e, §{step.citation}
             </p>
           )}

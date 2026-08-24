@@ -10,13 +10,13 @@ export const metadata: Metadata = {
 export default function TmSimulatePage(): React.JSX.Element {
   return (
     <div className="tnt-page">
-      <h1 style={{ fontSize: 26 }}>Simulate a Turing machine</h1>
-      <p style={{ maxWidth: '64ch' }}>
+      <h1>Simulate a Turing machine</h1>
+      <p className="tnt-prose">
         Hopcroft 2e §8.2–8.4. A finite control, one infinite tape, a head that reads, writes and
         moves — and everything a computer can do. Each machine here is the book’s own, run with the
         ID sequence written in §8.2.3’s notation beside the tape.
       </p>
-      <p className="tnt-muted" style={{ maxWidth: '64ch', fontSize: 14 }}>
+      <p className="tnt-prose tnt-muted tnt-sm">
         Build your own in <a href="/edit/tm">the editor</a>, or watch{' '}
         <a href="/convert/tm-multitape">many tapes reduced to one</a>.
       </p>

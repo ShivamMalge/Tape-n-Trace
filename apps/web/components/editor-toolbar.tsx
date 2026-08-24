@@ -45,18 +45,10 @@ export function EditorToolbar({
     <div
       role="toolbar"
       aria-label="Editor tools"
-      style={{
-        display: 'flex',
-        gap: 10,
-        alignItems: 'center',
-        flexWrap: 'wrap',
-        padding: '8px 12px',
-        border: '1px solid var(--tnt-border)',
-        borderRadius: 'var(--tnt-radius)',
-        background: 'var(--tnt-surface)',
-      }}
+      className="tnt-card tnt-row"
+      style={{ padding: 'var(--tnt-space-2) var(--tnt-space-3)' }}
     >
-      <div role="group" aria-label="Pointer mode" style={{ display: 'flex', gap: 4 }}>
+      <div role="group" aria-label="Pointer mode" className="tnt-row tnt-row-tight">
         <Toggle
           active={mode === 'draw'}
           onClick={() => onModeChange('draw')}
@@ -75,7 +67,7 @@ export function EditorToolbar({
 
       <Divider />
 
-      <button type="button" onClick={onUndo} disabled={!canUndo} title="Undo (Ctrl+Z)" style={button(!canUndo)}>
+      <button type="button" onClick={onUndo} disabled={!canUndo} title="Undo (Ctrl+Z)" className="tnt-btn">
         Undo
       </button>
       <button
@@ -83,20 +75,20 @@ export function EditorToolbar({
         onClick={onRedo}
         disabled={!canRedo}
         title="Redo (Ctrl+Shift+Z)"
-        style={button(!canRedo)}
+        className="tnt-btn"
       >
         Redo
       </button>
 
       <Divider />
 
-      <label style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 13 }}>
+      <label className="tnt-field-row">
         <span className="tnt-muted">Kind</span>
         <select
           value={kind}
           onChange={(event) => onKindChange(event.target.value as FiniteAutomaton['kind'])}
           aria-label="Machine kind"
-          style={select}
+          className="tnt-input"
         >
           <option value="DFA">DFA</option>
           <option value="NFA">NFA</option>
@@ -111,25 +103,25 @@ export function EditorToolbar({
         onClick={onTidy}
         disabled={tidying}
         title="Lay the diagram out in layers, ranked by distance from the start state"
-        style={button(tidying)}
+        className="tnt-btn"
       >
         {tidying ? 'Tidying…' : 'Tidy up'}
       </button>
 
       <Divider />
 
-      <div role="group" aria-label="Export" style={{ display: 'flex', gap: 4 }}>
-        <button type="button" onClick={() => onExport('svg')} title="Download as SVG" style={button(false)}>
+      <div role="group" aria-label="Export" className="tnt-row tnt-row-tight">
+        <button type="button" onClick={() => onExport('svg')} title="Download as SVG" className="tnt-btn">
           SVG
         </button>
-        <button type="button" onClick={() => onExport('png')} title="Download as PNG" style={button(false)}>
+        <button type="button" onClick={() => onExport('png')} title="Download as PNG" className="tnt-btn">
           PNG
         </button>
         <button
           type="button"
           onClick={() => onExport('tnt')}
           title="Download the machine as a .tnt file, which reopens here"
-          style={button(false)}
+          className="tnt-btn"
         >
           .tnt
         </button>
@@ -137,7 +129,7 @@ export function EditorToolbar({
 
       <Divider />
 
-      <button type="button" onClick={onReset} title="Discard this machine and start again" style={button(false)}>
+      <button type="button" onClick={onReset} title="Discard this machine and start again" className="tnt-btn">
         Clear
       </button>
     </div>
@@ -161,41 +153,16 @@ function Toggle({
       onClick={onClick}
       aria-pressed={active}
       title={title}
-      style={{
-        ...button(false),
-        background: active ? 'var(--tnt-current)' : 'var(--tnt-bg)',
-        color: active ? '#fff' : 'var(--tnt-text)',
-        borderColor: active ? 'var(--tnt-current)' : 'var(--tnt-border)',
-      }}
+      className="tnt-btn"
     >
       {children}
     </button>
   )
 }
 
+/** A hairline between groups of controls; there is no primitive for a rule. */
 function Divider(): React.JSX.Element {
-  return <span aria-hidden="true" style={{ width: 1, height: 20, background: 'var(--tnt-border)' }} />
-}
-
-function button(disabled: boolean): React.CSSProperties {
-  return {
-    padding: '5px 11px',
-    borderRadius: 'var(--tnt-radius)',
-    border: '1px solid var(--tnt-border)',
-    background: 'var(--tnt-bg)',
-    color: 'var(--tnt-text)',
-    fontSize: 13,
-    cursor: disabled ? 'not-allowed' : 'pointer',
-    opacity: disabled ? 0.45 : 1,
-  }
-}
-
-const select: React.CSSProperties = {
-  fontFamily: 'var(--tnt-font)',
-  fontSize: 13,
-  padding: '3px 5px',
-  borderRadius: 'var(--tnt-radius)',
-  border: '1px solid var(--tnt-border)',
-  background: 'var(--tnt-bg)',
-  color: 'var(--tnt-text)',
+  return (
+    <span aria-hidden="true" style={{ width: 1, height: 20, background: 'var(--tnt-border)' }} />
+  )
 }

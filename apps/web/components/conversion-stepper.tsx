@@ -92,20 +92,18 @@ export function ConversionStepper({
   const jumpToEnd = useCallback(() => setStepIndex(Math.max(0, stepCount - 1)), [stepCount])
 
   return (
-    <div style={{ display: 'grid', gap: 16 }}>
+    <div className="tnt-stack">
       {picker}
 
       {disabled ? null : <ValidationErrors errors={initial.errors} />}
 
       {disabled || trace === null ? null : (
         <>
+          {/* One pane or two: a conversion with no source to show gets the whole
+              width rather than a column beside an empty one. */}
           <div
-            style={{
-              display: 'grid',
-              gap: 14,
-              gridTemplateColumns: source === null ? '1fr' : 'repeat(auto-fit, minmax(280px, 1fr))',
-              alignItems: 'start',
-            }}
+            className={source === null ? 'tnt-stack' : 'tnt-panels'}
+            style={{ alignItems: 'start' }}
           >
             {source === null ? null : (
               <Pane title="Source" subtitle={describe(source.kind)}>
@@ -115,7 +113,7 @@ export function ConversionStepper({
 
             {target === null ? (
               <Pane title="Result" subtitle="built as the steps run">
-                <p className="tnt-muted" style={{ fontSize: 13, margin: 0 }}>
+                <p className="tnt-muted tnt-sm" style={{ margin: 0 }}>
                   Nothing built yet — step forward to watch it appear.
                 </p>
               </Pane>
@@ -158,14 +156,16 @@ function Pane({
   children: React.ReactNode
 }): React.JSX.Element {
   return (
-    <section style={{ display: 'grid', gap: 6, minWidth: 0 }}>
-      <h2 style={{ fontSize: 13, margin: 0, textTransform: 'uppercase', letterSpacing: 0.6 }}>
+    <section className="tnt-stack-sm">
+      <h2 className="tnt-label" style={{ margin: 0 }}>
         {title}{' '}
+        {/* `.tnt-label` is uppercase, tracked and semibold, and all three are
+            inherited; the subtitle is running text, so it undoes them. */}
         <span className="tnt-muted" style={{ textTransform: 'none', letterSpacing: 0, fontWeight: 400 }}>
           — {subtitle}
         </span>
       </h2>
-      <div className="tnt-card" style={{ background: 'var(--tnt-bg)', minWidth: 0, overflowX: 'auto' }}>
+      <div className="tnt-card tnt-scroll-x" style={{ background: 'var(--tnt-bg)', minWidth: 0 }}>
         {children}
       </div>
     </section>

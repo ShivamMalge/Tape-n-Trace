@@ -24,11 +24,11 @@ export function ConversionResult({
 }): React.JSX.Element | null {
   if (trace.result.type === 'incomplete') {
     return (
-      <div role="status" style={box('var(--tnt-marked)')}>
-        <strong style={{ color: 'var(--tnt-marked)', fontSize: 15 }}>Stopped without finishing</strong>
-        <p style={{ margin: 0, fontSize: 14 }}>{trace.result.reason}</p>
+      <div role="status" className="tnt-note tnt-note-warn tnt-stack-sm">
+        <strong style={{ color: 'var(--tnt-marked)' }}>Stopped without finishing</strong>
+        <p style={{ margin: 0 }}>{trace.result.reason}</p>
         {trace.meta.truncated === undefined ? null : (
-          <p className="tnt-muted" style={{ margin: 0, fontSize: 12 }}>
+          <p className="tnt-meta" style={{ margin: 0 }}>
             {trace.meta.truncated.reason}
           </p>
         )}
@@ -38,7 +38,7 @@ export function ConversionResult({
 
   if (!atEnd) {
     return (
-      <p className="tnt-muted" style={{ fontSize: 13, margin: 0 }}>
+      <p className="tnt-muted tnt-sm" style={{ margin: 0 }}>
         The answer appears at the last step.{' '}
         <button type="button" onClick={onJumpToEnd} style={linkButton}>
           Skip to it
@@ -52,13 +52,13 @@ export function ConversionResult({
   if (summary === null) return null
 
   return (
-    <div role="status" style={box('var(--tnt-accepting)')}>
-      <strong style={{ color: 'var(--tnt-accepting)', fontSize: 15 }}>{summary.headline}</strong>
-      <p style={{ margin: 0, fontSize: 15, fontFamily: 'var(--tnt-mono)', wordBreak: 'break-word' }}>
+    <div role="status" className="tnt-note tnt-note-good tnt-stack-sm">
+      <strong style={{ color: 'var(--tnt-accepting)' }}>{summary.headline}</strong>
+      <p className="tnt-mono" style={{ margin: 0, wordBreak: 'break-word' }}>
         {summary.body}
       </p>
       {summary.note === null ? null : (
-        <p className="tnt-muted" style={{ margin: 0, fontSize: 12 }}>
+        <p className="tnt-meta" style={{ margin: 0 }}>
           {summary.note}
         </p>
       )}
@@ -104,17 +104,7 @@ function describe(trace: Trace): Summary | null {
   }
 }
 
-function box(color: string): React.CSSProperties {
-  return {
-    display: 'grid',
-    gap: 5,
-    padding: '11px 14px',
-    borderRadius: 'var(--tnt-radius)',
-    border: `1px solid ${color}`,
-    background: 'var(--tnt-surface)',
-  }
-}
-
+/** A button that has to read as a link; no primitive covers that shape. */
 const linkButton: React.CSSProperties = {
   background: 'none',
   border: 'none',

@@ -26,44 +26,34 @@ export default async function ConversionPage({ params }: PageProps): Promise<Rea
 
   return (
     <div className="tnt-page">
-      <p style={{ fontSize: 13, margin: 0 }}>
+      <p className="tnt-sm" style={{ margin: 0 }}>
         <a href="/convert">← All conversions</a>
       </p>
 
-      <h1 style={{ fontSize: 24, marginTop: 8 }}>{found.title}</h1>
-      <p style={{ maxWidth: '62ch', marginTop: 0 }}>{found.summary}</p>
+      <h1 style={{ marginTop: 'var(--tnt-space-2)' }}>{found.title}</h1>
+      <p className="tnt-prose" style={{ marginTop: 0 }}>{found.summary}</p>
 
       {found.enrichment === true ? (
-        <p
-          style={{
-            maxWidth: '62ch',
-            fontSize: 13,
-            padding: '8px 12px',
-            borderRadius: 'var(--tnt-radius)',
-            border: '1px solid var(--tnt-border)',
-            background: 'var(--tnt-surface)',
-          }}
-        >
+        <p className="tnt-card tnt-prose tnt-sm">
           <strong>Beyond the syllabus.</strong> This topic is not in the prescribed text and is not
           examined on this course. It is here because it is worth knowing, not because you need it.
         </p>
       ) : null}
 
       <div
+        className="tnt-stack-lg"
         style={{
-          display: 'grid',
-          gap: 24,
           gridTemplateColumns: 'minmax(0, 3fr) minmax(220px, 1fr)',
           alignItems: 'start',
-          marginTop: 16,
+          marginTop: 'var(--tnt-space-4)',
         }}
       >
         <ConversionWorkbench key={found.id} conversionId={found.id} />
 
-        <aside style={{ display: 'grid', gap: 14, alignContent: 'start' }}>
+        <aside className="tnt-stack" style={{ alignContent: 'start' }}>
           <section className="tnt-card">
-            <h2 style={{ fontSize: 15, marginTop: 0 }}>How to read it</h2>
-            <ul style={{ margin: 0, paddingLeft: 18, fontSize: 14, display: 'grid', gap: 6 }}>
+            <h2>How to read it</h2>
+            <ul className="tnt-sm tnt-stack-sm" style={{ margin: 0, paddingLeft: 18 }}>
               {found.reading.map((line) => (
                 <li key={line}>{line}</li>
               ))}
@@ -71,8 +61,8 @@ export default async function ConversionPage({ params }: PageProps): Promise<Rea
           </section>
 
           <section className="tnt-card">
-            <h2 style={{ fontSize: 15, marginTop: 0 }}>Reference</h2>
-            <p className="tnt-muted" style={{ fontSize: 13, margin: 0 }}>
+            <h2>Reference</h2>
+            <p className="tnt-muted tnt-sm" style={{ margin: 0 }}>
               {found.citation}
             </p>
           </section>

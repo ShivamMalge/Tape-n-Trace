@@ -13,8 +13,8 @@ export default function PumpingIndexPage(): React.JSX.Element {
 
   return (
     <div className="tnt-page">
-      <h1 style={{ fontSize: 26 }}>The pumping lemma game</h1>
-      <p style={{ maxWidth: '64ch' }}>
+      <h1>The pumping lemma game</h1>
+      <p className="tnt-prose">
         The lemma is taught as a formula, but it is a two-player game with alternating quantifiers —
         ∃n, ∀w, ∃xyz, ∀i. You play the ∀ moves, the engine plays the ∃ moves, and it plays to win: it
         checks every decomposition and plays the one that is hardest to beat.
@@ -43,20 +43,20 @@ export default function PumpingIndexPage(): React.JSX.Element {
 
 function Section({ title, hint, children }: { title: string; hint: string; children: React.ReactNode }): React.JSX.Element {
   return (
-    <section style={{ marginTop: 26 }}>
-      <h2 style={{ fontSize: 18 }}>{title}</h2>
-      <p className="tnt-muted" style={{ marginTop: 0, fontSize: 14, maxWidth: '64ch' }}>{hint}</p>
-      <div style={{ display: 'grid', gap: 10, gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))' }}>{children}</div>
+    <section className="tnt-section">
+      <h2>{title}</h2>
+      <p className="tnt-prose tnt-muted tnt-sm" style={{ marginTop: 0 }}>{hint}</p>
+      <div className="tnt-panels tnt-panels-narrow">{children}</div>
     </section>
   )
 }
 
 function Card({ href, title, notation, difficulty }: { href: string; title: string; notation: string; difficulty: string }): React.JSX.Element {
   return (
-    <a href={href} className="tnt-card" style={{ display: 'grid', gap: 4, textDecoration: 'none', color: 'inherit' }}>
-      <strong style={{ fontSize: 15 }}>{title}</strong>
-      <code style={{ fontSize: 13 }}>{notation}</code>
-      <span className="tnt-muted" style={{ fontSize: 12 }}>{difficulty}</span>
+    <a href={href} className="tnt-card tnt-stack-sm">
+      <strong>{title}</strong>
+      <code className="tnt-sm">{notation}</code>
+      <span className="tnt-meta">{difficulty}</span>
     </a>
   )
 }

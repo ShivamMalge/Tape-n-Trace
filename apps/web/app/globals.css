@@ -1,4 +1,14 @@
+/**
+ * The web app's own chrome.
+ *
+ * Everything reusable — scales, buttons, chips, cards, tables — lives in
+ * `@tape-n-trace/ui`, because the Vyakarana widget ships those too. What is
+ * left here is the part a notebook must never see: the document reset, the
+ * shell grid, and the navigation rail.
+ */
+
 @import '@tape-n-trace/ui/tokens.css';
+@import '@tape-n-trace/ui/primitives.css';
 
 *,
 *::before,
@@ -13,23 +23,36 @@ body {
   background: var(--tnt-bg);
   color: var(--tnt-text);
   font-family: var(--tnt-font);
+  font-size: var(--tnt-text-base);
   line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
 }
 
 a {
   color: var(--tnt-current);
+  text-underline-offset: 2px;
+}
+
+a:hover {
+  text-decoration-thickness: 2px;
 }
 
 h1,
 h2,
 h3 {
-  line-height: 1.25;
+  line-height: 1.2;
   margin: 0 0 0.4em;
+  letter-spacing: -0.011em;
 }
+
+h1 { font-size: var(--tnt-text-2xl); }
+h2 { font-size: var(--tnt-text-xl); }
+h3 { font-size: var(--tnt-text-lg); }
 
 code,
 kbd {
   font-family: var(--tnt-mono);
+  font-variant-numeric: tabular-nums;
   font-size: 0.92em;
 }
 
@@ -38,28 +61,148 @@ kbd {
   outline-offset: 2px;
 }
 
-.tnt-page {
-  max-width: 1120px;
+::selection {
+  background: var(--tnt-current-soft);
+}
+
+/* ---------------------------------------------------------------------------
+ * The shell — a sticky rail beside the content
+ * ------------------------------------------------------------------------ */
+
+.tnt-shell {
+  display: grid;
+  grid-template-columns: 208px minmax(0, 1fr);
+  gap: var(--tnt-space-6);
+  max-width: 1360px;
   margin: 0 auto;
-  padding: 24px 20px 64px;
+  padding: 0 var(--tnt-space-5);
+  align-items: start;
 }
 
-.tnt-card {
-  border: 1px solid var(--tnt-border);
-  border-radius: var(--tnt-radius);
-  background: var(--tnt-surface);
-  padding: 16px;
+.tnt-rail {
+  position: sticky;
+  top: 0;
+  align-self: start;
+  max-height: 100vh;
+  overflow-y: auto;
+  padding: var(--tnt-space-5) 0 var(--tnt-space-6);
+  border-right: 1px solid var(--tnt-border);
+  padding-right: var(--tnt-space-4);
 }
 
-.tnt-muted {
+.tnt-brand {
+  display: block;
+  font-weight: 700;
+  font-size: var(--tnt-text-lg);
+  color: var(--tnt-text);
+  text-decoration: none;
+  letter-spacing: -0.02em;
+  margin-bottom: var(--tnt-space-1);
+}
+
+.tnt-brand-sub {
+  display: block;
+  font-size: var(--tnt-text-xs);
   color: var(--tnt-text-muted);
+  margin-bottom: var(--tnt-space-5);
 }
+
+.tnt-rail-group { margin-bottom: var(--tnt-space-4); }
+
+.tnt-rail-group > .tnt-label {
+  display: block;
+  margin-bottom: var(--tnt-space-1);
+}
+
+.tnt-rail-link {
+  display: block;
+  padding: 3px var(--tnt-space-2);
+  margin-left: calc(var(--tnt-space-2) * -1);
+  border-radius: var(--tnt-radius-sm);
+  font-size: var(--tnt-text-sm);
+  color: var(--tnt-text);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+}
+
+.tnt-rail-link:hover {
+  background: var(--tnt-hover);
+}
+
+.tnt-rail-link[aria-current='page'] {
+  border-left-color: var(--tnt-current);
+  color: var(--tnt-current);
+  font-weight: 600;
+  background: var(--tnt-current-soft);
+}
+
+.tnt-rail-rule {
+  border: 0;
+  border-top: 1px solid var(--tnt-border);
+  margin: var(--tnt-space-4) 0;
+}
+
+/* The content column. `.tnt-page` is what every route wraps itself in. */
+.tnt-page {
+  min-width: 0;
+  padding: var(--tnt-space-5) 0 var(--tnt-space-7);
+}
+
+.tnt-page > h1 { margin-bottom: var(--tnt-space-2); }
+
+/**
+ * Narrow: the rail becomes a disclosure above the content. `<details>` rather
+ * than a scripted menu, so it works before hydration and with the keyboard.
+ */
+@media (max-width: 860px) {
+  .tnt-shell {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+    padding: 0 var(--tnt-space-4);
+  }
+
+  .tnt-rail {
+    position: static;
+    max-height: none;
+    overflow: visible;
+    border-right: 0;
+    border-bottom: 1px solid var(--tnt-border);
+    padding: var(--tnt-space-3) 0;
+  }
+
+  .tnt-rail-nav {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: var(--tnt-space-3);
+  }
+
+  .tnt-brand-sub { margin-bottom: var(--tnt-space-2); }
+}
+
+/* ---------------------------------------------------------------------------
+ * The syllabus breadcrumb, above the page heading
+ * ------------------------------------------------------------------------ */
+
+.tnt-crumb {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--tnt-space-2);
+  align-items: baseline;
+  font-size: var(--tnt-text-xs);
+  color: var(--tnt-text-muted);
+  padding: var(--tnt-space-5) 0 var(--tnt-space-3);
+  border-bottom: 1px solid var(--tnt-border);
+}
+
+/* The crumb owns the top of the column when it is present. */
+.tnt-crumb + .tnt-page { padding-top: var(--tnt-space-5); }
 
 /* Skip link — the first tab stop on every page. */
 .tnt-skip {
   position: absolute;
   left: -9999px;
 }
+
 .tnt-skip:focus {
   left: 8px;
   top: 8px;

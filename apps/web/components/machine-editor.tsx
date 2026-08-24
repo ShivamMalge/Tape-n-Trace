@@ -146,7 +146,7 @@ export function MachineEditor({
         )
 
   return (
-    <div onKeyDown={onKeyDown} style={{ display: 'grid', gap: 16 }}>
+    <div onKeyDown={onKeyDown} className="tnt-stack">
       <EditorToolbar
         mode={mode}
         onModeChange={setMode}
@@ -165,7 +165,7 @@ export function MachineEditor({
         }}
       />
 
-      <p className="tnt-muted" style={{ margin: 0, fontSize: 13 }}>
+      <p className="tnt-muted tnt-sm" style={{ margin: 0 }}>
         Click empty space to add a state. Drag one state onto another to connect them. Double-click a
         state to make it accepting, right-click it to make it the start. Click an edge to edit its label.
       </p>
@@ -188,7 +188,7 @@ export function MachineEditor({
       />
 
       {notice === null ? null : (
-        <p role="status" style={{ margin: 0, fontSize: 13, color: 'var(--tnt-marked)' }}>
+        <p role="status" className="tnt-sm" style={{ margin: 0, color: 'var(--tnt-marked)' }}>
           {notice}
         </p>
       )}

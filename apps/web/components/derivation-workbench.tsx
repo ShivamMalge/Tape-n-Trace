@@ -74,12 +74,12 @@ export function DerivationWorkbench(): React.JSX.Element {
   }, [step])
 
   return (
-    <div style={{ display: 'grid', gap: 16 }}>
+    <div className="tnt-stack">
       <GrammarInput onGrammar={onGrammar} />
 
-      <div style={{ display: 'flex', gap: 8, alignItems: 'flex-end', flexWrap: 'wrap' }}>
-        <label style={{ display: 'grid', gap: 4 }}>
-          <span className="tnt-muted" style={{ fontSize: 13 }}>
+      <div className="tnt-row tnt-row-end">
+        <label className="tnt-field">
+          <span className="tnt-muted">
             Derive this string
           </span>
           <input
@@ -87,54 +87,24 @@ export function DerivationWorkbench(): React.JSX.Element {
             onChange={(event) => setTarget(event.target.value)}
             spellCheck={false}
             autoComplete="off"
-            style={{
-              fontFamily: 'var(--tnt-mono)',
-              fontSize: 16,
-              padding: '7px 9px',
-              borderRadius: 'var(--tnt-radius)',
-              border: '1px solid var(--tnt-border)',
-              background: 'var(--tnt-bg)',
-              color: 'var(--tnt-text)',
-              minWidth: 200,
-            }}
+            className="tnt-input tnt-input-mono"
+            style={{ minWidth: 200 }}
           />
         </label>
 
-        <label style={{ display: 'flex', gap: 5, alignItems: 'center', fontSize: 13 }}>
+        <label className="tnt-field-row">
           <span className="tnt-muted">Mode</span>
           <select
             value={mode}
             onChange={(event) => setMode(event.target.value as 'leftmost' | 'rightmost')}
-            style={{
-              fontFamily: 'var(--tnt-font)',
-              fontSize: 14,
-              padding: '5px 8px',
-              borderRadius: 'var(--tnt-radius)',
-              border: '1px solid var(--tnt-border)',
-              background: 'var(--tnt-bg)',
-              color: 'var(--tnt-text)',
-            }}
+            className="tnt-input"
           >
             <option value="leftmost">leftmost</option>
             <option value="rightmost">rightmost</option>
           </select>
         </label>
 
-        <button
-          type="button"
-          onClick={run}
-          disabled={grammar === null}
-          style={{
-            padding: '8px 16px',
-            borderRadius: 'var(--tnt-radius)',
-            border: '1px solid var(--tnt-current)',
-            background: 'var(--tnt-current)',
-            color: '#fff',
-            fontSize: 14,
-            cursor: grammar === null ? 'not-allowed' : 'pointer',
-            opacity: grammar === null ? 0.5 : 1,
-          }}
-        >
+        <button type="button" className="tnt-btn tnt-btn-primary" onClick={run} disabled={grammar === null}>
           Derive
         </button>
       </div>
@@ -142,31 +112,30 @@ export function DerivationWorkbench(): React.JSX.Element {
       <ValidationErrors errors={outcome.errors} />
 
       {outcome.trace?.result.type === 'incomplete' ? (
-        <p role="status" style={{ margin: 0, fontSize: 14, color: 'var(--tnt-marked)' }}>
+        <p role="status" style={{ margin: 0, color: 'var(--tnt-marked)' }}>
           {outcome.trace.result.reason} That is a bound, not a verdict.
         </p>
       ) : null}
 
       {outcome.trace !== null && snapshot !== undefined ? (
         <>
-          <section style={{ display: 'grid', gap: 6 }}>
-            <h2 style={{ fontSize: 13, margin: 0, textTransform: 'uppercase', letterSpacing: 0.6 }}>
+          <section className="tnt-stack-sm">
+            <h2 className="tnt-label" style={{ margin: 0 }}>
               Sentential form
             </h2>
-            <div className="tnt-card" style={{ background: 'var(--tnt-bg)', display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+            <div className="tnt-card tnt-row tnt-row-tight tnt-card-plain">
               {snapshot.input.length === 0 ? (
-                <span className="tnt-muted" style={{ fontSize: 14 }}>
+                <span className="tnt-muted">
                   ε — the empty string
                 </span>
               ) : (
                 snapshot.input.map((token, i) => (
                   <span
                     key={i}
+                    className="tnt-mono tnt-lg"
                     data-lit={litPositions.has(i) ? 'true' : undefined}
                     style={{
-                      fontFamily: 'var(--tnt-mono)',
-                      fontSize: 16,
-                      padding: '3px 8px',
+                      padding: 'var(--tnt-space-1) var(--tnt-space-2)',
                       borderRadius: 'var(--tnt-radius)',
                       border: `1px solid ${litPositions.has(i) ? 'var(--tnt-current)' : 'var(--tnt-border)'}`,
                       background: litPositions.has(i)
@@ -184,24 +153,24 @@ export function DerivationWorkbench(): React.JSX.Element {
             </div>
           </section>
 
-          <div style={{ display: 'grid', gap: 16, gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
-            <section style={{ display: 'grid', gap: 6, minWidth: 0 }}>
-              <h2 style={{ fontSize: 13, margin: 0, textTransform: 'uppercase', letterSpacing: 0.6 }}>
+          <div className="tnt-panels">
+            <section className="tnt-stack-sm">
+              <h2 className="tnt-label" style={{ margin: 0 }}>
                 Productions
               </h2>
-              <div className="tnt-card" style={{ background: 'var(--tnt-bg)' }}>
+              <div className="tnt-card tnt-card-plain">
                 <ProductionList grammar={snapshot.grammar} litIndices={lit} />
               </div>
             </section>
 
-            <section style={{ display: 'grid', gap: 6, minWidth: 0 }}>
-              <h2 style={{ fontSize: 13, margin: 0, textTransform: 'uppercase', letterSpacing: 0.6 }}>
+            <section className="tnt-stack-sm">
+              <h2 className="tnt-label" style={{ margin: 0 }}>
                 Parse tree
               </h2>
-              <div className="tnt-card" style={{ background: 'var(--tnt-bg)', overflowX: 'auto' }}>
+              <div className="tnt-card tnt-scroll-x tnt-card-plain">
                 <ParseTree nodes={toRenderTree(snapshot.nodes)} step={step} />
               </div>
-              <p className="tnt-muted" style={{ margin: 0, fontSize: 13, fontFamily: 'var(--tnt-mono)' }}>
+              <p className="tnt-sm tnt-muted tnt-mono" style={{ margin: 0 }}>
                 yield: {treeYield(snapshot.nodes).join(' ') || 'ε'}
               </p>
             </section>

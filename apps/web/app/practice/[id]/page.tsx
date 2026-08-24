@@ -30,11 +30,11 @@ export default async function ExercisePage({ params }: PageProps): Promise<React
 
   return (
     <div className="tnt-page">
-      <p style={{ fontSize: 13, margin: 0 }}>
+      <p className="tnt-sm" style={{ margin: 0 }}>
         <a href="/practice">← All exercises</a>
       </p>
 
-      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', margin: '10px 0' }}>
+      <div className="tnt-row" style={{ margin: 'var(--tnt-space-3) 0' }}>
         {[
           `${exercise.marks} marks`,
           exercise.bloom,
@@ -44,22 +44,13 @@ export default async function ExercisePage({ params }: PageProps): Promise<React
         ]
           .filter((tag): tag is string => tag !== null)
           .map((tag) => (
-            <span
-              key={tag}
-              style={{
-                fontSize: 12,
-                padding: '2px 9px',
-                borderRadius: 999,
-                border: '1px solid var(--tnt-border)',
-                background: 'var(--tnt-surface)',
-              }}
-            >
+            <span key={tag} className="tnt-tag">
               {tag}
             </span>
           ))}
       </div>
 
-      <p style={{ fontSize: 17, maxWidth: '68ch', whiteSpace: 'pre-line' }}>{exercise.prompt}</p>
+      <p className="tnt-prose tnt-lg" style={{ whiteSpace: 'pre-line' }}>{exercise.prompt}</p>
 
       <ExerciseWorkbench key={exercise.id} exercise={exercise} />
     </div>

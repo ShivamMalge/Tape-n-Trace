@@ -3,7 +3,7 @@
 > **Status: v1.0, 2026-08-24.** P0.1 through P1.7 are built and gated; the status tracker below is
 > updated in the same commit as the work it describes. P1.8 — the Python package — is what remains.
 
-Companion documents: [architecture.md](architecture.md) · [documentation.md](documentation.md) · [README.md](README.md)
+Companion documents: [architecture.md](architecture.md) · [documentation.md](documentation.md) · [phases-vyakarana.md](phases-vyakarana.md) — P1.8 in detail · [README.md](README.md)
 
 ---
 
@@ -43,7 +43,7 @@ Updated in the same commit as the work it describes. ✅ done and pushed · 🔨
 | P1.5 CFL properties, CNF | v0.8 | ✅ | 2026-08-22 · 735 tests → 776; pipeline runs the book’s safe order (Thm 7.14) |
 | P1.6 Turing machines | v0.9 | ✅ | 2026-08-23 · 776 tests → 838; every gallery machine is the book’s own |
 | P1.7 Undecidability, hierarchy | **v1.0** | ✅ | 2026-08-24 · 838 tests → 956; **full syllabus coverage** |
-| P1.8 Vyakarana (Python) | pkg 0.1 | ⬜ | ADR-004 spike first |
+| P1.8 Vyakarana (Python) | pkg 0.1 | ⬜ | planned separately in [phases-vyakarana.md](phases-vyakarana.md) — V0–V5, ADR-004 spike first |
 
 **Deadline note (added 2026-08-21): 10 days remain.** The outstanding plan is ~11 estimated weeks,
 so v1.0 as specified does not fit. The cut that preserves the most value: P1.1 → P1.2 → P1.3 → P1.4
@@ -725,30 +725,31 @@ Ship it before anything in P2. — **Met on 2026-08-24.**
 
 ### P1.8 — Vyakarana, the Python package · 2 weeks · ships `vyakarana` 0.1
 
-**Deliverables**
+> **Planned in detail in [phases-vyakarana.md](phases-vyakarana.md).** This row is a summary; that
+> document is authoritative, and the acceptance criteria below are expanded there into per-phase gates
+> across V0–V5. Do not maintain both — a criterion that appears twice will disagree with itself.
 
-- **Day 1: the ADR-004 spike.** Decide where the engine executes in the Python path and record
-  ADR-004-final **before** any public API is frozen. Everything else in this phase depends on the answer,
-  because it determines whether `d.accepts(w)` is synchronous.
+**Why it moved.** Everything from P0.1 to P1.7 was more TypeScript, over an engine that already existed,
+behind a harness that already worked. This is a second language, a new build backend, a wheel that cannot
+be un-published, a blocking unknown (ADR-004) that shapes the public API, and four notebook hosts we do
+not control — one of which, Colab, is a release criterion that no test in this repository can check.
+That is not one row's worth of plan.
+
+**Deliverables, in brief**
+
+- **The ADR-004 spike, first and timeboxed to a day.** Where the engine executes in the Python path
+  decides whether every value-returning call is `d.accepts(w)` or `await d.accepts(w)`, so it closes
+  before any signature is frozen.
 - `bridge/`: the anywidget React entry, bundled by `tsup` into `vyakarana/static/`.
 - `vyakarana/`: the Python package per [documentation.md](documentation.md).
 - Scoped, Preflight-disabled Tailwind build for the widget container.
 - `_repr_mimebundle_` for automatic rendering on bare display.
 - Bundle-freshness check script wired into CI.
 
-**Acceptance criteria**
-
-- [ ] ADR-004 is closed and recorded before the API freeze.
-- [ ] `pip install` from a clean virtualenv renders a DFA in **Google Colab** with no Node toolchain
-      present. Colab is a release criterion, not a nice-to-have — it is what students actually use.
-- [ ] Renders correctly in Jupyter Notebook, JupyterLab, and VS Code notebooks.
-- [ ] Every public Python method maps to an engine function; a CI test asserts the two API surfaces have
-      not drifted.
-- [ ] Widget CSS provably does not leak: a test notebook with custom host styling renders unchanged
-      outside the container.
-- [ ] `export_trace()` output validates against the same JSON schema the web app's traces use.
-- [ ] A missing JS bundle raises a `RuntimeError` naming the expected path and the build command.
-- [ ] The README status table for the Python package is accurate.
+**Exit gate.** `pip install vyakarana` in a clean Google Colab runtime renders a DFA, with no Node
+toolchain present. The rest of the criteria are in
+[phases-vyakarana.md](phases-vyakarana.md) §5, and two artifacts they assume — a trace JSON Schema, and
+a machine-readable engine surface for the parity test — do not exist yet and are deliverables there.
 
 ---
 

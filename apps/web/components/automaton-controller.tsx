@@ -106,16 +106,16 @@ export function AutomatonController({
   const drawn = snapshot?.machine ?? machine
 
   return (
-    <div style={{ display: 'grid', gap: 16 }}>
+    <div className="tnt-stack">
       <form
         onSubmit={(event) => {
           event.preventDefault()
           run(input)
         }}
-        style={{ display: 'flex', gap: 8, alignItems: 'flex-end', flexWrap: 'wrap' }}
+        className="tnt-row tnt-row-end"
       >
-        <label style={{ display: 'grid', gap: 4, flex: '1 1 240px' }}>
-          <span style={{ fontSize: 13 }} className="tnt-muted">
+        <label className="tnt-field" style={{ flex: '1 1 240px' }}>
+          <span className="tnt-muted">
             Input string (over {`{${machine.alphabet.join(', ')}}`})
           </span>
           <input
@@ -124,57 +124,27 @@ export function AutomatonController({
             placeholder="try 0110"
             spellCheck={false}
             autoComplete="off"
-            style={{
-              fontFamily: 'var(--tnt-mono)',
-              fontSize: 15,
-              padding: '7px 9px',
-              borderRadius: 'var(--tnt-radius)',
-              border: '1px solid var(--tnt-border)',
-              background: 'var(--tnt-bg)',
-              color: 'var(--tnt-text)',
-              width: '100%',
-            }}
+            className="tnt-input tnt-input-mono"
+            style={{ width: '100%' }}
           />
         </label>
 
-        <button
-          type="submit"
-          style={{
-            padding: '8px 16px',
-            borderRadius: 'var(--tnt-radius)',
-            border: '1px solid var(--tnt-current)',
-            background: 'var(--tnt-current)',
-            color: '#fff',
-            fontSize: 14,
-            cursor: 'pointer',
-          }}
-        >
+        <button type="submit" className="tnt-btn tnt-btn-primary">
           Run
         </button>
       </form>
 
       {suggested.length > 0 ? (
-        <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
-          <span className="tnt-muted" style={{ fontSize: 13 }}>
-            Try:
-          </span>
+        <div className="tnt-row tnt-row-tight">
+          <span className="tnt-muted tnt-sm">Try:</span>
           {suggested.map((word) => (
             <button
               key={word || 'empty'}
               type="button"
+              className="tnt-chip tnt-mono"
               onClick={() => {
                 setInput(word)
                 run(word)
-              }}
-              style={{
-                fontFamily: 'var(--tnt-mono)',
-                fontSize: 13,
-                padding: '3px 9px',
-                borderRadius: 999,
-                border: '1px solid var(--tnt-border)',
-                background: 'var(--tnt-bg)',
-                color: 'var(--tnt-text)',
-                cursor: 'pointer',
               }}
             >
               {word === '' ? 'ε (empty)' : word}
@@ -186,7 +156,7 @@ export function AutomatonController({
       <ValidationErrors errors={errors} />
       {trace === null ? null : <VerdictBanner result={trace.result} meta={trace.meta} />}
 
-      <div className="tnt-card" style={{ background: 'var(--tnt-bg)' }}>
+      <div className="tnt-card tnt-card-plain">
         <AutomatonRenderer machine={drawn} step={step} instanceId="sim" />
       </div>
 
@@ -209,12 +179,12 @@ export function AutomatonController({
 
       {snapshot?.nodes === undefined ? null : (
         <section>
-          <h2 style={{ fontSize: 15 }}>Branch tree</h2>
-          <p className="tnt-muted" style={{ fontSize: 13, marginTop: 0 }}>
+          <h2>Branch tree</h2>
+          <p className="tnt-muted tnt-sm" style={{ marginTop: 0 }}>
             Every branch the machine is exploring at once. A branch with no move left dies where it
             stands, and stays on the diagram so you can see where the guess went wrong.
           </p>
-          <div className="tnt-card" style={{ background: 'var(--tnt-bg)', overflowX: 'auto' }}>
+          <div className="tnt-card tnt-scroll-x tnt-card-plain">
             <BranchTree nodes={snapshot.nodes} input={snapshot.input} step={step} />
           </div>
         </section>

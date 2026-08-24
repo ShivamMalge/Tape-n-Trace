@@ -97,26 +97,18 @@ export function DiagonalWorkbench(): React.JSX.Element {
   const step = trace === null ? null : (trace.steps[playback.stepIndex] ?? null)
 
   return (
-    <div style={{ display: 'grid', gap: 16 }}>
-      <div role="group" aria-label="Where to look" style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+    <div className="tnt-stack">
+      <div role="group" aria-label="Where to look" className="tnt-row tnt-row-tight">
         {PRESETS.map((p) => (
           <button
             key={p.id}
             type="button"
+            className="tnt-chip"
             aria-pressed={p.id === preset.id}
             onClick={() => {
               setPresetId(p.id)
               setSelected(null)
               setArguing(false)
-            }}
-            style={{
-              fontSize: 13,
-              padding: '4px 10px',
-              borderRadius: 999,
-              border: p.id === preset.id ? '1px solid var(--tnt-current)' : '1px solid var(--tnt-border)',
-              background: p.id === preset.id ? 'var(--tnt-current-soft)' : 'var(--tnt-bg)',
-              color: 'var(--tnt-text)',
-              cursor: 'pointer',
             }}
           >
             {p.label}
@@ -124,10 +116,12 @@ export function DiagonalWorkbench(): React.JSX.Element {
         ))}
       </div>
 
-      <p style={{ margin: 0, fontSize: 14, maxWidth: '76ch' }}>{preset.blurb}</p>
+      <p className="tnt-prose" style={{ margin: 0 }}>
+        {preset.blurb}
+      </p>
 
-      <div style={{ display: 'flex', gap: 14, alignItems: 'center', flexWrap: 'wrap', fontSize: 13 }}>
-        <label style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+      <div className="tnt-row tnt-sm">
+        <label className="tnt-field-row">
           Moves per cell
           <input
             type="number"
@@ -136,30 +130,19 @@ export function DiagonalWorkbench(): React.JSX.Element {
             step={20}
             value={budget}
             onChange={(e) => setBudget(Math.max(1, Math.min(2000, Number(e.target.value) || 1)))}
-            style={{ width: 84, font: 'inherit', padding: '2px 6px' }}
+            className="tnt-input"
+            style={{ width: 84 }}
           />
         </label>
-        <label style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+        <label className="tnt-field-row">
           <input type="checkbox" checked={showComplement} onChange={(e) => setShowComplement(e.target.checked)} />
           Complement the diagonal
         </label>
-        <button
-          type="button"
-          onClick={() => setArguing((on) => !on)}
-          style={{
-            font: 'inherit',
-            padding: '4px 12px',
-            borderRadius: 'var(--tnt-radius)',
-            border: '1px solid var(--tnt-border)',
-            background: arguing ? 'var(--tnt-current-soft)' : 'var(--tnt-bg)',
-            color: 'var(--tnt-text)',
-            cursor: 'pointer',
-          }}
-        >
+        <button type="button" className="tnt-btn" aria-pressed={arguing} onClick={() => setArguing((on) => !on)}>
           {arguing ? 'Hide the argument' : 'Walk Theorem 9.2'}
         </button>
         {table.aligned ? null : (
-          <span className="tnt-muted" style={{ fontSize: 12 }}>
+          <span className="tnt-muted tnt-xs">
             The rows and columns start in different places, so the diagonal is off screen — the last preset lines them up.
           </span>
         )}
@@ -168,7 +151,7 @@ export function DiagonalWorkbench(): React.JSX.Element {
       <DiagonalGrid table={table} selected={selected} onSelect={setSelected} showComplement={showComplement} />
 
       {trace === null ? null : (
-        <div style={{ display: 'grid', gap: 10 }}>
+        <div className="tnt-stack">
           <TransportBar
             stepIndex={playback.stepIndex}
             stepCount={trace.steps.length}

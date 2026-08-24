@@ -34,17 +34,8 @@ export function HomomorphismEditor({
   }
 
   return (
-    <fieldset
-      style={{
-        border: '1px solid var(--tnt-border)',
-        borderRadius: 'var(--tnt-radius)',
-        padding: '10px 12px',
-        margin: 0,
-        display: 'grid',
-        gap: 8,
-      }}
-    >
-      <legend style={{ fontSize: 13, padding: '0 6px' }} className="tnt-muted">
+    <fieldset className="tnt-card tnt-stack-sm" style={{ margin: 0 }}>
+      <legend className="tnt-sm tnt-muted" style={{ padding: '0 var(--tnt-space-1)' }}>
         h : Σ → Δ*
       </legend>
 
@@ -54,8 +45,8 @@ export function HomomorphismEditor({
           imagesMustBeIn === undefined ? [] : image.filter((c) => !imagesMustBeIn.includes(c))
 
         return (
-          <label key={symbol} style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-            <span style={{ fontFamily: 'var(--tnt-mono)', fontSize: 14, minWidth: 62 }}>
+          <label key={symbol} className="tnt-row">
+            <span className="tnt-mono" style={{ minWidth: 62 }}>
               h({symbol}) =
             </span>
             <input
@@ -66,24 +57,12 @@ export function HomomorphismEditor({
               autoComplete="off"
               aria-label={`Image of ${symbol}`}
               aria-invalid={bad.length > 0}
-              style={{
-                fontFamily: 'var(--tnt-mono)',
-                fontSize: 14,
-                padding: '4px 7px',
-                width: 120,
-                borderRadius: 'var(--tnt-radius)',
-                border: `1px solid ${bad.length > 0 ? 'var(--tnt-marked)' : 'var(--tnt-border)'}`,
-                background: 'var(--tnt-bg)',
-                color: 'var(--tnt-text)',
-              }}
+              className="tnt-input tnt-input-mono"
+              style={{ width: 120, borderColor: bad.length > 0 ? 'var(--tnt-marked)' : undefined }}
             />
-            {image.length === 0 ? (
-              <span className="tnt-muted" style={{ fontSize: 12 }}>
-                erased
-              </span>
-            ) : null}
+            {image.length === 0 ? <span className="tnt-meta">erased</span> : null}
             {bad.length > 0 ? (
-              <span style={{ fontSize: 12, color: 'var(--tnt-marked)' }}>
+              <span className="tnt-xs" style={{ color: 'var(--tnt-marked)' }}>
                 the machine cannot read {bad.map((c) => `"${c}"`).join(', ')}
               </span>
             ) : null}
@@ -91,7 +70,7 @@ export function HomomorphismEditor({
         )
       })}
 
-      <p className="tnt-muted" style={{ margin: 0, fontSize: 12 }}>
+      <p className="tnt-meta" style={{ margin: 0 }}>
         {imagesMustBeIn === undefined
           ? 'Leave a box empty to map that symbol to ε. Every symbol needs an image, even an empty one.'
           : 'For h⁻¹ the images are read by the original machine, so they must be strings over its own alphabet.'}

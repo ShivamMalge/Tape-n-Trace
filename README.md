@@ -145,6 +145,7 @@ Full tree and rationale in [architecture.md](architecture.md) §3.
 |---|---|
 | [architecture.md](architecture.md) | Boundaries, the trace protocol, core types, ADRs, prohibitions |
 | [phases.md](phases.md) | Build order, per-phase acceptance criteria, schedule, open decisions |
+| [phases-vyakarana.md](phases-vyakarana.md) | The Python package's own plan — V0–V5, and why it needed one |
 | [documentation.md](documentation.md) | The Vyakarana Python API (specification — not yet released) |
 | [docs/citations.md](docs/citations.md) | Every Hopcroft 2e citation, verified against the printed edition |
 | `prd (2).md` | The original product requirements document |
@@ -227,6 +228,10 @@ violating them is a defect regardless of whether tests pass:
 
 - The engine imports no React, no Next, and never touches the DOM.
 - Every algorithm returns a trace, not just a result.
+- Styling goes in `packages/ui`'s token and primitive layers, and every selector there starts with a
+  `.tnt-` class — those files are injected into a host notebook by the widget, so a bare element
+  selector would repaint somebody's Jupyter cell. Page chrome lives in the app's `globals.css`.
+  Inline `style` is for what genuinely varies per step or per verdict; see architecture.md §10.3.
 - No component exceeds ~300 lines, and no component both computes and renders.
 - State naming in conversions is canonical and deterministic — same input, byte-identical output.
 - No documentation claims a capability the code lacks, including the table at the top of this file.

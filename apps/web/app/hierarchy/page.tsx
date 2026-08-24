@@ -11,29 +11,29 @@ export const metadata: Metadata = {
 export default function HierarchyPage(): React.JSX.Element {
   return (
     <div className="tnt-page">
-      <h1 style={{ fontSize: 26 }}>The hierarchy of language classes</h1>
-      <p style={{ maxWidth: '70ch' }}>
+      <h1>The hierarchy of language classes</h1>
+      <p className="tnt-prose">
         The whole course, on one picture. Each ring is a class of languages and a kind of machine, and each contains the
         one inside it — every regular language is context-free, every context-free language is recursive, and so on
         outwards. What makes it a course rather than a diagram is that every containment is <em>proper</em>, and the
         proof of each is a separate technique: the pumping lemma of §4.1 pushes a language out of the innermost ring,
         the pumping lemma of §7.2 pushes it out of the next, and diagonalization pushes L<sub>d</sub> out of them all.
       </p>
-      <p className="tnt-muted" style={{ maxWidth: '70ch', fontSize: 14 }}>
+      <p className="tnt-prose tnt-muted tnt-sm">
         Open a ring for its machine, its grammar, what it is closed under, its pumping lemma and what can be decided
         about it. The languages plotted in each ring link to the page that proves they belong there.
       </p>
 
-      <div style={{ marginTop: 20 }}>
+      <div style={{ marginTop: 'var(--tnt-space-5)' }}>
         <HierarchyRings
           show={LANGUAGE_CLASSES.map((c) => c.id)}
           caption="Each language sits in the innermost class that contains it, so a language shown in the context-free ring is context-free and not regular. The outermost region is Fig. 9.2's “not RE”."
         />
       </div>
 
-      <section style={{ marginTop: 32 }}>
-        <h2 style={{ fontSize: 19 }}>How to place a language you have been given</h2>
-        <ol style={{ maxWidth: '70ch', fontSize: 14, display: 'grid', gap: 8, paddingLeft: 20 }}>
+      <section className="tnt-section">
+        <h2>How to place a language you have been given</h2>
+        <ol className="tnt-prose tnt-sm tnt-stack-sm" style={{ paddingLeft: 20 }}>
           <li>
             Try to build a finite automaton or a regular expression. If one works, it is regular and you are finished —{' '}
             <a href="/edit">draw it</a>.

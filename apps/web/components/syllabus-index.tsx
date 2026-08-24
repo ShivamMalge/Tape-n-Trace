@@ -19,25 +19,16 @@ export function SyllabusIndex(): React.JSX.Element {
   const scheme = (SCHEMES.find((s) => s.id === schemeId) ?? DEFAULT_SCHEME) as Scheme
 
   return (
-    <div style={{ display: 'grid', gap: 24 }}>
+    <div className="tnt-stack-lg">
       {SCHEMES.length < 2 ? null : (
-        <div role="group" aria-label="Scheme" style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+        <div role="group" aria-label="Scheme" className="tnt-row tnt-row-tight">
           {SCHEMES.map((s) => (
             <button
               key={s.id}
               type="button"
+              className="tnt-chip"
               aria-pressed={s.id === scheme.id}
               onClick={() => setSchemeId(s.id)}
-              style={{
-                font: 'inherit',
-                fontSize: 13,
-                padding: '4px 12px',
-                borderRadius: 999,
-                border: s.id === scheme.id ? '1px solid var(--tnt-current)' : '1px solid var(--tnt-border)',
-                background: s.id === scheme.id ? 'var(--tnt-current-soft)' : 'var(--tnt-bg)',
-                color: 'var(--tnt-text)',
-                cursor: 'pointer',
-              }}
             >
               {s.code} · {s.institution.split(',')[0]}
             </button>
@@ -45,19 +36,17 @@ export function SyllabusIndex(): React.JSX.Element {
         </div>
       )}
 
-      <section className="tnt-card" style={{ display: 'grid', gap: 4 }}>
-        <strong style={{ fontSize: 16 }}>
+      <section className="tnt-card tnt-stack-sm">
+        <strong className="tnt-lg">
           {scheme.code} — {scheme.title}
         </strong>
-        <span style={{ fontSize: 14 }}>{scheme.institution}</span>
-        <span className="tnt-muted" style={{ fontSize: 13 }}>
+        <span>{scheme.institution}</span>
+        <span className="tnt-muted tnt-sm">
           {scheme.session} · {scheme.credits} credits · L:T:P:S = {scheme.ltps.join(':')}
         </span>
-        <span className="tnt-muted" style={{ fontSize: 13 }}>
-          Textbook: {scheme.textbook}
-        </span>
+        <span className="tnt-muted tnt-sm">Textbook: {scheme.textbook}</span>
         {scheme.ltps[1] === 0 && scheme.ltps[3] > 0 ? (
-          <p style={{ margin: '6px 0 0', fontSize: 13, borderLeft: '3px solid var(--tnt-current)', paddingLeft: 8 }}>
+          <p className="tnt-note" style={{ margin: 0 }}>
             {scheme.ltps[0]} lecture hours, <strong>no tutorial hours</strong>, and {scheme.ltps[3]} self-study hours.
             More than half of a student’s time with this subject is unsupervised — which is the gap every trace in this
             app exists to fill.
@@ -70,19 +59,20 @@ export function SyllabusIndex(): React.JSX.Element {
       ))}
 
       <section>
-        <h2 style={{ fontSize: 18 }}>Course outcomes</h2>
+        <h2>Course outcomes</h2>
         {scheme.outcomes.length === 0 ? (
-          <p className="tnt-muted" style={{ fontSize: 14, maxWidth: '70ch' }}>
-            {scheme.outcomesNote ?? 'Not recorded for this scheme.'}
-          </p>
+          <p className="tnt-muted tnt-prose">{scheme.outcomesNote ?? 'Not recorded for this scheme.'}</p>
         ) : (
-          <dl style={{ display: 'grid', gap: 8, margin: 0 }}>
+          <dl className="tnt-stack-sm" style={{ margin: 0 }}>
             {scheme.outcomes.map((co) => (
-              <div key={co.id} style={{ display: 'grid', gap: 1 }}>
-                <dt style={{ fontSize: 13, fontWeight: 600 }}>
-                  {co.id} <span className="tnt-muted" style={{ fontWeight: 400 }}>· Bloom level {co.level}</span>
+              <div key={co.id} className="tnt-stack-sm">
+                <dt className="tnt-sm" style={{ fontWeight: 600 }}>
+                  {co.id}{' '}
+                  <span className="tnt-muted" style={{ fontWeight: 400 }}>
+                    · Bloom level {co.level}
+                  </span>
                 </dt>
-                <dd style={{ margin: 0, fontSize: 14 }}>{co.text}</dd>
+                <dd style={{ margin: 0 }}>{co.text}</dd>
               </div>
             ))}
           </dl>
@@ -91,15 +81,15 @@ export function SyllabusIndex(): React.JSX.Element {
 
       {scheme.tutorials.length === 0 ? null : (
         <section>
-          <h2 style={{ fontSize: 18 }}>Tutorial components</h2>
-          <p className="tnt-muted" style={{ fontSize: 13, maxWidth: '70ch', marginTop: 0 }}>
+          <h2>Tutorial components</h2>
+          <p className="tnt-muted tnt-sm tnt-prose" style={{ marginTop: 0 }}>
             The components the syllabus prescribes, and what delivers each. One is not built, and says so.
           </p>
-          <ul style={{ display: 'grid', gap: 6, listStyle: 'none', padding: 0, margin: 0 }}>
+          <ul className="tnt-stack-sm" style={{ listStyle: 'none', padding: 0, margin: 0 }}>
             {scheme.tutorials.map((tutorial) => {
               const topic = tutorial.topic === null ? undefined : topicById(tutorial.topic)
               return (
-                <li key={tutorial.title} style={{ fontSize: 14 }}>
+                <li key={tutorial.title}>
                   {tutorial.title} —{' '}
                   {topic === undefined ? (
                     <span className="tnt-muted">{tutorial.note ?? 'nothing delivers this yet.'}</span>
@@ -115,12 +105,12 @@ export function SyllabusIndex(): React.JSX.Element {
 
       {scheme.discrepancies.length === 0 ? null : (
         <section>
-          <h2 style={{ fontSize: 18 }}>Where the source documents disagree</h2>
-          <p className="tnt-muted" style={{ fontSize: 13, maxWidth: '70ch', marginTop: 0 }}>
+          <h2>Where the source documents disagree</h2>
+          <p className="tnt-muted tnt-sm tnt-prose" style={{ marginTop: 0 }}>
             Recorded rather than quietly resolved. Worth one question to the course faculty before anything here is
             treated as settled.
           </p>
-          <ul style={{ display: 'grid', gap: 6, paddingLeft: 20, margin: 0, fontSize: 14 }}>
+          <ul className="tnt-stack-sm" style={{ paddingLeft: 'var(--tnt-space-5)', margin: 0 }}>
             {scheme.discrepancies.map((note) => (
               <li key={note}>{note}</li>
             ))}
@@ -136,35 +126,27 @@ function ModuleSection({ module, scheme }: { module: SchemeModule; scheme: Schem
 
   return (
     <section>
-      <h2 style={{ fontSize: 18, marginBottom: 2 }}>
+      <h2 style={{ marginBottom: 2 }}>
         Module {module.number} — {module.title}
       </h2>
-      <p className="tnt-muted" style={{ fontSize: 13, margin: '0 0 10px' }}>
+      <p className="tnt-meta" style={{ margin: '0 0 var(--tnt-space-3)' }}>
         {module.hours} hours · Hopcroft 2e {module.sections}
         {module.co === '' ? '' : ` · ${module.co}`}
       </p>
 
-      <ul style={{ display: 'grid', gap: 8, listStyle: 'none', padding: 0, margin: 0 }}>
+      <ul className="tnt-stack-sm" style={{ listStyle: 'none', padding: 0, margin: 0 }}>
         {topics.map((topic) => {
           const tool = CATALOG.find((t) => t.href === topic.href)
           return (
             <li key={topic.id}>
-              <a
-                href={topic.href}
-                className="tnt-card"
-                style={{ display: 'grid', gap: 3, textDecoration: 'none', color: 'inherit', padding: 12 }}
-              >
-                <span style={{ fontSize: 15 }}>
+              <a href={topic.href} className="tnt-card tnt-stack-sm">
+                <span>
                   {topic.title}{' '}
-                  <span className="tnt-muted" style={{ fontSize: 12 }}>
+                  <span className="tnt-meta">
                     {topic.sections.length === 0 ? '' : `§${topic.sections.join(', §')}`}
                   </span>
                 </span>
-                {tool === undefined ? null : (
-                  <span className="tnt-muted" style={{ fontSize: 13 }}>
-                    {tool.summary}
-                  </span>
-                )}
+                {tool === undefined ? null : <span className="tnt-muted tnt-sm">{tool.summary}</span>}
               </a>
             </li>
           )
@@ -172,7 +154,7 @@ function ModuleSection({ module, scheme }: { module: SchemeModule; scheme: Schem
       </ul>
 
       {scheme.outcomes.find((co) => co.id === module.co) === undefined ? null : (
-        <p className="tnt-muted" style={{ fontSize: 12, marginTop: 8, maxWidth: '70ch' }}>
+        <p className="tnt-meta tnt-prose" style={{ marginTop: 'var(--tnt-space-2)' }}>
           {module.co}: {scheme.outcomes.find((co) => co.id === module.co)?.text}
         </p>
       )}

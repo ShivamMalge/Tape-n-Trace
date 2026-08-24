@@ -52,23 +52,25 @@ export function CompareView({
   const shown = witness === '' ? 'the empty string' : `"${witness}"`
 
   return (
-    <section style={{ display: 'grid', gap: 12 }}>
-      <h2 style={{ fontSize: 15, margin: 0 }}>Watch them disagree on {shown}</h2>
+    <section className="tnt-stack">
+      <h2 style={{ margin: 0 }}>Watch them disagree on {shown}</h2>
 
-      <div style={{ display: 'grid', gap: 14, gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))' }}>
+      <div className="tnt-panels">
         {[
           { machine: left, trace: runs.left, label: leftLabel, id: 'cmp-l' },
           { machine: right, trace: runs.right, label: rightLabel, id: 'cmp-r' },
         ].map(({ machine, trace, label, id }) => (
-          <div key={id} style={{ display: 'grid', gap: 6, minWidth: 0 }}>
-            <h3 style={{ fontSize: 13, margin: 0, textTransform: 'uppercase', letterSpacing: 0.6 }}>
+          <div key={id} className="tnt-stack-sm">
+            <h3 className="tnt-label" style={{ margin: 0 }}>
               {label}
               <VerdictTag trace={trace} />
             </h3>
-            <div className="tnt-card" style={{ background: 'var(--tnt-bg)', overflowX: 'auto' }}>
+            <div className="tnt-card tnt-scroll-x tnt-card-plain">
               <AutomatonRenderer machine={machine} step={stepOf(trace)} instanceId={id} />
             </div>
-            <p className="tnt-muted" style={{ margin: 0, fontSize: 12, minHeight: 30 }}>
+            {/* The height is held so the panels do not jump as the narration
+                changes length from step to step. */}
+            <p className="tnt-meta" style={{ margin: 0, minHeight: 30 }}>
               {stepOf(trace)?.narration ?? ''}
             </p>
           </div>
@@ -94,14 +96,14 @@ function VerdictTag({ trace }: { trace: Trace | null }): React.JSX.Element | nul
   const accepted = trace.result.accepted
   return (
     <span
+      className="tnt-tag"
       style={{
-        marginLeft: 8,
-        fontSize: 11,
-        padding: '1px 8px',
-        borderRadius: 999,
+        marginLeft: 'var(--tnt-space-2)',
+        // The tag sits inside a `.tnt-label` heading, which is uppercase and
+        // tracked; both are inherited, and the verdict is neither.
         textTransform: 'none',
         letterSpacing: 0,
-        border: `1px solid ${accepted ? 'var(--tnt-accepting)' : 'var(--tnt-marked)'}`,
+        borderColor: accepted ? 'var(--tnt-accepting)' : 'var(--tnt-marked)',
         color: accepted ? 'var(--tnt-accepting)' : 'var(--tnt-marked)',
         background: accepted ? 'var(--tnt-accepting-soft)' : 'var(--tnt-surface)',
       }}

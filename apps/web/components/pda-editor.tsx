@@ -60,33 +60,18 @@ export function PdaEditor(): React.JSX.Element {
   }
 
   return (
-    <div style={{ display: 'grid', gap: 16 }}>
-      <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
-        <span className="tnt-muted" style={{ fontSize: 13 }}>
-          Start from:
-        </span>
+    <div className="tnt-stack">
+      <div className="tnt-row tnt-row-tight">
+        <span className="tnt-muted tnt-sm">Start from:</span>
         {PDA_PRESETS.map((p) => (
-          <button
-            key={p.id}
-            type="button"
-            onClick={() => loadPreset(p.id)}
-            style={{
-              fontSize: 13,
-              padding: '3px 10px',
-              borderRadius: 999,
-              border: '1px solid var(--tnt-border)',
-              background: 'var(--tnt-bg)',
-              color: 'var(--tnt-text)',
-              cursor: 'pointer',
-            }}
-          >
+          <button key={p.id} type="button" onClick={() => loadPreset(p.id)} className="tnt-chip">
             {p.title}
           </button>
         ))}
       </div>
 
-      <label style={{ display: 'grid', gap: 4 }}>
-        <span style={{ fontSize: 13 }} className="tnt-muted">
+      <label className="tnt-field">
+        <span className="tnt-muted">
           Transitions — one per line, <code>state, read, pop -&gt; state, push</code>. Use ε (or eps)
           to read nothing and to push nothing; a push without spaces splits as letter-plus-digits, so
           AZ0 pushes A then Z0.
@@ -96,62 +81,49 @@ export function PdaEditor(): React.JSX.Element {
           onChange={(event) => setSource(event.target.value)}
           rows={Math.max(8, source.split('\n').length + 1)}
           spellCheck={false}
-          style={{
-            fontFamily: 'var(--tnt-mono)',
-            fontSize: 14,
-            lineHeight: 1.6,
-            padding: '10px 12px',
-            borderRadius: 'var(--tnt-radius)',
-            border: '1px solid var(--tnt-border)',
-            background: 'var(--tnt-bg)',
-            color: 'var(--tnt-text)',
-            resize: 'vertical',
-          }}
+          className="tnt-input tnt-input-mono"
+          style={{ resize: 'vertical' }}
         />
       </label>
 
-      <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', alignItems: 'flex-end' }}>
-        <label style={{ display: 'grid', gap: 4 }}>
-          <span style={{ fontSize: 13 }} className="tnt-muted">
-            Start state
-          </span>
+      <div className="tnt-row tnt-row-end">
+        <label className="tnt-field">
+          <span className="tnt-muted">Start state</span>
           <input
             value={start}
             onChange={(event) => setStart(event.target.value)}
-            style={fieldStyle}
+            className="tnt-input tnt-input-mono"
+            style={{ minWidth: 90 }}
             spellCheck={false}
           />
         </label>
-        <label style={{ display: 'grid', gap: 4 }}>
-          <span style={{ fontSize: 13 }} className="tnt-muted">
-            Start stack symbol
-          </span>
+        <label className="tnt-field">
+          <span className="tnt-muted">Start stack symbol</span>
           <input
             value={startStack}
             onChange={(event) => setStartStack(event.target.value)}
-            style={fieldStyle}
+            className="tnt-input tnt-input-mono"
+            style={{ minWidth: 90 }}
             spellCheck={false}
           />
         </label>
-        <label style={{ display: 'grid', gap: 4 }}>
-          <span style={{ fontSize: 13 }} className="tnt-muted">
-            Accepting states (comma separated)
-          </span>
+        <label className="tnt-field">
+          <span className="tnt-muted">Accepting states (comma separated)</span>
           <input
             value={acceptingText}
             onChange={(event) => setAcceptingText(event.target.value)}
-            style={{ ...fieldStyle, minWidth: 180 }}
+            className="tnt-input tnt-input-mono"
+            style={{ minWidth: 180 }}
             spellCheck={false}
           />
         </label>
-        <label style={{ display: 'grid', gap: 4 }}>
-          <span style={{ fontSize: 13 }} className="tnt-muted">
-            Accept by
-          </span>
+        <label className="tnt-field">
+          <span className="tnt-muted">Accept by</span>
           <select
             value={acceptBy}
             onChange={(event) => setAcceptBy(event.target.value as PDA['acceptBy'])}
-            style={{ ...fieldStyle, cursor: 'pointer' }}
+            className="tnt-input tnt-input-mono"
+            style={{ minWidth: 90, cursor: 'pointer' }}
           >
             <option value="finalState">final state — L(P)</option>
             <option value="emptyStack">empty stack — N(P)</option>
@@ -163,39 +135,32 @@ export function PdaEditor(): React.JSX.Element {
 
       {machine === null ? null : (
         <>
-          <div className="tnt-card" style={{ background: 'var(--tnt-bg)' }}>
+          <div className="tnt-card tnt-card-plain">
             <AutomatonRenderer machine={pdaToDrawable(machine)} step={null} instanceId="pda-edit" />
           </div>
 
           {determinism === null ? null : (
             <section aria-label="Determinism report" role="status">
-              <h2 style={{ fontSize: 15 }}>Is it a DPDA?</h2>
+              <h2>Is it a DPDA?</h2>
               {determinism.deterministic ? (
-                <p
-                  className="tnt-card"
-                  style={{ margin: 0, borderLeft: '3px solid var(--tnt-accepting)', fontSize: 14 }}
-                >
+                <p className="tnt-note tnt-note-good" style={{ margin: 0 }}>
                   Deterministic. No two moves ever apply to the same ID: for every state, input
                   symbol and stack top there is at most one move, and no ε-move competes with a
                   reading move (§6.4.1).
                 </p>
               ) : (
-                <div className="tnt-card" style={{ borderLeft: '3px solid var(--tnt-dead)', display: 'grid', gap: 8 }}>
-                  <p style={{ margin: 0, fontSize: 14 }}>
+                <div className="tnt-note tnt-note-bad tnt-stack-sm">
+                  <p style={{ margin: 0 }}>
                     Not deterministic — {determinism.violations.length} pair
                     {determinism.violations.length === 1 ? '' : 's'} of moves can fire on the same
                     ID:
                   </p>
-                  <ul style={{ margin: 0, paddingLeft: 20, display: 'grid', gap: 6 }}>
+                  <ul className="tnt-stack-sm" style={{ margin: 0, paddingLeft: 20 }}>
                     {determinism.violations.map((violation) => (
-                      <li key={`${violation.a}~${violation.b}`} style={{ fontSize: 13 }}>
-                        <span style={{ fontFamily: 'var(--tnt-mono)' }}>
-                          {labelOf.get(violation.a) ?? violation.a}
-                        </span>{' '}
+                      <li key={`${violation.a}~${violation.b}`}>
+                        <span className="tnt-mono">{labelOf.get(violation.a) ?? violation.a}</span>{' '}
                         and{' '}
-                        <span style={{ fontFamily: 'var(--tnt-mono)' }}>
-                          {labelOf.get(violation.b) ?? violation.b}
-                        </span>
+                        <span className="tnt-mono">{labelOf.get(violation.b) ?? violation.b}</span>
                         <br />
                         <span className="tnt-muted">{violation.reason}</span>
                       </li>
@@ -207,15 +172,15 @@ export function PdaEditor(): React.JSX.Element {
           )}
 
           <section aria-label="Run it">
-            <h2 style={{ fontSize: 15 }}>Run it</h2>
+            <h2>Run it</h2>
             <PdaRunner machine={machine} />
           </section>
         </>
       )}
 
       <section aria-label="Where DPDAs sit">
-        <h2 style={{ fontSize: 15 }}>Where DPDAs sit (§6.4)</h2>
-        <div className="tnt-card" style={{ fontSize: 14, display: 'grid', gap: 8 }}>
+        <h2>Where DPDAs sit (§6.4)</h2>
+        <div className="tnt-card tnt-stack-sm">
           <p style={{ margin: 0 }}>
             Regular ⊊ DPDA languages ⊊ context-free — both inclusions are strict. Every regular
             language is a DPDA language (ignore the stack and run the DFA), but wcwᴿ is a DPDA
@@ -233,15 +198,4 @@ export function PdaEditor(): React.JSX.Element {
       </section>
     </div>
   )
-}
-
-const fieldStyle: React.CSSProperties = {
-  fontFamily: 'var(--tnt-mono)',
-  fontSize: 14,
-  padding: '6px 9px',
-  borderRadius: 'var(--tnt-radius)',
-  border: '1px solid var(--tnt-border)',
-  background: 'var(--tnt-bg)',
-  color: 'var(--tnt-text)',
-  minWidth: 90,
 }

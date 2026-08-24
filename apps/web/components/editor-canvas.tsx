@@ -132,7 +132,11 @@ export function EditorCanvas({
       // Edge clicks are caught here rather than on the SVG so a drag that happens
       // to end over an edge does not also open its label editor.
       onClick={handleClick}
-      style={{ background: 'var(--tnt-bg)', padding: 8, cursor: mode === 'move' ? 'grab' : 'crosshair' }}
+      style={{
+        background: 'var(--tnt-bg)',
+        padding: 'var(--tnt-space-2)',
+        cursor: mode === 'move' ? 'grab' : 'crosshair',
+      }}
     >
       <AutomatonRenderer
         machine={machine}

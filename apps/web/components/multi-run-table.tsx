@@ -37,9 +37,9 @@ export function MultiRunTable({
   }
 
   return (
-    <section style={{ display: 'grid', gap: 8 }}>
-      <h2 style={{ fontSize: 15, margin: 0 }}>Run many strings</h2>
-      <p className="tnt-muted" style={{ fontSize: 13, margin: 0 }}>
+    <section className="tnt-stack-sm">
+      <h2 style={{ margin: 0 }}>Run many strings</h2>
+      <p className="tnt-muted tnt-sm" style={{ margin: 0 }}>
         One string per line. A blank line means the empty string.
       </p>
 
@@ -49,41 +49,19 @@ export function MultiRunTable({
         rows={4}
         spellCheck={false}
         aria-label="Strings to test, one per line"
-        style={{
-          fontFamily: 'var(--tnt-mono)',
-          fontSize: 14,
-          padding: 8,
-          borderRadius: 'var(--tnt-radius)',
-          border: '1px solid var(--tnt-border)',
-          background: 'var(--tnt-bg)',
-          color: 'var(--tnt-text)',
-          resize: 'vertical',
-        }}
+        className="tnt-input tnt-input-mono"
+        style={{ resize: 'vertical' }}
       />
 
       <div>
-        <button
-          type="button"
-          onClick={runAll}
-          disabled={text.trim() === ''}
-          style={{
-            padding: '6px 14px',
-            borderRadius: 'var(--tnt-radius)',
-            border: '1px solid var(--tnt-border)',
-            background: 'var(--tnt-bg)',
-            color: 'var(--tnt-text)',
-            fontSize: 14,
-            cursor: text.trim() === '' ? 'not-allowed' : 'pointer',
-            opacity: text.trim() === '' ? 0.5 : 1,
-          }}
-        >
+        <button type="button" className="tnt-btn" onClick={runAll} disabled={text.trim() === ''}>
           Test all
         </button>
       </div>
 
       {rows === null ? null : (
-        <table style={{ borderCollapse: 'collapse', fontSize: 14, width: '100%' }}>
-          <caption className="tnt-muted" style={{ fontSize: 12, textAlign: 'left', paddingBottom: 4 }}>
+        <table className="tnt-table" style={{ width: '100%' }}>
+          <caption>
             {rows.filter((r) => r.outcome === 'accepted').length} of {rows.length} accepted. Select a row
             to step through its run.
           </caption>
@@ -96,13 +74,15 @@ export function MultiRunTable({
           </thead>
           <tbody>
             {rows.map((row, i) => (
-              <tr key={`${row.word}-${i}`} style={{ borderTop: '1px solid var(--tnt-border)' }}>
-                <td style={{ padding: '5px 8px' }}>
+              <tr key={`${row.word}-${i}`}>
+                <td>
+                  {/* A button that has to read as a link. No primitive covers
+                      that shape, so it stays inline. */}
                   <button
                     type="button"
+                    className="tnt-mono"
                     onClick={() => onLoad(row.word)}
                     style={{
-                      fontFamily: 'var(--tnt-mono)',
                       background: 'none',
                       border: 'none',
                       padding: 0,
@@ -114,10 +94,8 @@ export function MultiRunTable({
                     {row.word === '' ? 'ε' : row.word}
                   </button>
                 </td>
-                <td style={{ padding: '5px 8px', color: outcomeColor(row.outcome) }}>{row.outcome}</td>
-                <td style={{ padding: '5px 8px' }} className="tnt-muted">
-                  {row.note ?? ''}
-                </td>
+                <td style={{ color: outcomeColor(row.outcome) }}>{row.outcome}</td>
+                <td className="tnt-muted">{row.note ?? ''}</td>
               </tr>
             ))}
           </tbody>
@@ -156,10 +134,7 @@ function outcomeColor(outcome: Row['outcome']): string {
 
 function Th({ children }: { children: React.ReactNode }): React.JSX.Element {
   return (
-    <th
-      scope="col"
-      style={{ textAlign: 'left', padding: '5px 8px', fontSize: 12, color: 'var(--tnt-text-muted)' }}
-    >
+    <th scope="col" className="tnt-muted">
       {children}
     </th>
   )

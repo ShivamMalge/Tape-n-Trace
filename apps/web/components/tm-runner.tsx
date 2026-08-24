@@ -64,20 +64,27 @@ export function TmRunner({ machine, suggested = [], encodeInput, trackSeparator,
   const log = useMemo(() => (trace === null ? '' : tmIdLog(trace)), [trace])
   const nondeterministic = useMemo(() => !isDeterministicTM(machine), [machine])
   const stopped = trace?.result.type === 'incomplete'
-  const [copied, setCopied] = useState(false)
+  /**
+   * What was put on the clipboard, not whether anything was. A boolean stuck on
+   * "Copied" through the next run, so the button claimed the clipboard held an
+   * ID sequence that was no longer on screen. Comparing against the current log
+   * makes the label true by construction.
+   */
+  const [copiedLog, setCopiedLog] = useState<string | null>(null)
+  const copied = copiedLog !== null && copiedLog === log
 
   return (
-    <div style={{ display: 'grid', gap: 16 }}>
+    <div className="tnt-stack">
       <form
         onSubmit={(event) => {
           event.preventDefault()
           setCap(MOVE_CAP)
           run(input, MOVE_CAP)
         }}
-        style={{ display: 'flex', gap: 8, alignItems: 'flex-end', flexWrap: 'wrap' }}
+        className="tnt-row tnt-row-end"
       >
-        <label style={{ display: 'grid', gap: 4, flex: '1 1 240px' }}>
-          <span style={{ fontSize: 13 }} className="tnt-muted">
+        <label className="tnt-field" style={{ flex: '1 1 240px' }}>
+          <span className="tnt-muted">
             Input string (blank is {machine.blank}; {machine.tapes > 1 ? `${machine.tapes} tapes` : 'one tape'})
           </span>
           <input
@@ -85,19 +92,18 @@ export function TmRunner({ machine, suggested = [], encodeInput, trackSeparator,
             onChange={(event) => setInput(event.target.value)}
             spellCheck={false}
             autoComplete="off"
-            style={field}
+            className="tnt-input tnt-input-mono"
+            style={{ width: '100%' }}
           />
         </label>
-        <button type="submit" style={primary}>
+        <button type="submit" className="tnt-btn tnt-btn-primary">
           Run
         </button>
       </form>
 
       {suggested.length > 0 ? (
-        <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
-          <span className="tnt-muted" style={{ fontSize: 13 }}>
-            Try:
-          </span>
+        <div className="tnt-row tnt-row-tight">
+          <span className="tnt-muted tnt-sm">Try:</span>
           {suggested.map((word) => (
             <button
               key={word || 'empty'}
@@ -107,7 +113,7 @@ export function TmRunner({ machine, suggested = [], encodeInput, trackSeparator,
                 setCap(MOVE_CAP)
                 run(word, MOVE_CAP)
               }}
-              style={chip}
+              className="tnt-chip tnt-mono"
             >
               {word === '' ? 'ε (blank tape)' : word}
             </button>
@@ -119,8 +125,8 @@ export function TmRunner({ machine, suggested = [], encodeInput, trackSeparator,
       {trace === null ? null : <VerdictBanner result={trace.result} meta={trace.meta} />}
 
       {stopped ? (
-        <div role="status" aria-label="Move cap" className="tnt-card" style={{ borderLeft: '3px solid var(--tnt-marked)', display: 'grid', gap: 8 }}>
-          <p style={{ margin: 0, fontSize: 14 }}>
+        <div role="status" aria-label="Move cap" className="tnt-note tnt-note-warn tnt-stack-sm">
+          <p style={{ margin: 0 }}>
             Stopped after {cap} moves without halting. A Turing machine need not halt (§8.2.6), and no
             program can tell in general whether this one will — the page can only run it further.
           </p>
@@ -132,7 +138,7 @@ export function TmRunner({ machine, suggested = [], encodeInput, trackSeparator,
                 setCap(next)
                 run(input, next)
               }}
-              style={primary}
+              className="tnt-btn tnt-btn-primary"
             >
               Continue for {MOVE_CAP} more moves
             </button>
@@ -140,31 +146,32 @@ export function TmRunner({ machine, suggested = [], encodeInput, trackSeparator,
         </div>
       ) : null}
 
-      <div className="tnt-card" style={{ background: 'var(--tnt-bg)' }}>
+      <div className="tnt-card tnt-card-plain">
         <AutomatonRenderer machine={drawable} step={step} instanceId="tm" />
       </div>
 
       {current === null || snapshot === null ? null : (
-        <section aria-label="Tape" style={{ display: 'grid', gap: 8 }}>
-          <div style={{ display: 'flex', gap: 14, alignItems: 'center', flexWrap: 'wrap' }}>
-            <h2 style={{ fontSize: 15, margin: 0 }}>The tape{machine.tapes > 1 ? 's' : ''}</h2>
-            <span className="tnt-muted" style={{ fontSize: 13 }}>
+        <section aria-label="Tape" className="tnt-stack-sm">
+          <div className="tnt-row">
+            <h2 style={{ margin: 0 }}>The tape{machine.tapes > 1 ? 's' : ''}</h2>
+            <span className="tnt-muted tnt-sm">
               move {snapshot.moves}
               {subroutine !== undefined && subroutine.states.includes(current.state) ? ` · inside ${subroutine.name}` : ''}
             </span>
-            <fieldset style={{ border: 0, padding: 0, margin: 0, marginLeft: 'auto', display: 'flex', gap: 10, fontSize: 13 }}>
-              <legend className="tnt-muted" style={{ fontSize: 12, float: 'left', marginRight: 6 }}>
+            {/* A fieldset carries a border and padding of its own; only the reset stays inline. */}
+            <fieldset className="tnt-row tnt-sm" style={{ border: 0, padding: 0, margin: 0, marginLeft: 'auto' }}>
+              <legend className="tnt-meta" style={{ float: 'left', marginRight: 'var(--tnt-space-2)' }}>
                 Convention:
               </legend>
               {(['head-fixed', 'tape-fixed'] as const).map((m) => (
-                <label key={m} style={{ display: 'flex', gap: 4, alignItems: 'center', cursor: 'pointer' }}>
+                <label key={m} className="tnt-field-row" style={{ cursor: 'pointer' }}>
                   <input type="radio" name="tape-mode" value={m} checked={mode === m} onChange={() => setMode(m)} />
                   {m === 'head-fixed' ? 'head fixed, tape scrolls' : 'tape fixed, head moves'}
                 </label>
               ))}
             </fieldset>
           </div>
-          <div className="tnt-card" style={{ background: 'var(--tnt-bg)', display: 'grid', gap: 10 }}>
+          <div className="tnt-card tnt-stack-sm tnt-card-plain">
             {current.tapes.map((tape, i) => (
               <TapeStrip
                 key={i}
@@ -178,7 +185,7 @@ export function TmRunner({ machine, suggested = [], encodeInput, trackSeparator,
                 label={machine.tapes > 1 ? `Tape ${i + 1}` : 'Tape'}
               />
             ))}
-            <div style={{ fontFamily: 'var(--tnt-mono)', fontSize: 14 }}>{tmIdText(current, machine.blank)}</div>
+            <div className="tnt-mono">{tmIdText(current, machine.blank)}</div>
           </div>
         </section>
       )}
@@ -198,13 +205,13 @@ export function TmRunner({ machine, suggested = [], encodeInput, trackSeparator,
 
       {snapshot !== null && nondeterministic ? (
         <section>
-          <h2 style={{ fontSize: 15 }}>Branch tree</h2>
-          <p className="tnt-muted" style={{ fontSize: 13, marginTop: 0 }}>
+          <h2>Branch tree</h2>
+          <p className="tnt-muted tnt-sm" style={{ marginTop: 0 }}>
             Every ID the machine could be in, placed by moves made — the breadth-first order a
             deterministic machine would explore them in (Theorem 8.11). A branch with no move dies
             where it stands.
           </p>
-          <div className="tnt-card" style={{ background: 'var(--tnt-bg)', overflowX: 'auto' }}>
+          <div className="tnt-card tnt-scroll-x tnt-card-plain">
             <BranchTree nodes={snapshot.nodes} input={snapshot.input} step={step} />
           </div>
         </section>
@@ -212,14 +219,14 @@ export function TmRunner({ machine, suggested = [], encodeInput, trackSeparator,
 
       {log === '' ? null : (
         <section aria-label="ID sequence">
-          <h2 style={{ fontSize: 15 }}>The ID sequence</h2>
-          <p className="tnt-muted" style={{ fontSize: 13, marginTop: 0 }}>
+          <h2>The ID sequence</h2>
+          <p className="tnt-muted tnt-sm" style={{ marginTop: 0 }}>
             §8.2.3's notation: the state written immediately left of the scanned cell, the tape
             shown from its leftmost nonblank to its rightmost, widened to the head when it stands on
             a blank. Copy it straight into an answer.
           </p>
-          <div className="tnt-card" style={{ background: 'var(--tnt-bg)', display: 'grid', gap: 8 }}>
-            <pre style={{ margin: 0, fontFamily: 'var(--tnt-mono)', fontSize: 13, whiteSpace: 'pre-wrap', wordBreak: 'break-word', userSelect: 'text' }}>
+          <div className="tnt-card tnt-stack-sm tnt-card-plain">
+            <pre className="tnt-code-block" style={{ margin: 0, userSelect: 'text' }}>
               {log}
             </pre>
             <div>
@@ -228,10 +235,10 @@ export function TmRunner({ machine, suggested = [], encodeInput, trackSeparator,
                 onClick={() => {
                   void navigator.clipboard
                     ?.writeText(log)
-                    .then(() => setCopied(true))
-                    .catch(() => setCopied(false))
+                    .then(() => setCopiedLog(log))
+                    .catch(() => setCopiedLog(null))
                 }}
-                style={chip}
+                className="tnt-btn"
               >
                 {copied ? 'Copied' : 'Copy the sequence'}
               </button>
@@ -241,36 +248,4 @@ export function TmRunner({ machine, suggested = [], encodeInput, trackSeparator,
       )}
     </div>
   )
-}
-
-const field: React.CSSProperties = {
-  fontFamily: 'var(--tnt-mono)',
-  fontSize: 15,
-  padding: '7px 9px',
-  borderRadius: 'var(--tnt-radius)',
-  border: '1px solid var(--tnt-border)',
-  background: 'var(--tnt-bg)',
-  color: 'var(--tnt-text)',
-  width: '100%',
-}
-
-const primary: React.CSSProperties = {
-  padding: '8px 16px',
-  borderRadius: 'var(--tnt-radius)',
-  border: '1px solid var(--tnt-current)',
-  background: 'var(--tnt-current)',
-  color: '#fff',
-  fontSize: 14,
-  cursor: 'pointer',
-}
-
-const chip: React.CSSProperties = {
-  fontFamily: 'var(--tnt-mono)',
-  fontSize: 13,
-  padding: '3px 9px',
-  borderRadius: 999,
-  border: '1px solid var(--tnt-border)',
-  background: 'var(--tnt-bg)',
-  color: 'var(--tnt-text)',
-  cursor: 'pointer',
 }

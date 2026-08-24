@@ -19,27 +19,19 @@ export function ValidationErrors({
   if (errors.length === 0) return null
 
   return (
-    <section
-      role="alert"
-      style={{
-        padding: '12px 14px',
-        borderRadius: 'var(--tnt-radius)',
-        border: '1px solid var(--tnt-marked)',
-        background: 'var(--tnt-surface)',
-      }}
-    >
-      <h2 style={{ fontSize: 14, margin: '0 0 6px', color: 'var(--tnt-marked)' }}>
+    <section role="alert" className="tnt-card" style={{ borderColor: 'var(--tnt-marked)' }}>
+      <h2 style={{ color: 'var(--tnt-marked)' }}>
         {errors.length === 1
           ? 'There is a problem with this machine'
           : `There are ${errors.length} problems with this machine`}
       </h2>
 
-      <ul style={{ margin: 0, paddingLeft: 18, display: 'grid', gap: 4 }}>
+      <ul className="tnt-stack-sm" style={{ margin: 0, paddingLeft: 18 }}>
         {errors.map((error, i) => (
-          <li key={`${error.code}-${error.subject.id ?? i}`} style={{ fontSize: 14 }}>
+          <li key={`${error.code}-${error.subject.id ?? i}`}>
             {error.message}
             {error.subject.id === undefined ? null : (
-              <code className="tnt-muted" style={{ marginLeft: 6, fontSize: 12 }}>
+              <code className="tnt-muted tnt-xs" style={{ marginLeft: 'var(--tnt-space-2)' }}>
                 {error.subject.kind} {error.subject.id}
               </code>
             )}

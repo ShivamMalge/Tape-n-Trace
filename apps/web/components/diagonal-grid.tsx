@@ -48,22 +48,22 @@ export function DiagonalGrid({
   const onDiagonal = new Set(table.diagonal.map((entry) => entry.index))
 
   return (
-    <div style={{ overflowX: 'auto', border: '1px solid var(--tnt-border)', borderRadius: 'var(--tnt-radius)' }}>
-      <table style={{ borderCollapse: 'collapse', fontFamily: 'var(--tnt-mono)', fontSize: 13 }}>
-        <caption className="tnt-muted" style={{ captionSide: 'top', textAlign: 'left', padding: '8px 10px', fontSize: 12 }}>
+    <div className="tnt-scroll-x" style={{ border: '1px solid var(--tnt-border)', borderRadius: 'var(--tnt-radius)' }}>
+      <table className="tnt-table tnt-table-grid tnt-mono">
+        <caption style={{ padding: 'var(--tnt-space-2) var(--tnt-space-3)' }}>
           Rows {table.fromRow}–{table.fromRow + table.size - 1} against columns {table.fromCol}–
           {table.fromCol + table.size - 1}. Cell (i, j) is 1 when M<sub>i</sub> accepts w<sub>j</sub>, 0 when it does
           not, and ? when the run had not finished after {table.stepBudget} moves.
         </caption>
         <thead>
           <tr>
-            <th scope="col" style={{ ...headCell, textAlign: 'left' }}>
+            <th scope="col" style={{ textAlign: 'left' }}>
               i \ j
             </th>
             {table.words.map((word) => (
-              <th key={word.index} scope="col" style={headCell} title={word.word === '' ? 'ε (the empty string)' : word.word}>
+              <th key={word.index} scope="col" title={word.word === '' ? 'ε (the empty string)' : word.word}>
                 <div>{word.index}</div>
-                <div className="tnt-muted" style={{ fontSize: 10, fontWeight: 400 }}>
+                <div className="tnt-muted tnt-xs" style={{ fontWeight: 400 }}>
                   {short(word.word)}
                 </div>
               </th>
@@ -73,11 +73,11 @@ export function DiagonalGrid({
         <tbody>
           {table.rows.map((row) => (
             <tr key={row.index}>
-              <th scope="row" style={{ ...headCell, textAlign: 'left', whiteSpace: 'nowrap' }}>
+              <th scope="row" style={{ textAlign: 'left', whiteSpace: 'nowrap' }}>
                 <span>{row.index}</span>{' '}
                 <span
-                  className="tnt-muted"
-                  style={{ fontSize: 10, fontWeight: 400 }}
+                  className="tnt-muted tnt-xs"
+                  style={{ fontWeight: 400 }}
                   title={row.validCode ? 'a well-formed code' : (row.reason ?? '')}
                 >
                   {row.validCode ? '✓ code' : '— no moves'}
@@ -88,7 +88,7 @@ export function DiagonalGrid({
                 const isDiagonal = row.index === col && onDiagonal.has(row.index)
                 const isSelected = selected?.row === row.index && selected.col === col
                 return (
-                  <td key={col} style={{ padding: 0, border: '1px solid var(--tnt-border)' }}>
+                  <td key={col}>
                     <button
                       type="button"
                       onClick={() => onSelect({ row: row.index, col })}
@@ -118,7 +118,7 @@ export function DiagonalGrid({
           ))}
           {showComplement && table.diagonal.length > 0 ? (
             <tr>
-              <th scope="row" style={{ ...headCell, textAlign: 'left', whiteSpace: 'nowrap', color: 'var(--tnt-new)' }}>
+              <th scope="row" style={{ textAlign: 'left', whiteSpace: 'nowrap', color: 'var(--tnt-new)' }}>
                 L_d
               </th>
               {table.words.map((word) => {
@@ -126,13 +126,7 @@ export function DiagonalGrid({
                 return (
                   <td
                     key={word.index}
-                    style={{
-                      border: '1px solid var(--tnt-border)',
-                      textAlign: 'center',
-                      height: 30,
-                      color: 'var(--tnt-new)',
-                      background: 'var(--tnt-surface)',
-                    }}
+                    style={{ height: 30, color: 'var(--tnt-new)', background: 'var(--tnt-surface)' }}
                     title={
                       entry === undefined
                         ? 'off the diagonal'
@@ -153,13 +147,4 @@ export function DiagonalGrid({
       </table>
     </div>
   )
-}
-
-const headCell: React.CSSProperties = {
-  padding: '4px 6px',
-  border: '1px solid var(--tnt-border)',
-  background: 'var(--tnt-surface)',
-  fontWeight: 600,
-  fontSize: 12,
-  textAlign: 'center',
 }

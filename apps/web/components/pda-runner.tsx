@@ -65,19 +65,26 @@ export function PdaRunner({ machine, suggested = [] }: PdaRunnerProps): React.JS
   }, [snapshot, step])
 
   const log = useMemo(() => (trace === null ? '' : idLog(trace)), [trace])
-  const [copied, setCopied] = useState(false)
+  /**
+   * What was put on the clipboard, not whether anything was. A boolean stuck on
+   * "Copied" through the next run, so the button claimed the clipboard held an
+   * ID sequence that was no longer on screen. Comparing against the current log
+   * makes the label true by construction.
+   */
+  const [copiedLog, setCopiedLog] = useState<string | null>(null)
+  const copied = copiedLog !== null && copiedLog === log
 
   return (
-    <div style={{ display: 'grid', gap: 16 }}>
+    <div className="tnt-stack">
       <form
         onSubmit={(event) => {
           event.preventDefault()
           run(input)
         }}
-        style={{ display: 'flex', gap: 8, alignItems: 'flex-end', flexWrap: 'wrap' }}
+        className="tnt-row tnt-row-end"
       >
-        <label style={{ display: 'grid', gap: 4, flex: '1 1 240px' }}>
-          <span style={{ fontSize: 13 }} className="tnt-muted">
+        <label className="tnt-field" style={{ flex: '1 1 240px' }}>
+          <span className="tnt-muted">
             Input string (over {`{${machine.inputAlphabet.join(', ')}}`})
           </span>
           <input
@@ -85,39 +92,18 @@ export function PdaRunner({ machine, suggested = [] }: PdaRunnerProps): React.JS
             onChange={(event) => setInput(event.target.value)}
             spellCheck={false}
             autoComplete="off"
-            style={{
-              fontFamily: 'var(--tnt-mono)',
-              fontSize: 15,
-              padding: '7px 9px',
-              borderRadius: 'var(--tnt-radius)',
-              border: '1px solid var(--tnt-border)',
-              background: 'var(--tnt-bg)',
-              color: 'var(--tnt-text)',
-              width: '100%',
-            }}
+            className="tnt-input tnt-input-mono"
+            style={{ width: '100%' }}
           />
         </label>
-        <button
-          type="submit"
-          style={{
-            padding: '8px 16px',
-            borderRadius: 'var(--tnt-radius)',
-            border: '1px solid var(--tnt-current)',
-            background: 'var(--tnt-current)',
-            color: '#fff',
-            fontSize: 14,
-            cursor: 'pointer',
-          }}
-        >
+        <button type="submit" className="tnt-btn tnt-btn-primary">
           Run
         </button>
       </form>
 
       {suggested.length > 0 ? (
-        <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
-          <span className="tnt-muted" style={{ fontSize: 13 }}>
-            Try:
-          </span>
+        <div className="tnt-row tnt-row-tight">
+          <span className="tnt-muted tnt-sm">Try:</span>
           {suggested.map((word) => (
             <button
               key={word || 'empty'}
@@ -126,16 +112,7 @@ export function PdaRunner({ machine, suggested = [] }: PdaRunnerProps): React.JS
                 setInput(word)
                 run(word)
               }}
-              style={{
-                fontFamily: 'var(--tnt-mono)',
-                fontSize: 13,
-                padding: '3px 9px',
-                borderRadius: 999,
-                border: '1px solid var(--tnt-border)',
-                background: 'var(--tnt-bg)',
-                color: 'var(--tnt-text)',
-                cursor: 'pointer',
-              }}
+              className="tnt-chip tnt-mono"
             >
               {word === '' ? 'ε (empty)' : word}
             </button>
@@ -146,46 +123,37 @@ export function PdaRunner({ machine, suggested = [] }: PdaRunnerProps): React.JS
       <ValidationErrors errors={errors} />
       {trace === null ? null : <VerdictBanner result={trace.result} meta={trace.meta} />}
 
-      <div className="tnt-card" style={{ background: 'var(--tnt-bg)' }}>
+      <div className="tnt-card tnt-card-plain">
         <AutomatonRenderer machine={drawable} step={step} instanceId="pda" />
       </div>
 
       {snapshot === null || focus === null ? null : (
         <section aria-label="Current instantaneous description">
-          <h2 style={{ fontSize: 15 }}>The current ID</h2>
-          <p className="tnt-muted" style={{ fontSize: 13, marginTop: 0 }}>
+          <h2>The current ID</h2>
+          <p className="tnt-muted tnt-sm" style={{ marginTop: 0 }}>
             An instantaneous description (q, w, γ) is the whole truth about a run: state, unread
             input, stack. These three panels are that triple, for the branch this step is expanding.
           </p>
           <div
-            className="tnt-card"
-            style={{ display: 'flex', gap: 24, alignItems: 'flex-start', flexWrap: 'wrap', background: 'var(--tnt-bg)' }}
+            className="tnt-card tnt-row"
+            style={{ gap: 'var(--tnt-space-5)', alignItems: 'flex-start', background: 'var(--tnt-bg)' }}
           >
             <div>
-              <div className="tnt-muted" style={{ fontSize: 12, marginBottom: 4 }}>
+              <div className="tnt-meta" style={{ marginBottom: 'var(--tnt-space-1)' }}>
                 State
               </div>
-              <div
-                style={{
-                  fontFamily: 'var(--tnt-mono)',
-                  fontSize: 16,
-                  padding: '6px 14px',
-                  border: '2px solid var(--tnt-current)',
-                  borderRadius: 999,
-                  display: 'inline-block',
-                }}
-              >
+              <div className="tnt-mono tnt-lg" style={statePill}>
                 {focus.state}
               </div>
             </div>
             <div style={{ flex: '1 1 220px', minWidth: 180 }}>
-              <div className="tnt-muted" style={{ fontSize: 12, marginBottom: 4 }}>
+              <div className="tnt-meta" style={{ marginBottom: 'var(--tnt-space-1)' }}>
                 Input — {focus.position} of {snapshot.input.length} consumed
               </div>
               <InputStrip input={snapshot.input} position={focus.position} step={step} />
             </div>
             <StackColumn stack={focus.stack} />
-            <div style={{ flexBasis: '100%', fontFamily: 'var(--tnt-mono)', fontSize: 14 }}>
+            <div className="tnt-mono" style={{ flexBasis: '100%' }}>
               {idToText(focus.state, snapshot.input.slice(focus.position), focus.stack)}
             </div>
           </div>
@@ -207,13 +175,13 @@ export function PdaRunner({ machine, suggested = [] }: PdaRunnerProps): React.JS
 
       {snapshot === null ? null : (
         <section>
-          <h2 style={{ fontSize: 15 }}>Branch tree</h2>
-          <p className="tnt-muted" style={{ fontSize: 13, marginTop: 0 }}>
+          <h2>Branch tree</h2>
+          <p className="tnt-muted tnt-sm" style={{ marginTop: 0 }}>
             Every guess the machine is running at once, placed by input consumed. A branch with no
             move dies where it stands; a branch that would repeat an ID already explored is closed,
             because repeating a configuration can never reach anything new.
           </p>
-          <div className="tnt-card" style={{ background: 'var(--tnt-bg)', overflowX: 'auto' }}>
+          <div className="tnt-card tnt-scroll-x tnt-card-plain">
             <BranchTree nodes={snapshot.nodes} input={snapshot.input} step={step} />
           </div>
         </section>
@@ -221,23 +189,14 @@ export function PdaRunner({ machine, suggested = [] }: PdaRunnerProps): React.JS
 
       {log === '' ? null : (
         <section aria-label="ID sequence">
-          <h2 style={{ fontSize: 15 }}>The ID sequence</h2>
-          <p className="tnt-muted" style={{ fontSize: 13, marginTop: 0 }}>
+          <h2>The ID sequence</h2>
+          <p className="tnt-muted tnt-sm" style={{ marginTop: 0 }}>
             The run in the notation of §6.1.4 — the exact artefact an exam answer reproduces. On an
             accepted string this is the accepting computation; on a rejected one, the attempt that
             got furthest.
           </p>
-          <div className="tnt-card" style={{ background: 'var(--tnt-bg)', display: 'grid', gap: 8 }}>
-            <pre
-              style={{
-                margin: 0,
-                fontFamily: 'var(--tnt-mono)',
-                fontSize: 13,
-                whiteSpace: 'pre-wrap',
-                wordBreak: 'break-word',
-                userSelect: 'text',
-              }}
-            >
+          <div className="tnt-card tnt-stack-sm tnt-card-plain">
+            <pre className="tnt-code-block" style={{ margin: 0, userSelect: 'text' }}>
               {log}
             </pre>
             <div>
@@ -246,18 +205,10 @@ export function PdaRunner({ machine, suggested = [] }: PdaRunnerProps): React.JS
                 onClick={() => {
                   void navigator.clipboard
                     ?.writeText(log)
-                    .then(() => setCopied(true))
-                    .catch(() => setCopied(false))
+                    .then(() => setCopiedLog(log))
+                    .catch(() => setCopiedLog(null))
                 }}
-                style={{
-                  fontSize: 13,
-                  padding: '4px 12px',
-                  borderRadius: 'var(--tnt-radius)',
-                  border: '1px solid var(--tnt-border)',
-                  background: 'var(--tnt-bg)',
-                  color: 'var(--tnt-text)',
-                  cursor: 'pointer',
-                }}
+                className="tnt-btn"
               >
                 {copied ? 'Copied' : 'Copy the sequence'}
               </button>
@@ -267,4 +218,15 @@ export function PdaRunner({ machine, suggested = [] }: PdaRunnerProps): React.JS
       )}
     </div>
   )
+}
+
+/**
+ * The q of the ID, ringed in the current-step colour. `.tnt-tag` is the static
+ * pill, but it is muted and hairline; this one is the highlight itself.
+ */
+const statePill: React.CSSProperties = {
+  padding: 'var(--tnt-space-2) var(--tnt-space-3)',
+  border: '2px solid var(--tnt-current)',
+  borderRadius: 'var(--tnt-radius-full)',
+  display: 'inline-block',
 }

@@ -55,9 +55,9 @@ export function GrammarInput({ initial, onGrammar, presets = GRAMMAR_PRESETS }: 
   }, [outcome, settled, onGrammar])
 
   return (
-    <section className="tnt-card" style={{ display: 'grid', gap: 10 }}>
-      <label style={{ display: 'grid', gap: 5 }}>
-        <span className="tnt-muted" style={{ fontSize: 13 }}>
+    <section className="tnt-card tnt-stack">
+      <label className="tnt-field">
+        <span className="tnt-muted">
           Grammar — one variable per line, alternatives with |, ε for the empty production
         </span>
         <textarea
@@ -66,40 +66,35 @@ export function GrammarInput({ initial, onGrammar, presets = GRAMMAR_PRESETS }: 
           rows={Math.max(3, source.split('\n').length + 1)}
           spellCheck={false}
           aria-invalid={outcome.errors.length > 0}
+          className="tnt-input tnt-input-mono"
           style={{
-            fontFamily: 'var(--tnt-mono)',
-            fontSize: 16,
-            padding: '9px 11px',
-            borderRadius: 'var(--tnt-radius)',
-            border: `1px solid ${outcome.errors.length > 0 ? 'var(--tnt-marked)' : 'var(--tnt-border)'}`,
-            background: 'var(--tnt-bg)',
-            color: 'var(--tnt-text)',
+            borderColor: outcome.errors.length > 0 ? 'var(--tnt-marked)' : undefined,
             resize: 'vertical',
           }}
         />
       </label>
 
-      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
-        <span className="tnt-muted" style={{ fontSize: 13 }}>
+      <div className="tnt-row tnt-row-tight">
+        <span className="tnt-sm tnt-muted">
           Presets:
         </span>
         {presets.map((preset) => (
-          <button key={preset.id} type="button" onClick={() => setSource(preset.source)} style={chip}>
+          <button key={preset.id} type="button" className="tnt-chip" onClick={() => setSource(preset.source)}>
             {preset.title}
           </button>
         ))}
       </div>
 
-      <p className="tnt-muted" style={{ margin: 0, fontSize: 12 }}>
-        Symbols split per character (<code>aSb</code> is a, S, b) unless any alternative contains
-        spaces — then tokens are space-separated and <code>id</code> stays one terminal. Variables are
+      <p className="tnt-meta" style={{ margin: 0 }}>
+        Symbols split per character (<code className="tnt-code">aSb</code> is a, S, b) unless any alternative contains
+        spaces — then tokens are space-separated and <code className="tnt-code">id</code> stays one terminal. Variables are
         whatever appears left of an arrow.
       </p>
 
       {outcome.errors.length > 0 ? (
-        <ul role="alert" style={{ margin: 0, paddingLeft: 18, display: 'grid', gap: 3 }}>
+        <ul role="alert" className="tnt-stack-sm" style={{ margin: 0, paddingLeft: 'var(--tnt-space-4)' }}>
           {outcome.errors.map((error, i) => (
-            <li key={i} style={{ fontSize: 13, color: 'var(--tnt-marked)' }}>
+            <li key={i} className="tnt-sm" style={{ color: 'var(--tnt-marked)' }}>
               {error.message}
               {error.position === undefined ? null : (
                 <PositionNote source={settled} position={error.position} />
@@ -108,7 +103,7 @@ export function GrammarInput({ initial, onGrammar, presets = GRAMMAR_PRESETS }: 
           ))}
         </ul>
       ) : outcome.grammar === null ? null : (
-        <p className="tnt-muted" style={{ margin: 0, fontSize: 13 }}>
+        <p className="tnt-sm tnt-muted" style={{ margin: 0 }}>
           {outcome.grammar.variables.length} variables {`{${outcome.grammar.variables.join(', ')}}`},{' '}
           {outcome.grammar.terminals.length} terminals {`{${outcome.grammar.terminals.join(', ')}}`},{' '}
           start {outcome.grammar.start} — {outcome.grammar.productions.length} productions.
@@ -123,7 +118,7 @@ function PositionNote({ source, position }: { source: string; position: number }
   const line = before.split('\n').length
   const column = position - before.lastIndexOf('\n')
   return (
-    <span className="tnt-muted" style={{ fontSize: 12 }}>
+    <span className="tnt-meta">
       {' '}
       (line {line}, column {column})
     </span>
@@ -139,15 +134,13 @@ export function ProductionList({
   litIndices: ReadonlySet<number>
 }): React.JSX.Element {
   return (
-    <ol style={{ margin: 0, paddingLeft: 22, display: 'grid', gap: 3 }}>
+    <ol className="tnt-mono tnt-stack-sm" style={{ margin: 0, paddingLeft: 'var(--tnt-space-5)' }}>
       {grammar.productions.map((production, index) => (
         <li
           key={index}
           data-lit={litIndices.has(index) ? 'true' : undefined}
           style={{
-            fontFamily: 'var(--tnt-mono)',
-            fontSize: 14,
-            padding: '1px 6px',
+            padding: '1px var(--tnt-space-2)',
             borderRadius: 'var(--tnt-radius)',
             background: litIndices.has(index) ? 'var(--tnt-current-soft)' : undefined,
             color: litIndices.has(index) ? 'var(--tnt-current)' : undefined,
@@ -158,14 +151,4 @@ export function ProductionList({
       ))}
     </ol>
   )
-}
-
-const chip: React.CSSProperties = {
-  fontSize: 13,
-  padding: '3px 9px',
-  borderRadius: 999,
-  border: '1px solid var(--tnt-border)',
-  background: 'var(--tnt-bg)',
-  color: 'var(--tnt-text)',
-  cursor: 'pointer',
 }

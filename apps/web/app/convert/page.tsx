@@ -9,44 +9,35 @@ export const metadata: Metadata = {
 export default function ConvertIndexPage(): React.JSX.Element {
   return (
     <div className="tnt-page">
-      <h1 style={{ fontSize: 26 }}>Conversions</h1>
-      <p style={{ maxWidth: '62ch' }}>
+      <h1>Conversions</h1>
+      <p className="tnt-prose">
         The heart of the exam. Each of these is a mechanical procedure whose intermediate working a
         textbook prints only as a finished answer — here you can step through it and read what each
         step did.
       </p>
 
-      <h2 style={{ fontSize: 18, marginTop: 28 }}>Finite automata and regular expressions</h2>
-      <ul style={{ display: 'grid', gap: 12, listStyle: 'none', padding: 0, marginTop: 12 }}>
+      <h2 className="tnt-section">Finite automata and regular expressions</h2>
+      <ul className="tnt-stack" style={{ listStyle: 'none', padding: 0, marginTop: 'var(--tnt-space-3)' }}>
         {CONVERSIONS.map((conversion) => (
           <li key={conversion.id}>
-            <a
-              href={`/convert/${conversion.id}`}
-              className="tnt-card"
-              style={{ display: 'grid', gap: 4, textDecoration: 'none', color: 'inherit' }}
-            >
-              <strong style={{ fontSize: 16 }}>
+            <a href={`/convert/${conversion.id}`} className="tnt-card tnt-stack-sm">
+              <strong>
                 {conversion.title}
                 {conversion.enrichment === true ? (
-                  <span
-                    className="tnt-muted"
-                    style={{ fontSize: 11, marginLeft: 8, fontWeight: 400, textTransform: 'uppercase' }}
-                  >
+                  <span className="tnt-label" style={{ marginLeft: 'var(--tnt-space-2)' }}>
                     beyond the syllabus
                   </span>
                 ) : null}
               </strong>
-              <span style={{ fontSize: 14 }}>{conversion.summary}</span>
-              <span className="tnt-muted" style={{ fontSize: 12 }}>
-                {conversion.citation}
-              </span>
+              <span className="tnt-sm">{conversion.summary}</span>
+              <span className="tnt-meta">{conversion.citation}</span>
             </a>
           </li>
         ))}
       </ul>
 
-      <h2 style={{ fontSize: 18, marginTop: 28 }}>Pushdown automata</h2>
-      <ul style={{ display: 'grid', gap: 12, listStyle: 'none', padding: 0, marginTop: 12 }}>
+      <h2 className="tnt-section">Pushdown automata</h2>
+      <ul className="tnt-stack" style={{ listStyle: 'none', padding: 0, marginTop: 'var(--tnt-space-3)' }}>
         {[
           {
             href: '/convert/pda-acceptance',
@@ -64,16 +55,10 @@ export default function ConvertIndexPage(): React.JSX.Element {
           },
         ].map((entry) => (
           <li key={entry.href}>
-            <a
-              href={entry.href}
-              className="tnt-card"
-              style={{ display: 'grid', gap: 4, textDecoration: 'none', color: 'inherit' }}
-            >
-              <strong style={{ fontSize: 16 }}>{entry.title}</strong>
-              <span style={{ fontSize: 14 }}>{entry.summary}</span>
-              <span className="tnt-muted" style={{ fontSize: 12 }}>
-                {entry.citation}
-              </span>
+            <a href={entry.href} className="tnt-card tnt-stack-sm">
+              <strong>{entry.title}</strong>
+              <span className="tnt-sm">{entry.summary}</span>
+              <span className="tnt-meta">{entry.citation}</span>
             </a>
           </li>
         ))}

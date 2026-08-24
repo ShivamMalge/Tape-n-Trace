@@ -71,21 +71,10 @@ export function TransportBar({
 
   return (
     <div
-      className={className}
+      className={className === undefined ? 'tnt-transport' : `tnt-transport ${className}`}
       role="toolbar"
       aria-label="Trace transport"
       onKeyDown={onKeyDown}
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 10,
-        padding: '8px 12px',
-        border: '1px solid var(--tnt-border)',
-        borderRadius: 'var(--tnt-radius)',
-        background: 'var(--tnt-surface)',
-        fontFamily: 'var(--tnt-font)',
-        flexWrap: 'wrap',
-      }}
     >
       <Button label="First step" onClick={() => go(0)} disabled={inert || atStart}>
         ⏮
@@ -122,37 +111,21 @@ export function TransportBar({
             ? `Step ${stepIndex + 1} of ${stepCount}`
             : `Step ${stepIndex + 1} of ${stepCount}. ${narration}`
         }
-        style={{ flex: '1 1 160px', minWidth: 120, accentColor: 'var(--tnt-current)' }}
+        className="tnt-transport-scrub"
       />
 
-      <span
-        aria-hidden="true"
-        style={{
-          fontFamily: 'var(--tnt-mono)',
-          fontSize: 13,
-          color: 'var(--tnt-text-muted)',
-          whiteSpace: 'nowrap',
-        }}
-      >
+      <span aria-hidden="true" className="tnt-transport-count">
         {stepCount === 0 ? '—' : `${stepIndex + 1} / ${stepCount}`}
       </span>
 
-      <label style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 13 }}>
-        <span style={{ color: 'var(--tnt-text-muted)' }}>Speed</span>
+      <label className="tnt-field-row tnt-row-tight">
+        <span className="tnt-muted">Speed</span>
         <select
           value={speed}
           disabled={inert}
           onChange={(event) => onSpeedChange(Number(event.target.value))}
           aria-label="Playback speed"
-          style={{
-            fontFamily: 'var(--tnt-font)',
-            fontSize: 13,
-            padding: '2px 4px',
-            borderRadius: 'var(--tnt-radius)',
-            border: '1px solid var(--tnt-border)',
-            background: 'var(--tnt-bg)',
-            color: 'var(--tnt-text)',
-          }}
+          className="tnt-select"
         >
           {SPEED_CHOICES.map((choice) => (
             <option key={choice} value={choice}>
@@ -181,21 +154,7 @@ function Button({ label, onClick, disabled, primary = false, children }: ButtonP
       disabled={disabled}
       aria-label={label}
       title={label}
-      style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minWidth: 34,
-        height: 30,
-        borderRadius: 'var(--tnt-radius)',
-        border: '1px solid var(--tnt-border)',
-        background: primary ? 'var(--tnt-current)' : 'var(--tnt-bg)',
-        color: primary ? '#ffffff' : 'var(--tnt-text)',
-        cursor: disabled ? 'not-allowed' : 'pointer',
-        opacity: disabled ? 0.45 : 1,
-        fontSize: 13,
-        lineHeight: 1,
-      }}
+      className={`tnt-btn tnt-btn-icon${primary ? ' tnt-btn-primary' : ''}`}
     >
       <span aria-hidden="true">{children}</span>
     </button>

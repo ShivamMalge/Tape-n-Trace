@@ -92,36 +92,34 @@ export function ExtendedFeatures(): React.JSX.Element {
   const [openId, setOpenId] = useState<string | null>(null)
 
   return (
-    <ul style={{ display: 'grid', gap: 8, listStyle: 'none', padding: 0, margin: 0 }}>
+    <ul className="tnt-stack-sm" style={{ listStyle: 'none', padding: 0, margin: 0 }}>
       {FEATURES.map((feature) => {
         const open = openId === feature.id
         const regular = feature.rewrite !== null
 
         return (
           <li key={feature.id}>
+            {/* A disclosure, not a toggle: the open state hangs off
+                `aria-expanded`, which the primitives do not style, so the tint
+                is set here — and only when open, leaving `:hover` alone. */}
             <button
               type="button"
+              className="tnt-btn"
               onClick={() => setOpenId(open ? null : feature.id)}
               aria-expanded={open}
               style={{
                 width: '100%',
                 textAlign: 'left',
-                display: 'flex',
-                gap: 12,
                 alignItems: 'baseline',
-                padding: '9px 12px',
-                borderRadius: 'var(--tnt-radius)',
-                border: '1px solid var(--tnt-border)',
-                background: open ? 'var(--tnt-surface)' : 'var(--tnt-bg)',
-                color: 'var(--tnt-text)',
-                cursor: 'pointer',
+                gap: 'var(--tnt-space-3)',
+                ...(open ? { background: 'var(--tnt-surface)' } : {}),
               }}
             >
-              <code style={{ fontSize: 15, minWidth: 82 }}>{feature.syntax}</code>
-              <span style={{ fontSize: 14, flex: 1 }}>{feature.meaning}</span>
+              <code style={{ minWidth: 82 }}>{feature.syntax}</code>
+              <span style={{ flex: 1 }}>{feature.meaning}</span>
               <span
+                className="tnt-xs"
                 style={{
-                  fontSize: 12,
                   whiteSpace: 'nowrap',
                   color: regular ? 'var(--tnt-accepting)' : 'var(--tnt-marked)',
                 }}
@@ -132,15 +130,15 @@ export function ExtendedFeatures(): React.JSX.Element {
 
             {open ? (
               <div
-                className="tnt-card"
-                style={{ marginTop: 4, display: 'grid', gap: 6, background: 'var(--tnt-bg)' }}
+                className="tnt-card tnt-stack-sm"
+                style={{ marginTop: 'var(--tnt-space-1)', background: 'var(--tnt-bg)' }}
               >
                 {feature.rewrite === null ? null : (
-                  <p style={{ margin: 0, fontSize: 14 }}>
+                  <p style={{ margin: 0 }}>
                     Shorthand for <code>{feature.rewrite}</code>
                   </p>
                 )}
-                <p style={{ margin: 0, fontSize: 14 }}>{feature.verdict}</p>
+                <p style={{ margin: 0 }}>{feature.verdict}</p>
               </div>
             ) : null}
           </li>

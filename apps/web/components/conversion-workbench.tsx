@@ -74,10 +74,14 @@ export function ConversionWorkbench({ conversionId }: { conversionId: string }):
   }, [conversion?.takes, regex])
 
   const picker = (
-    <section className="tnt-card" style={{ display: 'grid', gap: 10 }}>
+    <section className="tnt-card tnt-stack">
       {conversion?.takes === 'machine' ? (
         <Field label="Machine">
-          <select value={machineId} onChange={(e) => setMachineId(e.target.value)} style={select}>
+          <select
+            value={machineId}
+            onChange={(e) => setMachineId(e.target.value)}
+            className="tnt-input tnt-input-mono"
+          >
             {machines.map((entry) => (
               <option key={entry.id} value={entry.id}>
                 {entry.title}
@@ -90,7 +94,11 @@ export function ConversionWorkbench({ conversionId }: { conversionId: string }):
       {conversion?.takes === 'grammar' ? (
         <>
           <Field label="Grammar">
-            <select value={grammarId} onChange={(e) => setGrammarId(e.target.value)} style={select}>
+            <select
+              value={grammarId}
+              onChange={(e) => setGrammarId(e.target.value)}
+              className="tnt-input tnt-input-mono"
+            >
               {SAMPLE_GRAMMARS.map((g) => (
                 <option key={g.id} value={g.id}>
                   {g.title}
@@ -99,17 +107,7 @@ export function ConversionWorkbench({ conversionId }: { conversionId: string }):
             </select>
           </Field>
           {chosenGrammar === undefined ? null : (
-            <pre
-              style={{
-                margin: 0,
-                fontFamily: 'var(--tnt-mono)',
-                fontSize: 13,
-                background: 'var(--tnt-bg)',
-                border: '1px solid var(--tnt-border)',
-                borderRadius: 'var(--tnt-radius)',
-                padding: '8px 10px',
-              }}
-            >
+            <pre className="tnt-code-block" style={{ margin: 0 }}>
               {grammarToText(chosenGrammar.grammar)}
             </pre>
           )}
@@ -125,35 +123,34 @@ export function ConversionWorkbench({ conversionId }: { conversionId: string }):
               spellCheck={false}
               autoComplete="off"
               aria-invalid={parseError !== null}
-              style={{ ...select, minWidth: 240, fontSize: 15 }}
+              className="tnt-input tnt-input-mono"
+              style={{ minWidth: 240 }}
             />
           </Field>
 
-          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
-            <span className="tnt-muted" style={{ fontSize: 13 }}>
-              Try:
-            </span>
+          <div className="tnt-row tnt-row-tight">
+            <span className="tnt-muted tnt-sm">Try:</span>
             {SAMPLE_REGEXES.map((sample) => (
               <button
                 key={sample.id}
                 type="button"
+                className="tnt-chip tnt-mono"
                 onClick={() => setRegex(sample.source)}
                 title={sample.note}
-                style={chip}
               >
                 {sample.source}
               </button>
             ))}
           </div>
 
-          <p className="tnt-muted" style={{ margin: 0, fontSize: 12 }}>
+          <p className="tnt-meta" style={{ margin: 0 }}>
             Union is <code>+</code> or <code>|</code>; star is <code>*</code>. Write <code>ε</code> for the
             empty string and <code>∅</code> for the empty language. Star binds tightest, then
             concatenation, then union.
           </p>
 
           {parseError === null ? null : (
-            <p role="alert" style={{ margin: 0, fontSize: 13, color: 'var(--tnt-marked)' }}>
+            <p role="alert" className="tnt-sm" style={{ margin: 0, color: 'var(--tnt-marked)' }}>
               {parseError}
             </p>
           )}
@@ -163,19 +160,11 @@ export function ConversionWorkbench({ conversionId }: { conversionId: string }):
   )
 
   if (conversion === undefined) {
-    return (
-      <p className="tnt-muted" style={{ fontSize: 14 }}>
-        No conversion is registered under that name.
-      </p>
-    )
+    return <p className="tnt-muted">No conversion is registered under that name.</p>
   }
 
   if (input === null) {
-    return (
-      <p className="tnt-muted" style={{ fontSize: 14 }}>
-        No source is available for this conversion yet.
-      </p>
-    )
+    return <p className="tnt-muted">No source is available for this conversion yet.</p>
   }
 
   // The picker already reports the parse error against the field, so the stepper
@@ -194,32 +183,13 @@ export function ConversionWorkbench({ conversionId }: { conversionId: string }):
 
 function Field({ label, children }: { label: string; children: React.ReactNode }): React.JSX.Element {
   return (
-    <label style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
-      <span style={{ fontSize: 13, minWidth: 130 }} className="tnt-muted">
+    // A field row that wraps: `tnt-field-row` for the pairing and the type size,
+    // `tnt-row` for the wrap once the control no longer fits beside its label.
+    <label className="tnt-row tnt-field-row">
+      <span className="tnt-muted" style={{ minWidth: 130 }}>
         {label}
       </span>
       {children}
     </label>
   )
-}
-
-const select: React.CSSProperties = {
-  fontFamily: 'var(--tnt-mono)',
-  fontSize: 14,
-  padding: '6px 8px',
-  borderRadius: 'var(--tnt-radius)',
-  border: '1px solid var(--tnt-border)',
-  background: 'var(--tnt-bg)',
-  color: 'var(--tnt-text)',
-}
-
-const chip: React.CSSProperties = {
-  fontFamily: 'var(--tnt-mono)',
-  fontSize: 13,
-  padding: '3px 9px',
-  borderRadius: 999,
-  border: '1px solid var(--tnt-border)',
-  background: 'var(--tnt-bg)',
-  color: 'var(--tnt-text)',
-  cursor: 'pointer',
 }

@@ -302,37 +302,89 @@ export interface NavLink {
   label: string
 }
 
+export interface NavGroup {
+  id: string
+  label: string
+  links: NavLink[]
+}
+
 /**
- * The header.
+ * The navigation rail.
  *
  * Here rather than in the layout so that adding a tool is a change to this file
- * and `topics.ts`, and to nothing else. Hubs and the syllabus index are listed
- * alongside the tools because they are navigation rather than tools, and so have
- * no place in `CATALOG`.
+ * and `topics.ts`, and to nothing else — `test/syllabus.test.tsx` reads
+ * `app/layout.tsx` and fails if a link is hard-coded back into it.
  *
- * `test/syllabus.test.tsx` checks that every href below is a route that exists
- * and that every live tool is reachable — from here or from the home page,
- * which renders `CATALOG` directly.
+ * **Grouped by verb, because the product is.** The README's "Three verbs"
+ * section says everything here is one of simulate, transform or decide, and
+ * `Tool.verb` records which. Seventeen links in a flat wrapping row said none of
+ * that; five named groups say it on every page. Hubs and the syllabus index sit
+ * among the tools because they are navigation rather than tools, and so have no
+ * place in `CATALOG`.
+ *
+ * Not every live tool is here. The rail is for the twenty or so a student
+ * reaches for; the rest are found from the home page, which renders `CATALOG`
+ * directly, and from the hub each one belongs to. A test asserts every live
+ * tool is reachable from one or the other.
  */
-export const NAV: NavLink[] = [
-  { href: '/simulate', label: 'Simulate' },
-  { href: '/edit', label: 'Draw' },
-  { href: '/convert', label: 'Convert' },
-  { href: '/regex', label: 'Regex' },
-  { href: '/closure', label: 'Closure' },
-  { href: '/search', label: 'Search' },
-  { href: '/applied', label: 'Case studies' },
-  { href: '/practice', label: 'Practice' },
-  { href: '/prove/pumping', label: 'Pumping' },
-  { href: '/grammar', label: 'Grammars' },
-  { href: '/simulate/pda', label: 'PDA' },
-  { href: '/grammar/simplify', label: 'CNF' },
-  { href: '/simulate/tm', label: 'TM' },
-  { href: '/undecidable', label: 'Undecidable' },
-  { href: '/hierarchy', label: 'Hierarchy' },
-  { href: '/learn/strings', label: 'Strings & languages' },
-  { href: '/syllabus', label: 'Syllabus' },
+export const NAV: NavGroup[] = [
+  {
+    id: 'simulate',
+    label: 'Simulate',
+    links: [
+      { href: '/simulate', label: 'Finite automata' },
+      { href: '/edit', label: 'Draw a machine' },
+      { href: '/simulate/pda', label: 'Pushdown automata' },
+      { href: '/simulate/tm', label: 'Turing machines' },
+      { href: '/search', label: 'Text search' },
+    ],
+  },
+  {
+    id: 'convert',
+    label: 'Convert',
+    links: [
+      { href: '/convert', label: 'All conversions' },
+      { href: '/regex', label: 'Regex playground' },
+      { href: '/closure', label: 'Closure lab' },
+      { href: '/grammar', label: 'Grammars' },
+      { href: '/grammar/simplify', label: 'Simplify & CNF' },
+    ],
+  },
+  {
+    id: 'prove',
+    label: 'Prove',
+    links: [
+      { href: '/prove/pumping', label: 'Pumping lemma' },
+      { href: '/closure/cfl', label: 'CFL closure' },
+      { href: '/undecidable', label: 'Undecidability' },
+      { href: '/undecidable/diagonalization', label: 'Diagonalization' },
+      { href: '/undecidable/reduction', label: 'Reductions' },
+    ],
+  },
+  {
+    id: 'practice',
+    label: 'Practice',
+    links: [
+      { href: '/practice', label: 'Question bank' },
+      { href: '/applied', label: 'Case studies' },
+    ],
+  },
+  {
+    id: 'learn',
+    label: 'Learn',
+    links: [
+      { href: '/hierarchy', label: 'The hierarchy' },
+      { href: '/learn/strings', label: 'Strings & languages' },
+      { href: '/learn/unix-regex', label: 'UNIX regexes' },
+      { href: '/syllabus', label: 'Syllabus' },
+    ],
+  },
 ]
+
+/** Every rail link, flattened. */
+export function navLinks(): NavLink[] {
+  return NAV.flatMap((group) => group.links)
+}
 
 export function liveTools(): Tool[] {
   return CATALOG.filter((tool) => tool.status === 'live')

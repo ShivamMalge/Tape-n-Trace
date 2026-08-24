@@ -53,12 +53,11 @@ export function EdgeLabelEditor({
         event.preventDefault()
         onCommit(text)
       }}
-      className="tnt-card"
-      style={{ display: 'grid', gap: 8 }}
+      className="tnt-card tnt-stack-sm"
       aria-label={`Label for the edge from ${from} to ${to}`}
     >
-      <label style={{ display: 'grid', gap: 4 }}>
-        <span style={{ fontSize: 13 }} className="tnt-muted">
+      <label className="tnt-field">
+        <span className="tnt-muted">
           {from} → {to}, reading
         </span>
         <input
@@ -74,58 +73,30 @@ export function EdgeLabelEditor({
           placeholder="0, 1"
           spellCheck={false}
           autoComplete="off"
-          style={{
-            fontFamily: 'var(--tnt-mono)',
-            fontSize: 15,
-            padding: '7px 9px',
-            borderRadius: 'var(--tnt-radius)',
-            border: '1px solid var(--tnt-border)',
-            background: 'var(--tnt-bg)',
-            color: 'var(--tnt-text)',
-          }}
+          className="tnt-input tnt-input-mono"
         />
       </label>
 
-      <p className="tnt-muted" style={{ margin: 0, fontSize: 12 }}>
+      <p className="tnt-muted tnt-xs" style={{ margin: 0 }}>
         Comma-separated. Write <code>eps</code> or <code>ε</code> for an ε-transition. Leave it empty
         to delete the edge.
       </p>
 
       {epsilonProblem ? (
-        <p style={{ margin: 0, fontSize: 12, color: 'var(--tnt-marked)' }}>
+        <p className="tnt-xs" style={{ margin: 0, color: 'var(--tnt-marked)' }}>
           This machine is not an ε-NFA, so an ε-transition would make it invalid. Change its kind
           first, or use a symbol.
         </p>
       ) : null}
 
-      <div style={{ display: 'flex', gap: 8 }}>
-        <button type="submit" style={primaryButton}>
+      <div className="tnt-row">
+        <button type="submit" className="tnt-btn tnt-btn-primary">
           {reads.length === 0 ? 'Delete edge' : 'Save label'}
         </button>
-        <button type="button" onClick={onCancel} style={plainButton}>
+        <button type="button" onClick={onCancel} className="tnt-btn">
           Cancel
         </button>
       </div>
     </form>
   )
-}
-
-const primaryButton: React.CSSProperties = {
-  padding: '6px 14px',
-  borderRadius: 'var(--tnt-radius)',
-  border: '1px solid var(--tnt-current)',
-  background: 'var(--tnt-current)',
-  color: '#fff',
-  fontSize: 14,
-  cursor: 'pointer',
-}
-
-const plainButton: React.CSSProperties = {
-  padding: '6px 14px',
-  borderRadius: 'var(--tnt-radius)',
-  border: '1px solid var(--tnt-border)',
-  background: 'var(--tnt-bg)',
-  color: 'var(--tnt-text)',
-  fontSize: 14,
-  cursor: 'pointer',
 }

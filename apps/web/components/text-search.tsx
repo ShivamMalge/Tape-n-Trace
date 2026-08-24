@@ -55,15 +55,16 @@ export function TextSearch(): React.JSX.Element {
   const covered = useMemo(() => coveredPositions(search?.matches ?? []), [search])
 
   return (
-    <div style={{ display: 'grid', gap: 16 }}>
-      <section className="tnt-card" style={{ display: 'grid', gap: 10 }}>
+    <div className="tnt-stack">
+      <section className="tnt-card tnt-stack">
         <Field label="Keywords">
           <input
             value={keywordText}
             onChange={(e) => setKeywordText(e.target.value)}
             spellCheck={false}
             autoComplete="off"
-            style={{ ...input, minWidth: 220 }}
+            className="tnt-input tnt-input-mono"
+            style={{ minWidth: 220 }}
           />
         </Field>
 
@@ -73,25 +74,24 @@ export function TextSearch(): React.JSX.Element {
             onChange={(e) => setText(e.target.value)}
             spellCheck={false}
             autoComplete="off"
-            style={{ ...input, minWidth: 320, flex: '1 1 320px' }}
+            className="tnt-input tnt-input-mono"
+            style={{ minWidth: 320, flex: '1 1 320px' }}
           />
         </Field>
 
-        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
-          <span className="tnt-muted" style={{ fontSize: 13 }}>
-            Try:
-          </span>
+        <div className="tnt-row tnt-row-tight">
+          <span className="tnt-sm tnt-muted">Try:</span>
           {PRESETS.map((preset) => (
             <button
               key={preset.id}
               type="button"
               title={preset.note}
+              className="tnt-chip tnt-mono"
               onClick={() => {
                 setKeywordText(preset.keywords)
                 setText(preset.text)
                 setHead(null)
               }}
-              style={chip}
             >
               {preset.keywords}
             </button>
@@ -99,7 +99,7 @@ export function TextSearch(): React.JSX.Element {
         </div>
 
         {outcome.error === null ? null : (
-          <p role="alert" style={{ margin: 0, fontSize: 13, color: 'var(--tnt-marked)' }}>
+          <p role="alert" className="tnt-sm" style={{ margin: 0, color: 'var(--tnt-marked)' }}>
             {outcome.error.message}
           </p>
         )}
@@ -107,21 +107,16 @@ export function TextSearch(): React.JSX.Element {
 
       {search === null ? null : (
         <>
-          <section style={{ display: 'grid', gap: 8 }}>
-            <h2 style={{ fontSize: 15, margin: 0 }}>The scan</h2>
-            <p className="tnt-muted" style={{ margin: 0, fontSize: 13 }}>
+          <section className="tnt-stack-sm">
+            <h2 style={{ margin: 0 }}>The scan</h2>
+            <p className="tnt-sm tnt-muted" style={{ margin: 0 }}>
               Hover or focus a character to see where the DFA had got to after reading it. Highlighted
               runs are matches — overlapping ones are all reported.
             </p>
 
-            <div
-              className="tnt-card"
-              style={{ background: 'var(--tnt-bg)', display: 'flex', flexWrap: 'wrap', gap: 2 }}
-            >
+            <div className="tnt-card tnt-row tnt-row-tight tnt-card-plain">
               {characters.length === 0 ? (
-                <span className="tnt-muted" style={{ fontSize: 13 }}>
-                  Nothing to scan yet.
-                </span>
+                <span className="tnt-sm tnt-muted">Nothing to scan yet.</span>
               ) : (
                 characters.map((char, index) => (
                   <button
@@ -132,13 +127,12 @@ export function TextSearch(): React.JSX.Element {
                     onMouseLeave={() => setHead(null)}
                     onBlur={() => setHead(null)}
                     aria-label={`Position ${index}, "${char}", state ${search.path[index] ?? 'start'}`}
+                    className="tnt-mono tnt-lg"
                     style={{
-                      fontFamily: 'var(--tnt-mono)',
-                      fontSize: 16,
                       minWidth: 22,
-                      padding: '4px 2px',
+                      padding: 'var(--tnt-space-1) 2px',
                       border: `1px solid ${head === index ? 'var(--tnt-current)' : 'transparent'}`,
-                      borderRadius: 4,
+                      borderRadius: 'var(--tnt-radius-sm)',
                       background: covered.has(index) ? 'var(--tnt-accepting-soft)' : 'transparent',
                       color: covered.has(index) ? 'var(--tnt-accepting)' : 'var(--tnt-text)',
                       cursor: 'pointer',
@@ -150,7 +144,7 @@ export function TextSearch(): React.JSX.Element {
               )}
             </div>
 
-            <p style={{ margin: 0, fontSize: 14 }}>
+            <p style={{ margin: 0 }}>
               {search.matches.length === 0 ? (
                 <span className="tnt-muted">No keyword occurs in this text.</span>
               ) : (
@@ -173,7 +167,7 @@ export function TextSearch(): React.JSX.Element {
             </p>
           </section>
 
-          <div style={{ display: 'grid', gap: 16, gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
+          <div className="tnt-panels">
             <Machine
               title="The guessing NFA"
               subtitle={`§2.4.2 — ${search.machines.nfa.states.length} states, ${search.machines.nfa.transitions.length} transitions`}
@@ -217,15 +211,15 @@ function Machine({
   children: React.ReactNode
 }): React.JSX.Element {
   return (
-    <section style={{ display: 'grid', gap: 6, minWidth: 0 }}>
-      <h2 style={{ fontSize: 15, margin: 0 }}>{title}</h2>
-      <p className="tnt-muted" style={{ margin: 0, fontSize: 12 }}>
+    <section className="tnt-stack-sm">
+      <h2 style={{ margin: 0 }}>{title}</h2>
+      <p className="tnt-meta" style={{ margin: 0 }}>
         {subtitle}
       </p>
-      <div className="tnt-card" style={{ background: 'var(--tnt-bg)', minWidth: 0, overflowX: 'auto' }}>
+      <div className="tnt-card tnt-scroll-x" style={{ background: 'var(--tnt-bg)', minWidth: 0 }}>
         {children}
       </div>
-      <p className="tnt-muted" style={{ margin: 0, fontSize: 13 }}>
+      <p className="tnt-sm tnt-muted" style={{ margin: 0 }}>
         {note}
       </p>
     </section>
@@ -234,32 +228,11 @@ function Machine({
 
 function Field({ label, children }: { label: string; children: React.ReactNode }): React.JSX.Element {
   return (
-    <label style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
-      <span style={{ fontSize: 13, minWidth: 110 }} className="tnt-muted">
+    <label className="tnt-row">
+      <span className="tnt-sm tnt-muted" style={{ minWidth: 110 }}>
         {label}
       </span>
       {children}
     </label>
   )
-}
-
-const input: React.CSSProperties = {
-  fontFamily: 'var(--tnt-mono)',
-  fontSize: 15,
-  padding: '6px 9px',
-  borderRadius: 'var(--tnt-radius)',
-  border: '1px solid var(--tnt-border)',
-  background: 'var(--tnt-bg)',
-  color: 'var(--tnt-text)',
-}
-
-const chip: React.CSSProperties = {
-  fontFamily: 'var(--tnt-mono)',
-  fontSize: 13,
-  padding: '3px 9px',
-  borderRadius: 999,
-  border: '1px solid var(--tnt-border)',
-  background: 'var(--tnt-bg)',
-  color: 'var(--tnt-text)',
-  cursor: 'pointer',
 }

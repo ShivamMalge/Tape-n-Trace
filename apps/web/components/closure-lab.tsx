@@ -129,39 +129,41 @@ export function ClosureLab(): React.JSX.Element {
     | undefined
 
   return (
-    <div style={{ display: 'grid', gap: 16 }}>
-      <section className="tnt-card" style={{ display: 'grid', gap: 10 }}>
-        <label style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
-          <span style={{ fontSize: 13, minWidth: 90 }} className="tnt-muted">
+    <div className="tnt-stack">
+      <section className="tnt-card tnt-stack">
+        <label className="tnt-row">
+          <span className="tnt-sm tnt-muted" style={{ minWidth: 90 }}>
             Operation
           </span>
-          <select value={opId} onChange={(e) => setOpId(e.target.value as ClosureOp)} style={select}>
+          <select
+            className="tnt-select"
+            value={opId}
+            onChange={(e) => setOpId(e.target.value as ClosureOp)}
+          >
             {OPERATIONS.map((o) => (
               <option key={o.op} value={o.op}>
                 {o.label}
               </option>
             ))}
           </select>
-          <span className="tnt-muted" style={{ fontSize: 12 }}>
-            Hopcroft 2e, {operation.citation}
-          </span>
+          <span className="tnt-meta">Hopcroft 2e, {operation.citation}</span>
         </label>
 
-        <p className="tnt-muted" style={{ margin: 0, fontSize: 13 }}>
+        <p className="tnt-sm tnt-muted" style={{ margin: 0 }}>
           {operation.note}
         </p>
 
-        <label style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
-          <span style={{ fontSize: 13, minWidth: 90 }} className="tnt-muted">
+        <label className="tnt-row">
+          <span className="tnt-sm tnt-muted" style={{ minWidth: 90 }}>
             {operation.arity === 2 ? 'L₁' : 'Machine'}
           </span>
           <select
+            className="tnt-select"
             value={leftId}
             onChange={(e) => {
               setLeftId(e.target.value)
               setConverted(null)
             }}
-            style={select}
           >
             {PRESETS.map((entry) => (
               <option key={entry.id} value={entry.id}>
@@ -172,11 +174,15 @@ export function ClosureLab(): React.JSX.Element {
         </label>
 
         {operation.arity === 2 ? (
-          <label style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
-            <span style={{ fontSize: 13, minWidth: 90 }} className="tnt-muted">
+          <label className="tnt-row">
+            <span className="tnt-sm tnt-muted" style={{ minWidth: 90 }}>
               L₂
             </span>
-            <select value={effectiveRightId} onChange={(e) => setRightId(e.target.value)} style={select}>
+            <select
+              className="tnt-select"
+              value={effectiveRightId}
+              onChange={(e) => setRightId(e.target.value)}
+            >
               {rightOptions.map((entry) => (
                 <option key={entry.id} value={entry.id}>
                   {entry.title}
@@ -202,20 +208,12 @@ export function ClosureLab(): React.JSX.Element {
         <div>
           <button
             type="button"
+            className="tnt-btn tnt-btn-primary"
             onClick={() => setConverted(determinise(chosen))}
-            style={{
-              padding: '7px 15px',
-              borderRadius: 'var(--tnt-radius)',
-              border: '1px solid var(--tnt-current)',
-              background: 'var(--tnt-current)',
-              color: '#fff',
-              fontSize: 14,
-              cursor: 'pointer',
-            }}
           >
             Convert it to a complete DFA first
           </button>
-          <p className="tnt-muted" style={{ margin: '6px 0 0', fontSize: 12 }}>
+          <p className="tnt-meta" style={{ margin: 'var(--tnt-space-1) 0 0' }}>
             Runs the subset construction and minimises the result. Watch it happen on the{' '}
             <a href="/convert/nfa-to-dfa">conversion page</a> instead if you would rather see the working.
           </p>
@@ -223,7 +221,7 @@ export function ClosureLab(): React.JSX.Element {
       ) : null}
 
       {converted === null ? null : (
-        <p className="tnt-muted" style={{ margin: 0, fontSize: 13 }}>
+        <p className="tnt-sm tnt-muted" style={{ margin: 0 }}>
           Using the determinised machine ({converted.states.length} states).{' '}
           <button
             type="button"
@@ -237,7 +235,7 @@ export function ClosureLab(): React.JSX.Element {
 
       {outcome.trace === null ? null : (
         <>
-          <div style={{ display: 'grid', gap: 14, gridTemplateColumns: 'repeat(auto-fit, minmax(270px, 1fr))' }}>
+          <div className="tnt-panels tnt-panels-narrow">
             {snapshot?.left === undefined ? null : (
               <Pane title={operation.arity === 2 ? 'L₁' : 'Source'}>
                 <AutomatonRenderer machine={snapshot.left} step={step} instanceId="cl-left" />
@@ -288,21 +286,13 @@ function sameAlphabet(a: FiniteAutomaton, b: FiniteAutomaton): boolean {
 
 function Pane({ title, children }: { title: string; children: React.ReactNode }): React.JSX.Element {
   return (
-    <section style={{ display: 'grid', gap: 6, minWidth: 0 }}>
-      <h2 style={{ fontSize: 13, margin: 0, textTransform: 'uppercase', letterSpacing: 0.6 }}>{title}</h2>
-      <div className="tnt-card" style={{ background: 'var(--tnt-bg)', minWidth: 0, overflowX: 'auto' }}>
+    <section className="tnt-stack-sm">
+      <h2 className="tnt-label" style={{ margin: 0 }}>
+        {title}
+      </h2>
+      <div className="tnt-card tnt-scroll-x" style={{ background: 'var(--tnt-bg)', minWidth: 0 }}>
         {children}
       </div>
     </section>
   )
-}
-
-const select: React.CSSProperties = {
-  fontFamily: 'var(--tnt-font)',
-  fontSize: 14,
-  padding: '5px 8px',
-  borderRadius: 'var(--tnt-radius)',
-  border: '1px solid var(--tnt-border)',
-  background: 'var(--tnt-bg)',
-  color: 'var(--tnt-text)',
 }

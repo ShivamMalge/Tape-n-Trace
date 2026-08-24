@@ -9,8 +9,8 @@ export const metadata: Metadata = {
 export default function TmMultitapePage(): React.JSX.Element {
   return (
     <div className="tnt-page">
-      <h1 style={{ fontSize: 26 }}>Many tapes to one</h1>
-      <p style={{ maxWidth: '64ch' }}>
+      <h1>Many tapes to one</h1>
+      <p className="tnt-prose">
         Hopcroft 2e §8.4.2–8.4.3. Extra tapes add no power: a one-tape machine N keeps 2k tracks —
         each tape’s contents and a marker for where its head is — and simulates one move of M by
         sweeping right to read under the markers and sweeping left to write and move them. Theorem

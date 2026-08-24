@@ -29,14 +29,14 @@ export default async function PumpingGamePage({ params, searchParams }: PageProp
 
   return (
     <div className="tnt-page" style={{ maxWidth: 880 }}>
-      <p style={{ fontSize: 13, margin: 0 }}>
+      <p className="tnt-sm" style={{ margin: 0 }}>
         <a href="/prove/pumping">← All games</a>
       </p>
 
-      <h1 style={{ fontSize: 24, marginTop: 8 }}>{language.title}</h1>
+      <h1 style={{ marginTop: 'var(--tnt-space-2)' }}>{language.title}</h1>
       <p style={{ marginTop: 0 }}>
-        <code style={{ fontSize: 16 }}>{language.notation}</code>
-        <span className="tnt-muted" style={{ fontSize: 13, marginLeft: 10 }}>
+        <code className="tnt-lg">{language.notation}</code>
+        <span className="tnt-muted tnt-sm" style={{ marginLeft: 'var(--tnt-space-3)' }}>
           {playMode === 'defend' ? 'reverse mode — you defend' : playVariant === 'cfl' ? 'CFL variant — you attack' : 'you attack'}
         </span>
       </p>

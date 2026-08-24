@@ -22,7 +22,7 @@ import { useDebounced } from '../lib/use-debounced'
  * Alphabet abstracted the way §3.3.2's examples are: `a` a letter, `d` a digit.
  * Real lexers work over ASCII; the shape of the machine is the same.
  */
-const ALPHABET = ['a', 'd', ' ', '=', '+']
+export const ALPHABET = ['a', 'd', ' ', '=', '+']
 
 interface Rule {
   name: string
@@ -30,13 +30,27 @@ interface Rule {
   note: string
 }
 
-const RULES: Rule[] = [
+export const RULES: Rule[] = [
   { name: 'KEYWORD', regex: 'aa', note: 'A two-letter keyword, like "if".' },
   { name: 'IDENT', regex: 'a(a+d)*', note: 'A letter then letters or digits.' },
   { name: 'NUMBER', regex: 'dd*', note: 'One or more digits.' },
-  { name: 'OP', regex: '=+ +', note: 'An operator: = or +.' },
-  { name: 'SPACE', regex: '  *', note: 'Runs of spaces.' },
+  // Both of these need escapes, and neither is optional. `+` is union in this
+  // engine — §3.1.2 has no Kleene plus — so an unescaped one never means the
+  // symbol +, and `parseRegex` rejects a bare space outright ("spaces are not
+  // symbols"). Written unescaped, these two rules failed to build a DFA at all
+  // and every space, = and + in the snippet fell through to a one-character
+  // ERROR token, which is not what a lexer demo should be demonstrating.
+  { name: 'OP', regex: '=+\\+', note: 'An operator: = or +.' },
+  { name: 'SPACE', regex: '\\ \\ *', note: 'Runs of spaces.' },
 ]
+
+/**
+ * Every character is in ALPHABET — the previous default held a literal `1`,
+ * which is not, so it lexed as ERROR on load. `aa` leads so the first thing on
+ * screen is the keyword-beats-identifier tie: both match two characters, and
+ * the earlier rule wins.
+ */
+export const DEFAULT_SNIPPET = 'aa add = ad + dd'
 
 interface Token {
   rule: string
@@ -45,7 +59,7 @@ interface Token {
 }
 
 export function LexerDemo(): React.JSX.Element {
-  const [source, setSource] = useState('add1 = ad + dd')
+  const [source, setSource] = useState(DEFAULT_SNIPPET)
   const settled = useDebounced(source, 220)
 
   // One DFA per rule, built once. Longest match then means: at each position,
@@ -62,15 +76,15 @@ export function LexerDemo(): React.JSX.Element {
   const tokens = useMemo(() => tokenise(settled, machines), [settled, machines])
 
   return (
-    <div style={{ display: 'grid', gap: 14 }}>
-      <table style={{ borderCollapse: 'collapse', fontSize: 13, width: '100%' }}>
-        <caption className="tnt-muted" style={{ textAlign: 'left', fontSize: 12, paddingBottom: 6 }}>
+    <div className="tnt-stack">
+      <table className="tnt-table" style={{ width: '100%' }}>
+        <caption>
           The rules, in order. On a tie the first one wins — which is why KEYWORD sits above IDENT.
         </caption>
         <thead>
           <tr>
             {['Rule', 'Expression', 'Matches'].map((h) => (
-              <th key={h} scope="col" style={{ textAlign: 'left', padding: '4px 8px', fontSize: 12, color: 'var(--tnt-text-muted)' }}>
+              <th key={h} scope="col">
                 {h}
               </th>
             ))}
@@ -78,19 +92,17 @@ export function LexerDemo(): React.JSX.Element {
         </thead>
         <tbody>
           {RULES.map((rule) => (
-            <tr key={rule.name} style={{ borderTop: '1px solid var(--tnt-border)' }}>
-              <td style={{ padding: '4px 8px', fontFamily: 'var(--tnt-mono)' }}>{rule.name}</td>
-              <td style={{ padding: '4px 8px', fontFamily: 'var(--tnt-mono)' }}>{rule.regex}</td>
-              <td style={{ padding: '4px 8px' }} className="tnt-muted">
-                {rule.note}
-              </td>
+            <tr key={rule.name}>
+              <td className="tnt-mono">{rule.name}</td>
+              <td className="tnt-mono">{rule.regex}</td>
+              <td className="tnt-muted">{rule.note}</td>
             </tr>
           ))}
         </tbody>
       </table>
 
-      <label style={{ display: 'grid', gap: 5 }}>
-        <span style={{ fontSize: 13 }} className="tnt-muted">
+      <label className="tnt-field">
+        <span className="tnt-muted">
           Snippet — letters as <code>a</code>, digits as <code>d</code>, plus spaces, <code>=</code> and{' '}
           <code>+</code>
         </span>
@@ -99,23 +111,13 @@ export function LexerDemo(): React.JSX.Element {
           onChange={(event) => setSource(event.target.value)}
           spellCheck={false}
           autoComplete="off"
-          style={{
-            fontFamily: 'var(--tnt-mono)',
-            fontSize: 16,
-            padding: '8px 10px',
-            borderRadius: 'var(--tnt-radius)',
-            border: '1px solid var(--tnt-border)',
-            background: 'var(--tnt-bg)',
-            color: 'var(--tnt-text)',
-          }}
+          className="tnt-input tnt-input-mono tnt-input-lg"
         />
       </label>
 
-      <div className="tnt-card" style={{ background: 'var(--tnt-bg)', display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+      <div className="tnt-card tnt-row tnt-row-tight tnt-card-plain">
         {tokens.length === 0 ? (
-          <span className="tnt-muted" style={{ fontSize: 13 }}>
-            Nothing tokenised yet.
-          </span>
+          <span className="tnt-sm tnt-muted">Nothing tokenised yet.</span>
         ) : (
           tokens.map((token, i) => (
             <span
@@ -124,19 +126,16 @@ export function LexerDemo(): React.JSX.Element {
               style={{
                 display: 'inline-grid',
                 gap: 1,
-                padding: '3px 8px',
+                padding: 'var(--tnt-space-1) var(--tnt-space-2)',
                 borderRadius: 'var(--tnt-radius)',
                 border: `1px solid ${token.rule === 'ERROR' ? 'var(--tnt-marked)' : 'var(--tnt-border)'}`,
                 background: token.rule === 'ERROR' ? 'var(--tnt-surface)' : 'var(--tnt-current-soft)',
               }}
             >
-              <code style={{ fontSize: 14 }}>{token.text === ' ' ? '␣' : token.text}</code>
+              <code>{token.text === ' ' ? '␣' : token.text}</code>
               <span
-                style={{
-                  fontSize: 10,
-                  letterSpacing: 0.5,
-                  color: token.rule === 'ERROR' ? 'var(--tnt-marked)' : 'var(--tnt-current)',
-                }}
+                className="tnt-label"
+                style={{ color: token.rule === 'ERROR' ? 'var(--tnt-marked)' : 'var(--tnt-current)' }}
               >
                 {token.rule}
               </span>
@@ -145,7 +144,7 @@ export function LexerDemo(): React.JSX.Element {
         )}
       </div>
 
-      <p className="tnt-muted" style={{ margin: 0, fontSize: 13 }}>
+      <p className="tnt-sm tnt-muted" style={{ margin: 0 }}>
         Try <code>aa</code> against <code>aaa</code>: the first is a KEYWORD, the second an IDENT, because
         longest match takes the three-letter reading before the two-letter one.
       </p>

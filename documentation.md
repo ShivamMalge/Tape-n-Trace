@@ -11,7 +11,7 @@
 >
 > **One signature-level question is still open** — see [§3.1](#31-an-open-question-that-affects-every-signature).
 
-Companion documents: [README.md](README.md) · [architecture.md](architecture.md) · [phases.md](phases.md)
+Companion documents: [README.md](README.md) · [architecture.md](architecture.md) · [phases.md](phases.md) · [phases-vyakarana.md](phases-vyakarana.md) — how this gets built
 
 ---
 
@@ -113,9 +113,11 @@ Rendering is unaffected either way — that always goes through `anywidget` to t
 only headless value returns, which must also work under `pytest` and `nbconvert` where no frontend is
 attached.
 
-A one-day spike on the first day of P1.8 closes this **before the API is frozen**. This document assumes
-the synchronous form throughout; if the spike lands the other way, every value-returning signature below
-gains `await` and this note is replaced by the outcome.
+A one-day spike closes this **before the API is frozen** — it is phase V0 of
+[phases-vyakarana.md](phases-vyakarana.md), which states what the spike must measure and what to do if
+the day runs out without a clear winner. This document assumes the synchronous form throughout; if the
+spike lands the other way, every value-returning signature below gains `await` and this note is replaced
+by the outcome.
 
 ---
 

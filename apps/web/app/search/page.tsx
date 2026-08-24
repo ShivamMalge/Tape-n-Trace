@@ -9,13 +9,13 @@ export const metadata: Metadata = {
 export default function SearchPage(): React.JSX.Element {
   return (
     <div className="tnt-page">
-      <h1 style={{ fontSize: 26 }}>Text and keyword search</h1>
-      <p style={{ maxWidth: '62ch' }}>
+      <h1>Text and keyword search</h1>
+      <p className="tnt-prose">
         The application that makes finite automata feel like engineering. Give it some keywords and some
         text, and watch the head scan — with both machines shown side by side so the cost of guessing is
         visible.
       </p>
-      <p className="tnt-muted" style={{ maxWidth: '62ch', fontSize: 14 }}>
+      <p className="tnt-prose tnt-muted tnt-sm">
         Hopcroft 2e §2.4.
       </p>
       <TextSearch />

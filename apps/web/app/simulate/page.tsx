@@ -8,23 +8,19 @@ export const metadata: Metadata = {
 export default function SimulateIndexPage(): React.JSX.Element {
   return (
     <div className="tnt-page">
-      <h1 style={{ fontSize: 26 }}>Simulate a finite automaton</h1>
-      <p style={{ maxWidth: '62ch' }}>
+      <h1>Simulate a finite automaton</h1>
+      <p className="tnt-prose">
         Pick a machine, give it a string, and step through the run. Every step says what it did and cites
         the section of the textbook it came from.
       </p>
 
-      <ul style={{ display: 'grid', gap: 12, listStyle: 'none', padding: 0, marginTop: 24 }}>
+      <ul className="tnt-stack" style={{ listStyle: 'none', padding: 0, marginTop: 'var(--tnt-space-5)' }}>
         {GALLERY.map((entry) => (
           <li key={entry.id}>
-            <a
-              href={`/simulate/${entry.id}`}
-              className="tnt-card"
-              style={{ display: 'grid', gap: 4, textDecoration: 'none', color: 'inherit' }}
-            >
-              <strong style={{ fontSize: 16 }}>{entry.title}</strong>
-              <span style={{ fontSize: 14 }}>{entry.language}</span>
-              <span className="tnt-muted" style={{ fontSize: 12 }}>
+            <a href={`/simulate/${entry.id}`} className="tnt-card tnt-stack-sm">
+              <strong>{entry.title}</strong>
+              <span className="tnt-sm">{entry.language}</span>
+              <span className="tnt-meta">
                 {entry.citation} · {entry.machine.states.length} states over{' '}
                 {`{${entry.machine.alphabet.join(', ')}}`}
               </span>
