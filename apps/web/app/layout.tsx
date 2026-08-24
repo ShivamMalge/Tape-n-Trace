@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
+import { NAV } from '../lib/catalog'
+import { SyllabusBreadcrumb } from '../components/syllabus-breadcrumb'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -43,49 +45,16 @@ export default function RootLayout({ children }: { children: ReactNode }): React
             >
               Tape-n-Trace
             </a>
-            <a href="/simulate" style={{ fontSize: 14 }}>
-              Simulate
-            </a>
-            <a href="/edit" style={{ fontSize: 14 }}>
-              Draw
-            </a>
-            <a href="/convert" style={{ fontSize: 14 }}>
-              Convert
-            </a>
-            <a href="/regex" style={{ fontSize: 14 }}>
-              Regex
-            </a>
-            <a href="/closure" style={{ fontSize: 14 }}>
-              Closure
-            </a>
-            <a href="/search" style={{ fontSize: 14 }}>
-              Search
-            </a>
-            <a href="/applied" style={{ fontSize: 14 }}>
-              Case studies
-            </a>
-            <a href="/practice" style={{ fontSize: 14 }}>
-              Practice
-            </a>
-            <a href="/prove/pumping" style={{ fontSize: 14 }}>
-              Pumping
-            </a>
-            <a href="/grammar" style={{ fontSize: 14 }}>
-              Grammars
-            </a>
-            <a href="/simulate/pda" style={{ fontSize: 14 }}>
-              PDA
-            </a>
-            <a href="/grammar/simplify" style={{ fontSize: 14 }}>
-              CNF
-            </a>
-            <a href="/simulate/tm" style={{ fontSize: 14 }}>
-              TM
-            </a>
-            <a href="/learn/strings" style={{ fontSize: 14 }}>
-              Strings &amp; languages
-            </a>
+            {/* Read from lib/catalog.ts, so a new tool reaches the header by
+                being added there rather than by editing this file. */}
+            {NAV.map((link) => (
+              <a key={link.href} href={link.href} style={{ fontSize: 14 }}>
+                {link.label}
+              </a>
+            ))}
           </nav>
+
+          <SyllabusBreadcrumb />
         </header>
 
         <main id="main">{children}</main>

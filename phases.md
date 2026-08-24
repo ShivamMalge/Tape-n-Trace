@@ -1,6 +1,7 @@
 # Build Phases — Tape-n-Trace
 
-> **Status: pre-implementation.** Nothing below is built. This is the execution plan.
+> **Status: v1.0, 2026-08-24.** P0.1 through P1.7 are built and gated; the status tracker below is
+> updated in the same commit as the work it describes. P1.8 — the Python package — is what remains.
 
 Companion documents: [architecture.md](architecture.md) · [documentation.md](documentation.md) · [README.md](README.md)
 
@@ -41,7 +42,7 @@ Updated in the same commit as the work it describes. ✅ done and pushed · 🔨
 | P1.4 PDA | v0.7 | ✅ | 2026-08-22 · 691 tests → 735 |
 | P1.5 CFL properties, CNF | v0.8 | ✅ | 2026-08-22 · 735 tests → 776; pipeline runs the book’s safe order (Thm 7.14) |
 | P1.6 Turing machines | v0.9 | ✅ | 2026-08-23 · 776 tests → 838; every gallery machine is the book’s own |
-| P1.7 Undecidability, hierarchy | v1.0 | ⬜ | |
+| P1.7 Undecidability, hierarchy | **v1.0** | ✅ | 2026-08-24 · 838 tests → 956; **full syllabus coverage** |
 | P1.8 Vyakarana (Python) | pkg 0.1 | ⬜ | ADR-004 spike first |
 
 **Deadline note (added 2026-08-21): 10 days remain.** The outstanding plan is ~11 estimated weeks,
@@ -49,6 +50,13 @@ so v1.0 as specified does not fit. The cut that preserves the most value: P1.1 �
 in order (each ships alone), then reassess. P1.8 and P1.6/P1.7 are the natural sacrifices — the
 Python package is a separate deliverable, and Module 5 is explainer-heavy. Prefer shipping
 Modules 1–3 excellently over five modules shakily (§6, first risk).
+
+> **Closed, 2026-08-24.** The sacrifice was not needed. P1.5 through P1.7 landed in the three days
+> after that note was written, and **v1.0 shipped on day 4 of 10** with all five modules covered. The
+> estimate that said eleven weeks was wrong by roughly an order of magnitude, which is worth recording
+> honestly rather than quietly deleting: §6's first risk was real, the mitigation (ship each phase
+> alone) was right, and the schedule it was mitigating never materialised. **P1.8 remains outstanding**
+> and is the only thing between here and the full roadmap.
 
 ## 2. Scope baseline — BTOCH503 (autonomous)
 
@@ -632,7 +640,7 @@ wrong is the most common lost-marks mistake in the subject. Showing the pipeline
 
 ---
 
-### P1.7 — Undecidability, hierarchy, syllabus index · 1 week · ships **v1.0, full syllabus coverage**
+### ✅ P1.7 — Undecidability, hierarchy, syllabus index · 1 week · ships **v1.0, full syllabus coverage** — **DONE**
 
 **Goal.** This content **cannot be simulated** — it is proof. The temptation is to skip it or to fake an
 animation. Do neither.
@@ -655,19 +663,63 @@ animation. Do neither.
 - **`/syllabus`** and the scheme layer: `lib/topics.ts`, `lib/schemes/vtu-2022-bcs503.ts`, the derived
   breadcrumb on every tool page, and CO mapping.
 
+**Note (2026-08-24).** Two things the plan above did not anticipate, both forced by computing the table
+rather than illustrating it.
+
+*The table has two origins.* Fig. 9.1 is drawn with rows and columns starting together, and a real one
+cannot be. The first well-formed code is w₆₈₂ and the first machine that accepts anything is M₁₃₅₄,
+while the columns worth reading are ε, 0, 1, 00 — so an aligned window is either solid 0s or full of
+inputs hundreds of bits long. The axes therefore start independently, defaulting to together so the
+diagonal is present, and the page says when the diagonal is off screen instead of drawing one that is
+not there.
+
+*The scheme owns the module number, not the topic.* `topics.ts` said so in a comment from P1.1 and
+carried a `module` field anyway. It no longer does: `moduleOf(topicId, scheme)` answers that question,
+which is what makes the second scheme a data file rather than a fork.
+
+*The reduction builder is chosen, not dragged.* The deliverable above says "drag problem A onto problem
+B". It ships as two labelled lists of radio buttons instead. Dragging would be the third interaction in
+this app that a keyboard cannot perform, for no teaching gain — the content is the construction and the
+refusal, not the gesture — and the picker has room to mark each problem with where it sits (decidable,
+undecidable, RE but not recursive, not RE) and to say which ones no reduction may start from, which a
+drag target has nowhere to put.
+
 **Acceptance criteria**
 
-- [ ] Every topic in the default scheme resolves to a live link. A CI test walks the scheme and fails on
+- ✅ Every topic in the default scheme resolves to a live link. A CI test walks the scheme and fails on
       any dead or missing target.
-- [ ] The diagonalization table computes real cells for a real small TM enumeration, with a bounded step
+      *(`test/syllabus.test.tsx` reads the app's routes off the filesystem — a hand-written route list is
+      exactly what goes stale — resolves dynamic segments the way Next does, and walks all 33 topics.
+      It also fails on a topic the scheme does not place, so nothing is orphaned.)*
+- ✅ The diagonalization table computes real cells for a real small TM enumeration, with a bounded step
       budget; cells exceeding it are marked "no answer within budget", which is itself the honest and
       instructive display.
-- [ ] No page in this section claims to "simulate" an undecidable problem.
-- [ ] Every explainer cites its Hopcroft 2e section.
-- [ ] Adding a tool requires editing `catalog.ts` and `topics.ts` only — verified by adding one in review.
+      *(Every cell is `simulateTM` on a machine decoded from a real binary string. The footnote to Fig. 9.1
+      is reproduced and located: rows 1–681 are solid 0s, asserted, and the presets carry a student to
+      w₆₈₂ (first code), M₁₃₅₄ (first to accept anything) and M₂₆₀₂ (first not to halt — δ(q₁,B) = (q₁,0,L)
+      runs for ever on ε). All three constants are found by search in the tests, not asserted. A cell that
+      outlives its budget renders `?` and is labelled "no answer within the budget"; the test asserts its
+      label never reads "does not accept", and that a larger budget never changes an answer already given.)*
+- ✅ No page in this section claims to "simulate" an undecidable problem.
+      *(Asserted on every narration of both new trace kinds, and on every one of the six reductions. The
+      `/undecidable` page carries a "what this page does not claim" section. Fig. 8.7's decider is drawn
+      dashed, captioned "assumed to exist", and withdrawn at the last step.)*
+- ✅ Every explainer cites its Hopcroft 2e section.
+      *(Twelve new rows and six figures in [docs/citations.md](docs/citations.md), read off the printed pages.
+      Tests require a citation on every problem, every reduction, every language class that is in scope,
+      and every language plotted on the map.)*
+- ✅ Adding a tool requires editing `catalog.ts` and `topics.ts` only — verified by adding one in review.
+      *(The header was the third file, and is not any more: it renders `NAV` from `catalog.ts`, and a test
+      reads `app/layout.tsx` and fails if a navigation link is hard-coded back into it.)*
+
+**Two things this phase deliberately does not claim.** The context-sensitive ring carries no citation —
+the prescribed sections have no linear bounded automaton — and its outer boundary is drawn with nothing
+plotted in it, because no standard language witnesses it. The second scheme ships with an empty outcome
+list and prints the reason, because VTU's outcomes have not been read off a VTU document and every
+exercise carries a CO tag. Both are recorded in [docs/citations.md](docs/citations.md).
 
 **Exit gate. v1.0 is the milestone that matters.** Complete, correct, syllabus-mapped coverage of BTOCH503 and BCS503 alike.
-Ship it before anything in P2.
+Ship it before anything in P2. — **Met on 2026-08-24.**
 
 ---
 
@@ -748,7 +800,7 @@ extract-the-parse-tree-from-the-table link is genuinely well worth showing.
 | P1.4 | PDA editor, ID simulator, acceptance conversions, CFG to PDA, DPDA | 1.5 wks | **v0.7** |
 | P1.5 | Simplification pipeline, CNF, CFL closure lab | 1 wk | **v0.8** |
 | P1.6 | TM editor, simulator, gallery, multitape, programming techniques | 2 wks | v0.9 |
-| P1.7 | Undecidability explainers, hierarchy map, syllabus index | 1 wk | **v1.0** |
+| P1.7 | Diagonalization table, reduction builder, hierarchy map, syllabus index | 1 wk | **v1.0** ✅ |
 | P1.8 | Vyakarana: spike, bridge, package, Colab, PyPI | 2 wks | `vyakarana` 0.1 |
 | P2 | Enrichment, JFLAP, IDE, classroom | open | v1.x |
 
@@ -777,7 +829,7 @@ elimination adds half a week back.
 |---|---|---|---|
 | 1 | **ADR-004** — where the engine executes in the Python path. | Author + spike | P1.8 day 1 |
 | 2 | **Hosting and auth.** v1.0 is anonymous with no login; the classroom layer in P2 is when auth becomes real. | Author | Before P2 |
-| 3 | **Source-document conflicts** (§2, note). Teaching hours (40 vs 42), the CO-to-module mapping, and the Bloom's levels differ between the syllabus, the lesson plan and the model papers. Worth one clarification from the course faculty before the scheme config is frozen. | Author | Before P1.7 |
+| 3 | **Source-document conflicts** (§2, note). Teaching hours (40 vs 42), the CO-to-module mapping, and the Bloom's levels differ between the syllabus, the lesson plan and the model papers. Worth one clarification from the course faculty before the scheme config is frozen. | Author | ~~Before P1.7~~ — **still open.** P1.7 shipped without resolving it: the scheme takes the syllabus document as authoritative, per §2, and prints all four disagreements on `/syllabus` under "Where the source documents disagree" rather than picking a side in silence. One question to the faculty still closes it. |
 
 **Resolved**
 

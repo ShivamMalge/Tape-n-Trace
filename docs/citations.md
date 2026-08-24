@@ -67,6 +67,18 @@ coarse citation is honest; a plausible one is not.
 | 8.4.2, Thm 8.9 | Equivalence of One-Tape and Multitape TM's | 337–338 | `tm/multitape.ts` — `multitapeToSingle`, the 2k-track machine with head markers, built and run |
 | 8.4.3, Thm 8.10 | Running Time and the Many-Tapes-to-One Construction | 339–340 | `tm/multitape.ts` — `simulateReduction` counts N's moves against 4n + 2k; asserted in the tests |
 | 8.4.4, Thm 8.11 | Nondeterministic Turing Machines | 340–342 | `tm/simulate.ts` — the breadth-first tree of IDs; the page's nondeterminism card |
+| 8.1.1–8.1.2 | Programs that Print "Hello, World"; The Hypothetical "Hello, World" Tester | 308–313 | `undecidable/reduction.ts` — the hello-world problem, with H₂'s paradox as its reason for being undecidable |
+| 8.1.3 | Reducing One Problem to Another | 313–316 | `undecidable/reduction.ts` — Fig. 8.7's construct-then-decide chain; Example 8.1's four-step construction, instruction for instruction; the box on p. 316 is what `REDUCTION_DIRECTION` refuses |
+| 8.1.4 | Exercises for Section 8.1 | 316 | `undecidable/reduction.ts` — Exercise 8.1.1(a) halting and (b) any output, both reduced from hello-world |
+| 9.1.1 | Enumerating the Binary Strings | 369 | `undecidable/encoding.ts` — `binaryString` and `stringIndex`; "treat 1w as a binary integer i" implemented as printed |
+| 9.1.2 | Codes for Turing Machines | 369–370 | `undecidable/encoding.ts` — q₁ the start and q₂ the sole accepting state, X₁X₂X₃ = 0, 1, B, D₁D₂ = L, R; the rule code 0ⁱ10ʲ10ᵏ10ˡ10ᵐ; C₁11C₂⋯11C_n; the pair (M, w) separated by 111 |
+| 9.1.3 | The Diagonalization Language | 370–372 | `undecidable/diagonal.ts` — L_d; an ill-formed code read as the one-state machine with no moves. The footnote on p. 371 — "the top rows of the table are in fact solid 0's" — is why the page has presets rather than starting at row 1 and stopping there |
+| 9.1.4, Thm 9.2 | Proof that L_d is not Recursively Enumerable | 372 | `undecidable/diagonal.ts` — `diagonalArgument`, walked over the computed table |
+| 9.2.1 | Recursive Languages | 373 | `hierarchy.ts` — a problem is decidable exactly when its language is recursive |
+| 9.2.2, Thms 9.3, 9.4 | Complements of Recursive and RE languages | 374–377 | `hierarchy.ts` — the complement row of the closure table, and the nine placements of p. 377 of which four survive |
+| 9.2.3 | The Universal Language | 377–379 | `hierarchy.ts`, `undecidable/reduction.ts` — L_u is RE because the universal machine accepts it |
+| 9.2.4, Thm 9.6 | Undecidability of the Universal Language | 379–381 | `undecidable/reduction.ts` — L_u is RE but not recursive; the box on p. 380 defines H(M) and places the halting problem; the paragraph above Thm 9.6 is why a reduction's conclusion depends on its source |
+| 9.2.5 | Exercises for Section 9.2 | 381–382 | `undecidable/reduction.ts` — Exercise 9.2.1 (halting ⇄ L_u); `hierarchy.ts` — Exercise 9.2.6 (closure), see the divergence below |
 
 Figure-level, verified:
 
@@ -78,6 +90,12 @@ Figure-level, verified:
 | Fig. 3.16, 3.17 | Basis and induction of the ε-NFA construction | `regex/thompson.ts` |
 | Fig. 6.2 (Example 6.2) | The wwᴿ PDA as a transition diagram, p. 224 | `pda/gallery.ts` — `wwr`, arc for arc |
 | Fig. 6.11 (Example 6.16) | The deterministic wcwᴿ PDA, p. 248 | `pda/gallery.ts` — `wcwr`, arc for arc |
+| Fig. 8.7 | If we could solve problem P₂, then we could use its solution to solve P₁, p. 314 | `reduction-builder.tsx` — the boxes and the dashed "Decide" diamond |
+| Fig. 9.1 | The table that represents acceptance of strings by Turing machines, p. 371 | `undecidable/diagonal.ts`, `diagonal-grid.tsx` |
+| Fig. 9.2 | Relationship between the recursive, RE, and non-RE languages, p. 374 | `hierarchy.ts`; drawn by `hierarchy-rings.tsx` on `/undecidable` and extended inwards on `/hierarchy` |
+| Fig. 9.3 | Construction of a TM accepting the complement of a recursive language, p. 376 | `hierarchy.ts` — the complement row's construction |
+| Fig. 9.4 | Simulation of two TM's accepting a language and its complement, p. 376 | `hierarchy.ts` — the parallel simulation the union and intersection rows reuse |
+| Fig. 9.6 | Reduction of L_d to the complement of L_u, p. 380 | `undecidable/reduction.ts` — the Copy box producing w111w |
 | Example 7.1 | S → AB \| a, A → b: the wrong-order trap, p. 256 | `test/cfl.test.ts`, and the pipeline page's preset (with B → Bb so the text form can state B) |
 | Example 7.8 | ε-elimination worked through, p. 260 | `test/cfl.test.ts` — the output grammar asserted exactly |
 | Examples 7.10, 7.12, Fig. 7.1 | Unit pairs and the rewritten expression grammar, pp. 263–265 | `test/cfl.test.ts` — ten pairs and four production sets asserted exactly |
@@ -146,6 +164,40 @@ subroutine are otherwise verbatim and are the ones the page boxes.
 (§8.4.1 says so). The engine writes one tape's ID per part, separated by ‖,
 with the state before the scanned cell on every tape.
 
+**Example 9.1's code, read where it could be read** (`undecidable/encoding.ts`).
+The scan of p. 370 renders the long digit strings at a size where they cannot be
+counted digit by digit with any confidence, and a code is nothing but digits.
+The first three of the four rule codes were read and match the engine's output
+character for character. The fourth and the joined code were **not** transcribed:
+they follow from the coding scheme §9.1.2 states in prose — δ(q₃, X₃) = (q₂, X₂,
+D₁) is 0³10³10²10²10¹ — which the three legible ones confirm. The test says so at
+the assertion rather than claiming a transcription it does not have.
+
+**A code that repeats a (state, symbol) pair** (`undecidable/encoding.ts`).
+§9.1.2 codes δ, which is a function, so a well-formed code lists each pair once.
+The text does not say what a code that repeats one means. The engine reads it as
+ill-formed, and so as §9.1.3's machine with no moves. The empty string is treated
+the same way, on the same reasoning — a code lists at least one transition. Both
+choices are invisible in the table, because either reading gives L(Mᵢ) = ∅ for
+every index a window can reach; they are reachable only by typing a code by hand.
+
+**Exercise 9.2.6's answers** (`hierarchy.ts`). The closure table for the
+recursive and RE languages has one row the book proves — complementation, by
+Theorems 9.3 and 9.4 — and six it sets as Exercise 9.2.6 without printing
+solutions. Those six are worked here, and every one of them is labelled
+*exercise* in the data, in the table and in the panel that opens beneath it. The
+citation points at the exercise that asks the question, never at a theorem that
+answers it.
+
+**A square table with two origins** (`undecidable/diagonal.ts`). Fig. 9.1 is
+drawn with its rows and columns starting together, and the engine defaults to
+that, because cell (i, i) is the whole point. It also allows them to start apart,
+which the printed figure never needs to. Computing the cells forces the question:
+the first well-formed code is w₆₈₂ and the first machine that accepts anything is
+M₁₃₅₄, while the columns worth reading are ε, 0, 1, 00 — so held together, a
+window is either solid 0s or full of inputs hundreds of bits long. The table says
+which kind of window it is, and the page says when the diagonal is off screen.
+
 ---
 
 ## Uncited on purpose
@@ -160,6 +212,32 @@ The module is therefore **enrichment under ADR-003**: demoted, not deleted. It
 carries no citation. The syllabus's own reference texts (Linz; Mishra &
 Chandrasekaran) do cover the topic, but no section number is claimed for either,
 because neither has been checked against a printed copy.
+
+**Context-sensitive languages** (`hierarchy.ts`). The ring between the
+context-free and the recursive languages carries `citation: null`, and the page
+says in words that the prescribed sections do not cover it. Hopcroft 2e's listed
+sections contain no linear bounded automaton and no context-sensitive grammar.
+The ring is on the map because the syllabus's own tutorial component — "Language
+Classification (Regular, CFL, CSL, Recursive, RE)" — names the class, and a
+student told to expect five classes should not find four with a gap where the
+fifth was. It is the one ring on the map with nowhere to read about it, and
+saying so is the point.
+
+Its outer boundary is unwitnessed for the same reason. Every other containment on
+the map is shown proper by a language a student can name and a proof they are
+examined on; recursive-but-not-context-sensitive languages exist by a diagonal
+argument over the linear bounded automata, which is not in scope, and no
+memorable example is standard. The ring is drawn empty and the map says why,
+rather than borrowing a language that does not belong there.
+
+**VTU's course outcomes** (`lib/schemes/vtu-2022-bcs503.ts`). The second scheme
+ships with an empty outcome list. phases.md §2 records the section list as
+confirmed identical to BTOCH503's, and it is shared rather than copied; it also
+records that the *outcomes* differ, and no VTU document in this repository has
+been read to establish their wording. Every exercise in the bank carries a CO
+tag, so five plausible-looking outcomes would mislabel the whole question bank
+while appearing complete. The syllabus page prints the reason where the outcomes
+would be.
 
 ---
 

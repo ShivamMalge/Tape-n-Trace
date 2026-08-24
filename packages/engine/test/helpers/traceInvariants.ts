@@ -257,7 +257,8 @@ function collectIds(snapshot: unknown, where: string): SnapshotIds {
   const s = snapshot as Record<string, unknown> & {
     nodes?: { id: string }[]
     grammar?: { productions?: unknown[]; variables?: string[]; terminals?: string[] }
-    table?: { name?: string }[]
+    /** A list of named rows for most conversions; Fig. 9.1 itself for P1.7. */
+    table?: unknown
     states?: string[]
     input?: unknown[]
     current?: { tapes?: { cells: unknown[]; offset: number }[] }
@@ -275,10 +276,11 @@ function collectIds(snapshot: unknown, where: string): SnapshotIds {
   const labels = new Set<string>([
     ...states,
     ...machines.flatMap((m) => m.alphabet ?? []),
-    ...(s.table ?? []).flatMap((row) => (row.name === undefined ? [] : [row.name])),
+    ...namedTableRows(s.table).flatMap((row) => (row.name === undefined ? [] : [row.name])),
     ...(s.states ?? []),
     ...(s.grammar?.variables ?? []),
     ...(s.grammar?.terminals ?? []),
+    ...figureAxisLabels(s.table),
   ])
 
   return {
@@ -290,6 +292,27 @@ function collectIds(snapshot: unknown, where: string): SnapshotIds {
     inputLength: s.input?.length ?? 0,
     tapes: s.current?.tapes ?? [],
   }
+}
+
+/** The row-list form of `table`, which is what every conversion before P1.7 puts there. */
+function namedTableRows(table: unknown): { name?: string }[] {
+  return Array.isArray(table) ? (table as { name?: string }[]) : []
+}
+
+/**
+ * The axis labels of Fig. 9.1 — P1.7.
+ *
+ * The diagonalization snapshot's `table` is that figure rather than a list of
+ * rows, and both of its axes are positions in the enumeration of §9.1.1. So a
+ * cell highlight there names two integers, not two state names.
+ */
+function figureAxisLabels(table: unknown): string[] {
+  if (table === null || typeof table !== 'object' || Array.isArray(table)) return []
+  const figure = table as { rows?: { index?: unknown }[]; words?: { index?: unknown }[] }
+  return [...(figure.rows ?? []), ...(figure.words ?? [])]
+    .map((entry) => entry.index)
+    .filter((index): index is number => typeof index === 'number')
+    .map(String)
 }
 
 /** A machine is anything carrying a state list and a transition list. */

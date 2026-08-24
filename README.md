@@ -11,11 +11,10 @@ Jupyter and Colab.
 
 ## ⚠ What actually works today
 
-**Modules 1–4 complete and Module 5's machines — v0.9.** Everything BTOCH503's first four modules
-examine is built, verified and on screen, and now the Turing machines of Module 5: the chapter 8
-gallery run on a scrolling tape with the ID sequence written out, an editor, and the many-tapes-to-one
-reduction with its cost counted. What remains is Module 5's second half — undecidability, the
-hierarchy, the syllabus index.
+**Full syllabus coverage — v1.0.** Every module BTOCH503 examines is built, verified and on screen.
+Module 5 is now complete: the chapter 8 Turing machines, and the chapter 9 undecidability results —
+the diagonalization table with every cell computed from a real machine run, the reduction builder,
+the hierarchy of language classes, and a syllabus index whose every link CI checks.
 
 | Area | Status | Notes |
 |---|---|---|
@@ -33,14 +32,21 @@ hierarchy, the syllabus index.
 | PDA — simulator, editor, acceptance conversions, CFG→PDA, DPDA checker | ✅ P1.4 | ID log in textbook notation, branch tree for guesses |
 | CFL properties — simplification pipeline, CNF, closure lab | ✅ P1.5 | the book's safe order, the grammar diffed per stage, the intersection that fails |
 | Turing machines — simulator, editor, gallery, multitape reduction, NTM | ✅ P1.6 | IDs in §8.2.3 notation, head-fixed or tape-fixed, the 4n + 2k cost counted |
-| Undecidability, hierarchy, syllabus index | ❌ Not started | P1.7 |
+| Undecidability — diagonalization table, reduction builder | ✅ P1.7 | every cell a real machine run under a stated budget; the wrong-direction reduction refused |
+| Hierarchy map and syllabus index | ✅ P1.7 | six nested rings, two schemes, and a CI test that walks every topic to its page |
 | Vyakarana (Python package) | ❌ Not started | P1.8 |
 
 P0.3’s exit gate is the **grand round-trip**: 200 random NFAs pushed through
 `subset → minimise → state elimination → Thompson → ε-elimination → subset → minimise`, with the DFA that
 comes out required to accept exactly the language that went in. It is green.
 
-**838 tests**: 650 engine (96.7% line coverage, CI-gated at 90%), 46 renderer, 142 web app.
+**956 tests**: 715 engine (97.0% line coverage, CI-gated at 90%), 46 renderer, 195 web app.
+
+Two of those hold v1.0's own promises. A CI test reads the app's routes off the filesystem and walks
+every topic in the syllabus, failing on any that points at a page that does not exist — so no link on
+`/syllabus` can rot. Another reads `app/layout.tsx` and fails if a navigation link is hard-coded
+there, which is what keeps "adding a tool means editing `catalog.ts` and `topics.ts`" true rather than
+merely intended.
 
 Every citation the engine emits has been checked against a printed copy of Hopcroft 2e rather than
 written from memory — the audit, including six corrections and four deliberate divergences, is in
@@ -156,10 +162,13 @@ semester V, 3 credits, AY 2026–27. Reference text: **Hopcroft, Motwani & Ullma
 | 2 | 8 | 3.1, 3.2 (except 3.2.1), 3.3, 4.1, 4.2, 4.4 | CO2 | RE playground, state elimination, closure lab, minimization, pumping game |
 | 3 | 8 | 5.1, 5.2, 5.4, 6.1, 6.2, 6.3.1, 6.4 | CO3 | Grammar editor, derivations, parse trees, ambiguity, PDA simulator, CFG→PDA |
 | 4 | 8 | 7.1, 7.2, 7.3 | CO4 | Simplification pipeline, CNF, CFL pumping game, CFL closure lab |
-| 5 | 8 | 8.1–8.4, 9.1, 9.2 | CO5 | TM simulator, gallery, multitape, diagonalization and reduction explainers |
+| 5 | 8 | 8.1–8.4, 9.1, 9.2 | CO5 | TM simulator, gallery, multitape, diagonalization table, reduction builder, hierarchy map |
 
-**VTU 2022 BCS503 ships as a second scheme** — its section list is identical, so it costs almost nothing
-and serves every non-autonomous VTU college.
+**VTU 2022 BCS503 ships as a second scheme** — its section list is identical and shared rather than
+copied, so it costs almost nothing and serves every non-autonomous VTU college. It ships with its
+outcome list *empty*: VTU's course outcomes differ from BTOCH503's and no VTU document here has been
+read to establish their wording, and since every exercise carries a CO tag, five invented outcomes
+would mislabel the whole question bank. The page prints that reason where the outcomes would be.
 
 The syllabus is **data, not code** — one scheme-independent topic graph, one config file per institution.
 Adding a university is a file in `apps/web/lib/schemes/`, not a code change.
@@ -178,8 +187,11 @@ features.
 
 **Deliberately out of scope for v1.0**, because the published syllabus excludes them: PDA→CFG (6.3.2),
 CYK and CFL decision properties (7.4), the R⁽ᵏ⁾ᵢⱼ construction (3.2.1), decision properties of regular
-languages (4.3), and the formal-proof sections (1.2, 1.4). They remain in the topic graph as enrichment
-and are scheduled after v1.0. Post's Correspondence Problem and P/NP are absent from the scheme entirely.
+languages (4.3), and the formal-proof sections (1.2, 1.4). Each is recorded in [phases.md](phases.md) §2.3
+with the reason it was cut, and each is scheduled after v1.0. They are deliberately *not* in the topic
+graph: it carries only what a scheme places, so a test can require every topic to resolve to a page that
+exists, and nothing unbuilt can appear on `/syllabus`. Post's Correspondence Problem and P/NP are absent
+from the scheme entirely.
 
 ---
 
@@ -196,7 +208,7 @@ and are scheduled after v1.0. Post's Correspondence Problem and P/NP are absent 
 | **v0.7** | PDA editor, ID simulator, acceptance conversions, CFG→PDA — Module 3 complete |
 | **v0.8** | Simplification pipeline, CNF, CFL closure lab — Module 4 complete |
 | v0.9 | TM editor, simulator, gallery, multitape, programming techniques |
-| **v1.0** | Undecidability explainers, Chomsky hierarchy map, syllabus index — **full syllabus coverage** |
+| **v1.0** | Diagonalization table, reduction builder, hierarchy map, syllabus index — **full syllabus coverage** |
 | `vyakarana` 0.1 | The Python package, verified in Colab |
 | v1.x | Enrichment topics, JFLAP import, browser IDE, classroom layer |
 

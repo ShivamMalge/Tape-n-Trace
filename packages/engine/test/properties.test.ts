@@ -27,8 +27,18 @@ const DFA_MAX_LENGTH = 12
 const NFA_MAX_LENGTH = 8
 const ENFA_MAX_LENGTH = 8
 
-/** Two minutes of headroom over the measured cost of the heaviest check. */
-const SLOW = { timeout: 300_000 }
+/**
+ * Generous headroom over the measured cost of the heaviest check.
+ *
+ * Budgeted against the *contended* cost, not the isolated one. Alone, the DFA
+ * check takes under two minutes and 300 s looked like ample headroom; run
+ * alongside the other twenty-five files it competes for cores with them and can
+ * take three times as long, which turned the suite's central correctness gate
+ * into a coin flip on a busy machine. These are correctness gates and not
+ * performance gates: a slow pass is a pass, and the only thing a tight timeout
+ * buys is a false failure.
+ */
+const SLOW = { timeout: 900_000 }
 
 /**
  * Hand control back to the event loop.

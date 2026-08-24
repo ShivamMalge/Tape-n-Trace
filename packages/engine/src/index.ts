@@ -253,6 +253,60 @@ export {
 export type { Technique, TmExpectation, TmPreset } from './tm/gallery.js'
 export { TM_PRESETS, tmPreset } from './tm/gallery.js'
 
+export type { CanonicalLanguage, ClassId, Closedness, ClosureRow, LanguageClass } from './hierarchy.js'
+export {
+  CANONICAL_LANGUAGES,
+  COMPLEMENT_PLACEMENTS,
+  LANGUAGE_CLASSES,
+  RECURSIVE_RE_CLOSURE,
+  UNWITNESSED_SEPARATION,
+  languageClass,
+} from './hierarchy.js'
+
+export type { CodedRule, DecodedTM, TmCode } from './undecidable/encoding.js'
+export {
+  FIRST_ACCEPTING_CODE_INDEX,
+  FIRST_CODE_INDEX,
+  FIRST_NON_HALTING_CODE_INDEX,
+  binaryString,
+  codedRuleText,
+  codedSymbol,
+  decodeTM,
+  encodePair,
+  encodeTM,
+  machineAt,
+  splitPair,
+  stringIndex,
+} from './undecidable/encoding.js'
+
+export type {
+  DiagonalCell,
+  DiagonalEntry,
+  DiagonalOptions,
+  DiagonalRow,
+  DiagonalSnapshot,
+  DiagonalTable,
+  DiagonalTrace,
+} from './undecidable/diagonal.js'
+export { DEFAULT_CELL_BUDGET, cellDigit, diagonalArgument, diagonalTable } from './undecidable/diagonal.js'
+
+export type {
+  Problem,
+  ProblemReductionSnapshot,
+  ProblemReductionTrace,
+  ProblemStatus,
+  Reduction,
+} from './undecidable/reduction.js'
+export {
+  PROBLEMS,
+  REDUCTIONS,
+  isKnownHard,
+  problemById,
+  reduce,
+  reductionBetween,
+  reductionsFrom,
+} from './undecidable/reduction.js'
+
 export type { ReductionSnapshot, ReductionTrace } from './tm/multitape.js'
 export {
   encodeInput,

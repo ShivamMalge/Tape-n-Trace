@@ -16,7 +16,7 @@
 import { gradeLanguage, isOk } from '@tape-n-trace/engine'
 import type { FiniteAutomaton, LanguageGrade, Result, Sym } from '@tape-n-trace/engine'
 import { buildPlayground } from './playground'
-import { topicById } from './topics'
+import { moduleOf as topicModule } from './schemes'
 
 export type ExerciseKind =
   | 'construct-dfa'
@@ -115,12 +115,13 @@ export const CIE_SCOPES = {
 export type CieScope = keyof typeof CIE_SCOPES
 
 export function inCieScope(exercise: Exercise, scope: CieScope): boolean {
-  const topic = topicById(exercise.topic)
-  return topic !== undefined && (CIE_SCOPES[scope] as readonly number[]).includes(topic.module)
+  const module = moduleOf(exercise)
+  return module !== null && (CIE_SCOPES[scope] as readonly number[]).includes(module)
 }
 
+/** Which module the exercise falls in, under the default scheme. */
 export function moduleOf(exercise: Exercise): number | null {
-  return topicById(exercise.topic)?.module ?? null
+  return topicModule(exercise.topic) ?? null
 }
 
 /** True when the exercise's own reference would pass its own grader. */

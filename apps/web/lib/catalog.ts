@@ -253,6 +253,85 @@ export const CATALOG: Tool[] = [
     modules: [5],
     verb: 'convert',
   },
+  {
+    id: 'undecidability',
+    title: 'Undecidability',
+    summary:
+      'Recursive inside RE inside everything, the four places a language and its complement can sit, and what the two classes are closed under.',
+    href: '/undecidable',
+    status: 'live',
+    phase: 'P1.7',
+    modules: [5],
+    verb: 'prove',
+  },
+  {
+    id: 'diagonalization',
+    title: 'The diagonalization table',
+    summary:
+      'Fig. 9.1 with every cell computed: machines decoded from binary strings, run under a step budget, and a diagonal you can complement.',
+    href: '/undecidable/diagonalization',
+    status: 'live',
+    phase: 'P1.7',
+    modules: [5],
+    verb: 'prove',
+  },
+  {
+    id: 'reduction-builder',
+    title: 'The reduction builder',
+    summary: 'Drop one problem onto another to build A ≤ B, with the construction and the contradiction drawn — and the wrong direction refused.',
+    href: '/undecidable/reduction',
+    status: 'live',
+    phase: 'P1.7',
+    modules: [5],
+    verb: 'prove',
+  },
+  {
+    id: 'hierarchy',
+    title: 'The hierarchy of language classes',
+    summary: 'Nested rings from regular out to every language, each with its machine, its closure and its pumping lemma, and the languages that separate them.',
+    href: '/hierarchy',
+    status: 'live',
+    phase: 'P1.7',
+    modules: [1, 2, 3, 4, 5],
+    verb: 'learn',
+  },
+]
+
+export interface NavLink {
+  href: string
+  label: string
+}
+
+/**
+ * The header.
+ *
+ * Here rather than in the layout so that adding a tool is a change to this file
+ * and `topics.ts`, and to nothing else. Hubs and the syllabus index are listed
+ * alongside the tools because they are navigation rather than tools, and so have
+ * no place in `CATALOG`.
+ *
+ * `test/syllabus.test.tsx` checks that every href below is a route that exists
+ * and that every live tool is reachable — from here or from the home page,
+ * which renders `CATALOG` directly.
+ */
+export const NAV: NavLink[] = [
+  { href: '/simulate', label: 'Simulate' },
+  { href: '/edit', label: 'Draw' },
+  { href: '/convert', label: 'Convert' },
+  { href: '/regex', label: 'Regex' },
+  { href: '/closure', label: 'Closure' },
+  { href: '/search', label: 'Search' },
+  { href: '/applied', label: 'Case studies' },
+  { href: '/practice', label: 'Practice' },
+  { href: '/prove/pumping', label: 'Pumping' },
+  { href: '/grammar', label: 'Grammars' },
+  { href: '/simulate/pda', label: 'PDA' },
+  { href: '/grammar/simplify', label: 'CNF' },
+  { href: '/simulate/tm', label: 'TM' },
+  { href: '/undecidable', label: 'Undecidable' },
+  { href: '/hierarchy', label: 'Hierarchy' },
+  { href: '/learn/strings', label: 'Strings & languages' },
+  { href: '/syllabus', label: 'Syllabus' },
 ]
 
 export function liveTools(): Tool[] {

@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { EXERCISES, exerciseById } from '../../../content/exercises'
 import { topicById } from '../../../lib/topics'
+import { moduleOf } from '../../../lib/schemes'
 import { ExerciseWorkbench } from '../../../components/exercise-workbench'
 
 interface PageProps {
@@ -38,7 +39,7 @@ export default async function ExercisePage({ params }: PageProps): Promise<React
           `${exercise.marks} marks`,
           exercise.bloom,
           exercise.co,
-          topic === undefined ? null : `Module ${topic.module} · ${topic.title}`,
+          topic === undefined ? null : `Module ${moduleOf(topic.id) ?? '?'} · ${topic.title}`,
           exercise.source,
         ]
           .filter((tag): tag is string => tag !== null)

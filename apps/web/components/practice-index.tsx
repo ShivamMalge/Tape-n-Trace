@@ -11,7 +11,6 @@
 import { useMemo, useState } from 'react'
 import { EXERCISES } from '../content/exercises'
 import { CIE_SCOPES, inCieScope, moduleOf, type CieScope } from '../lib/exercises'
-import { topicById } from '../lib/topics'
 
 type Filter = 'all' | CieScope | `m${1 | 2 | 3 | 4 | 5}`
 
@@ -85,7 +84,6 @@ export function PracticeIndex(): React.JSX.Element {
 
       <ul style={{ display: 'grid', gap: 10, listStyle: 'none', padding: 0, margin: 0 }}>
         {shown.map((exercise) => {
-          const topic = topicById(exercise.topic)
           return (
             <li key={exercise.id}>
               <a
@@ -96,7 +94,7 @@ export function PracticeIndex(): React.JSX.Element {
                 <span style={{ fontSize: 15 }}>{exercise.prompt.split('\n')[0]}</span>
                 <span className="tnt-muted" style={{ fontSize: 12 }}>
                   {exercise.marks} marks · {exercise.bloom} · {exercise.co} · Module{' '}
-                  {topic?.module ?? '?'} ·{' '}
+                  {moduleOf(exercise) ?? '?'} ·{' '}
                   {exercise.grader === 'manual' ? 'marked by hand' : 'auto-graded'} · {exercise.source}
                 </span>
               </a>

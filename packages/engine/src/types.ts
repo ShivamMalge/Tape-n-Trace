@@ -188,6 +188,10 @@ export type TraceKind =
   | 'decide.membership'
   | 'decide.equivalence'
   | 'decide.state-equivalence'
+  /** Theorem 9.2, walked over a computed corner of Fig. 9.1. */
+  | 'decide.diagonalization'
+  /** A ≤ B, as Fig. 8.7 draws it. */
+  | 'prove.reduction'
   | ClosureTraceKind
   | 'game.pumping.regular'
   | 'game.pumping.cfl'
