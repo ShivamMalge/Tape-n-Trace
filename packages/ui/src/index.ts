@@ -70,3 +70,6 @@ export type { TriangleTableProps } from './table/triangle-table.js'
 
 export { ParseTree } from './tree/parse-tree.js'
 export type { ParseTreeNode, ParseTreeProps } from './tree/parse-tree.js'
+
+export { TapeStrip } from './tape/tape-strip.js'
+export type { TapeStripProps, TapeStripTape } from './tape/tape-strip.js'

@@ -225,12 +225,33 @@ export const CATALOG: Tool[] = [
   {
     id: 'turing-machines',
     title: 'Turing machines',
-    summary: 'A tape, a head, and every configuration in between.',
+    summary:
+      'The chapter 8 machines run on a scrolling tape, the ID sequence written out, and a non-halting run stopped honestly.',
     href: '/simulate/tm',
-    status: 'planned',
+    status: 'live',
     phase: 'P1.6',
     modules: [5],
     verb: 'simulate',
+  },
+  {
+    id: 'edit-tm',
+    title: 'Build a Turing machine',
+    summary: 'Type δ one move per line, see the diagram with X/Y → labels, and run it — one tape or several.',
+    href: '/edit/tm',
+    status: 'live',
+    phase: 'P1.6',
+    modules: [5],
+    verb: 'simulate',
+  },
+  {
+    id: 'convert-tm-multitape',
+    title: 'Many tapes to one',
+    summary: 'Theorem 8.9 animated, with the 4n + 2k cost of Theorem 8.10 counted live.',
+    href: '/convert/tm-multitape',
+    status: 'live',
+    phase: 'P1.6',
+    modules: [5],
+    verb: 'convert',
   },
 ]
 

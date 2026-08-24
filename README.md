@@ -11,10 +11,11 @@ Jupyter and Colab.
 
 ## ⚠ What actually works today
 
-**Modules 1–4 complete — v0.8.** Everything BTOCH503's first four modules examine is built, verified
-and on screen: simulation, all the conversions, closure operations, keyword search, regular
-expressions, the practice bank, the pumping game, grammars, pushdown automata, and now the
-simplification pipeline to Chomsky Normal Form and the CFL closure lab. Module 5 has not started.
+**Modules 1–4 complete and Module 5's machines — v0.9.** Everything BTOCH503's first four modules
+examine is built, verified and on screen, and now the Turing machines of Module 5: the chapter 8
+gallery run on a scrolling tape with the ID sequence written out, an editor, and the many-tapes-to-one
+reduction with its cost counted. What remains is Module 5's second half — undecidability, the
+hierarchy, the syllabus index.
 
 | Area | Status | Notes |
 |---|---|---|
@@ -31,14 +32,15 @@ simplification pipeline to Chomsky Normal Form and the CFL closure lab. Module 5
 | Grammars — derivations, ambiguity, left recursion | ✅ P1.3 | parse trees grow with the derivation |
 | PDA — simulator, editor, acceptance conversions, CFG→PDA, DPDA checker | ✅ P1.4 | ID log in textbook notation, branch tree for guesses |
 | CFL properties — simplification pipeline, CNF, closure lab | ✅ P1.5 | the book's safe order, the grammar diffed per stage, the intersection that fails |
-| Engine — TM | ❌ Not started | P1.6 |
+| Turing machines — simulator, editor, gallery, multitape reduction, NTM | ✅ P1.6 | IDs in §8.2.3 notation, head-fixed or tape-fixed, the 4n + 2k cost counted |
+| Undecidability, hierarchy, syllabus index | ❌ Not started | P1.7 |
 | Vyakarana (Python package) | ❌ Not started | P1.8 |
 
 P0.3’s exit gate is the **grand round-trip**: 200 random NFAs pushed through
 `subset → minimise → state elimination → Thompson → ε-elimination → subset → minimise`, with the DFA that
 comes out required to accept exactly the language that went in. It is green.
 
-**776 tests**: 602 engine (96.8% line coverage, CI-gated at 90%), 43 renderer, 131 web app.
+**838 tests**: 650 engine (96.7% line coverage, CI-gated at 90%), 46 renderer, 142 web app.
 
 Every citation the engine emits has been checked against a printed copy of Hopcroft 2e rather than
 written from memory — the audit, including six corrections and four deliberate divergences, is in

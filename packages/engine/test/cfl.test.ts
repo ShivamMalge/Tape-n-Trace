@@ -412,11 +412,13 @@ describe('intersection with a regular language — §7.3.4', () => {
 describe('inverse homomorphism — §7.3.5', () => {
   const pda = (pdaPreset('anbn') as NonNullable<ReturnType<typeof pdaPreset>>).machine
 
-  it.each([
+  const cases: { name: string; h: Record<string, string[]> }[] = [
     { name: 'two images', h: { x: ['a', 'b'], y: ['a', 'a', 'b', 'b'] } },
-    { name: 'an erased symbol', h: { x: ['a'], y: [] as string[] } },
+    { name: 'an erased symbol', h: { x: ['a'], y: [] } },
     { name: 'images that straddle the boundary', h: { x: ['a', 'a'], y: ['b'], z: ['a', 'b', 'b'] } },
-  ])('$name: P′ accepts w exactly when P accepts h(w)', ({ h }) => {
+  ]
+
+  it.each(cases)('$name: P′ accepts w exactly when P accepts h(w)', ({ h }) => {
     const trace = unwrap(cflInverseHomomorphism(pda, h))
     assertTraceInvariants(trace)
     const inverse = (trace.result as { type: 'machine'; machine: PDA }).machine

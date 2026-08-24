@@ -40,7 +40,7 @@ Updated in the same commit as the work it describes. ✅ done and pushed · 🔨
 | P1.3 Grammars, parse trees | v0.6 | ✅ | 2026-08-21 · derivations, ambiguity, left recursion |
 | P1.4 PDA | v0.7 | ✅ | 2026-08-22 · 691 tests → 735 |
 | P1.5 CFL properties, CNF | v0.8 | ✅ | 2026-08-22 · 735 tests → 776; pipeline runs the book’s safe order (Thm 7.14) |
-| P1.6 Turing machines | v0.9 | ⬜ | |
+| P1.6 Turing machines | v0.9 | ✅ | 2026-08-23 · 776 tests → 838; every gallery machine is the book’s own |
 | P1.7 Undecidability, hierarchy | v1.0 | ⬜ | |
 | P1.8 Vyakarana (Python) | pkg 0.1 | ⬜ | ADR-004 spike first |
 
@@ -594,7 +594,7 @@ wrong is the most common lost-marks mistake in the subject. Showing the pipeline
 
 ---
 
-### P1.6 — Turing machines · 2 weeks · ships v0.9
+### P1.6 — Turing machines · 2 weeks · ships v0.9 — **DONE**
 
 **Deliverables**
 
@@ -612,15 +612,23 @@ wrong is the most common lost-marks mistake in the subject. Showing the pipeline
 - `tm/gallery.ts`: binary increment, unary addition, `{0^n 1^n}`, palindrome checker, `{a^n b^n c^n}`,
   copy/duplicate, a small busy beaver (2- and 3-state), and a machine that provably does not halt on some
   input — which introduces 8.2.6 and sets up Module 5's second half.
+- **Note (2026-08-23).** The book draws arcs as `X/Y →` (§8.2.4), not `a -> b, R`; the editor and diagrams follow
+  the book. The 3-state busy beaver in the gallery is the one that writes the most 1s (six, in 14 moves); the
+  21-move champion is a different machine and is not claimed.
 
 **Acceptance criteria**
 
-- [ ] Every gallery machine halts with the documented output within the documented step count, asserted
+- ✅ Every gallery machine halts with the documented output within the documented step count, asserted
       in tests.
-- [ ] A multitape machine and its single-tape reduction accept the same 100-string sample.
-- [ ] The step guard stops at the cap with a clear message and an explicit "continue for N more" action.
-- [ ] The ID log matches the textbook's notation character for character on the worked example.
-- [ ] The non-halting gallery machine is labelled as such and does not hang the UI.
+      *(Fifteen machines, 34 documented (input, verdict, output, move bound) cases, every one asserted; the busy beavers to their exact move counts (6 and 14).)*
+- ✅ A multitape machine and its single-tape reduction accept the same 100-string sample.
+      *(Theorem 8.9’s N built as a real machine and run on the encoded input: every string to length 6 (127 of them) agrees with the two-tape machine, and N’s moves stay inside Theorem 8.10’s Σ(4n + 2k) bound.)*
+- ✅ The step guard stops at the cap with a clear message and an explicit "continue for N more" action.
+      *(Engine: `incomplete` with the reason, the run re-issued with a larger cap gets exactly that far. UI: “Stopped after 1000 moves” and a “Continue for 1000 more moves” button, asserted.)*
+- ✅ The ID log matches the textbook's notation character for character on the worked example.
+      *(Example 8.2 on 0011 and on 0010, character for character, subscripts included.)*
+- ✅ The non-halting gallery machine is labelled as such and does not hang the UI.
+      *(Labelled “Does not halt” with the reason; the run stops at the move cap, is never reported as rejected, and the test drives it twice through the cap.)*
 
 ---
 

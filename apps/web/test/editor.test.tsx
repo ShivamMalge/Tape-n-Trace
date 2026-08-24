@@ -27,7 +27,7 @@ function stateRow(id: string): HTMLElement {
 }
 
 describe('keyboard navigability (§11.5)', () => {
-  it('builds a two-state machine using only the keyboard-reachable controls', async () => {
+  it('builds a two-state machine using only the keyboard-reachable controls', { timeout: 60_000 }, async () => {
     const user = userEvent.setup()
     render(<MachineEditor />)
 

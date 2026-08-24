@@ -50,10 +50,12 @@ function assertNarrations(trace: Trace<Step<unknown>>): void {
     expect(step.narration.trimEnd().endsWith('.'), `${where} narration must end in a period: "${step.narration}"`).toBe(true)
 
     for (const marker of PLACEHOLDER_MARKERS) {
-      expect(
-        step.narration.toLowerCase().includes(marker.toLowerCase()),
-        `${where} narration contains placeholder text "${marker}": "${step.narration}"`,
-      ).toBe(false)
+      // "XXX" counts only as a word on its own — a Turing machine's tape may hold three X markers.
+      const present =
+        marker === 'XXX'
+          ? /(^|\s)XXX($|\s)/.test(step.narration)
+          : step.narration.toLowerCase().includes(marker.toLowerCase())
+      expect(present, `${where} narration contains placeholder text "${marker}": "${step.narration}"`).toBe(false)
     }
   }
 }
@@ -102,6 +104,18 @@ function assertHighlightsResolve(trace: Trace<Step<unknown>>): void {
           expect(ids.labels.has(h.row), `${where} names row "${h.row}", absent from the snapshot`).toBe(true)
           expect(ids.labels.has(h.col), `${where} names column "${h.col}", absent from the snapshot`).toBe(true)
           break
+        case 'tapeCell': {
+          // The head may stand one cell outside the written window (it moved
+          // there and has not written yet); anything further is a bad index.
+          const tape = ids.tapes[h.tape]
+          expect(tape, `${where} names tape ${h.tape}, absent from the snapshot`).toBeDefined()
+          if (tape === undefined) break
+          expect(
+            h.index >= tape.offset - 1 && h.index <= tape.offset + tape.cells.length,
+            `${where} names cell ${h.index}, outside the tape window ${tape.offset}..${tape.offset + tape.cells.length - 1}`,
+          ).toBe(true)
+          break
+        }
         default:
           throw new Error(
             `assertTraceInvariants cannot resolve a "${(h as Highlight).type}" highlight yet. ` +
@@ -215,6 +229,8 @@ interface SnapshotIds {
   /** How many productions the snapshot's grammar holds. */
   productionCount: number
   inputLength: number
+  /** The tapes of the configuration a TM snapshot is about. */
+  tapes: { cells: unknown[]; offset: number }[]
 }
 
 interface MachineLike {
@@ -244,6 +260,7 @@ function collectIds(snapshot: unknown, where: string): SnapshotIds {
     table?: { name?: string }[]
     states?: string[]
     input?: unknown[]
+    current?: { tapes?: { cells: unknown[]; offset: number }[] }
   }
 
   // Machines are found by shape, not by field name. Conversions have called
@@ -271,6 +288,7 @@ function collectIds(snapshot: unknown, where: string): SnapshotIds {
     productionCount: s.grammar?.productions?.length ?? 0,
     treeNodes: new Set((s.nodes ?? []).map((n) => n.id)),
     inputLength: s.input?.length ?? 0,
+    tapes: s.current?.tapes ?? [],
   }
 }
 

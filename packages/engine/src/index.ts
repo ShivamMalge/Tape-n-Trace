@@ -43,6 +43,7 @@ export {
   parseSubsetStateName,
   pdaTransitionId,
   productStateName,
+  tmTransitionId,
   sortStateIds,
   subsetStateName,
 } from './ids.js'
@@ -230,3 +231,35 @@ export {
   cflUnion,
   renameApart,
 } from './cfg/closure.js'
+
+export type { SimulateTmOptions, Tape, TmBranchNode, TmConfig, TmSnapshot, TmTrace } from './tm/simulate.js'
+export {
+  finalConfig,
+  idText as tmIdText,
+  initialConfig,
+  isDeterministicTM,
+  movesMade,
+  nonblankSpan,
+  readCell,
+  simulateTM,
+  stateText,
+  tapeContents,
+  tapeIdText,
+  tmIdLog,
+  validateTM,
+  writeCell,
+} from './tm/simulate.js'
+
+export type { Technique, TmExpectation, TmPreset } from './tm/gallery.js'
+export { TM_PRESETS, tmPreset } from './tm/gallery.js'
+
+export type { ReductionSnapshot, ReductionTrace } from './tm/multitape.js'
+export {
+  encodeInput,
+  encodedStart,
+  multitapeToSingle,
+  phaseOf,
+  simulateReduction,
+  splitTracks,
+  trackRows,
+} from './tm/multitape.js'

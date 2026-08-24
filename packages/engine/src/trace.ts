@@ -179,7 +179,11 @@ function assertNarration(narration: string, index: number): void {
     throw new EngineInvariantError(`${where} narration does not end in a period: "${narration}"`)
   }
   for (const marker of PLACEHOLDER_MARKERS) {
-    if (narration.toLowerCase().includes(marker.toLowerCase())) {
+    // "XXX" is a dev marker only as a word on its own: a tape full of X
+    // markers (Fig. 8.9's machine writes them) is a legitimate ID.
+    const present =
+      marker === 'XXX' ? /(^|\s)XXX($|\s)/.test(narration) : narration.toLowerCase().includes(marker.toLowerCase())
+    if (present) {
       throw new EngineInvariantError(`${where} narration contains placeholder text "${marker}".`)
     }
   }

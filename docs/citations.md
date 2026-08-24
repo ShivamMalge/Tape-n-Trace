@@ -58,6 +58,15 @@ coarse citation is honest; a plausible one is not.
 | 7.3.4, Thm 7.27 | Intersection With a Regular Language | 286–287 | `cfg/closure.ts` — the PDA × FA product, states (q, p) |
 | 7.3.4, Thm 7.29 | L − R is a CFL; complement and difference need not be | 289 | the closure lab's non-closure card |
 | 7.3.5, Thm 7.30 | Inverse Homomorphism | 290–291 | `cfg/closure.ts` — the buffer construction, states (q, x) |
+| 8.2.2 | Notation for the Turing Machine | 318–319 | `tm/simulate.ts` — the 7-tuple; a single-tape head must move (L or R), enforced by `validateTM` |
+| 8.2.3 | Instantaneous Descriptions for Turing Machines | 320–321 | `tm/simulate.ts` — every move's narration; `tapeIdText` implements the four blank-handling exceptions as printed |
+| 8.2.4 | Transition Diagrams for Turing Machines | 323 | `lib/tm-drawable.ts` — arcs labelled X/Y → and X/Y ← |
+| 8.2.5–8.2.6 | The Language of a Turing Machine; Turing Machines and Halting | 326–327 | `tm/simulate.ts` — accept on entering F, halt when δ is undefined; the move cap reports `incomplete`, never rejection |
+| 8.3.1–8.3.3 | Storage in the State; Multiple Tracks; Subroutines | 330–335 | `tm/gallery.ts` — Examples 8.6, 8.7 and 8.8 as presets; the page's technique cards |
+| 8.4.1 | Multitape Turing Machines | 336–337 | `tm/simulate.ts` — one read, write and move per tape; S allowed only here |
+| 8.4.2, Thm 8.9 | Equivalence of One-Tape and Multitape TM's | 337–338 | `tm/multitape.ts` — `multitapeToSingle`, the 2k-track machine with head markers, built and run |
+| 8.4.3, Thm 8.10 | Running Time and the Many-Tapes-to-One Construction | 339–340 | `tm/multitape.ts` — `simulateReduction` counts N's moves against 4n + 2k; asserted in the tests |
+| 8.4.4, Thm 8.11 | Nondeterministic Turing Machines | 340–342 | `tm/simulate.ts` — the breadth-first tree of IDs; the page's nondeterminism card |
 
 Figure-level, verified:
 
@@ -75,6 +84,13 @@ Figure-level, verified:
 | Example 7.15, Fig. 7.3 | The expression grammar in CNF, pp. 267–268 | `test/cfl.test.ts` — fifteen variables, three cascades, language equivalence |
 | Example 7.22 | Substitution into {01}, p. 282 | `test/cfl.test.ts`, the closure lab's substitution demo |
 | Example 7.26 | L₁ = {0ⁿ1ⁿ2ⁱ}, L₂ = {0ⁱ1ⁿ2ⁿ}, p. 285 | `cfg/closure.ts` — `CFL_INTERSECTION_DEMO`, letters renamed (see below) |
+| Fig. 8.9, Example 8.2 | The 0ⁿ1ⁿ machine and its ID sequence on 0011, pp. 321–323 | `tm/gallery.ts` — `zeros-ones`; `test/tm.test.ts` asserts both printed ID sequences character for character |
+| Fig. 8.11, Example 8.4 | Proper subtraction, p. 325 | `tm/gallery.ts` — `monus`, verbatim; q6 marked accepting so the halt reads as one |
+| Example 8.6 | Storage in the state, 01* + 10*, pp. 330–331 | `tm/gallery.ts` — `storage-in-state`, states named [q, A] |
+| Example 8.7 | L_wcw with a check-mark track, pp. 331–333 | `tm/gallery.ts` — `tracks`, rules 1–14 generated as printed |
+| Figs. 8.14–8.15, Example 8.8 | Copy, and the multiplication program that calls it, pp. 334–335 | `tm/gallery.ts` — `copy` (with a q₀ walking over the leading 1) and `multiply` |
+| Exercise 8.2.3 | Binary increment on $N, halting on the leftmost digit of N+1, p. 328 | `tm/gallery.ts` — `binary-increment`, built to the exercise's stated IDs |
+| Exercise 8.4.2 | A nondeterministic machine, p. 342 | `tm/gallery.ts` — `ntm`, verbatim |
 
 ---
 
@@ -120,6 +136,15 @@ four modules in the book's order of exposition (useless symbols first). The page
 runs Theorem 7.14's order of execution — ε-productions, unit productions,
 useless symbols, CNF — because the exposition order is precisely the trap the
 phase exists to teach.
+
+**Copy's leading state** (`tm/gallery.ts`). Fig. 8.14's Copy begins to the right
+of a 1 the multiplication program has already passed. Run on its own it needs
+one more state, q₀, that walks over that 1; the five states of the book's
+subroutine are otherwise verbatim and are the ones the page boxes.
+
+**Multitape IDs.** The book gives no ID notation for multitape machines
+(§8.4.1 says so). The engine writes one tape's ID per part, separated by ‖,
+with the state before the scanned cell on every tape.
 
 ---
 

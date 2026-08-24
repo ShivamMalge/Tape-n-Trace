@@ -119,6 +119,21 @@ export function pdaTransitionId(
 }
 
 /**
+ * The canonical id of a Turing-machine transition: `q0-[0/X,R]->q1` for
+ * δ(q0, 0) = (q1, X, R); a multitape move lists one entry per tape, space
+ * separated: `q0-[0 B/X 0,R S]->q1`.
+ */
+export function tmTransitionId(
+  from: StateId,
+  read: readonly string[],
+  write: readonly string[],
+  move: readonly string[],
+  to: StateId,
+): TransitionId {
+  return `${from}-[${read.join(' ')}/${write.join(' ')},${move.join(' ')}]->${to}`
+}
+
+/**
  * A name not already taken, formed by suffixing the base. `q` with `q`, `q1`
  * taken yields `q2`. Deterministic: the same base and the same taken set always
  * produce the same name.

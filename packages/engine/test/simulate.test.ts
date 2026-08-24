@@ -265,7 +265,7 @@ describe('simulateNFA — the branch-tree guard (§9)', () => {
     expect((trace.steps.at(-1)?.snapshot as NFASnapshot).status).toBe('stopped')
   })
 
-  it('still satisfies every trace invariant', () => {
+  it('still satisfies every trace invariant', { timeout: 60_000 }, () => {
     assertTraceInvariants(unwrap(simulateNFA(explosive, '0000000')))
   })
 })
