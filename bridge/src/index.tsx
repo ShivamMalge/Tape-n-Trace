@@ -30,7 +30,12 @@ function render({ model, el }: RenderProps): () => void {
 
   const draw = (): void => {
     const state = readState(model)
-    root.render(<Viewer payload={state.payload} trace={state.trace} step={state.step} onStepChange={onStepChange} />)
+    const theme = state.options['theme']
+    if (theme === 'dark' || theme === 'light') container.dataset['tntTheme'] = theme
+    else delete container.dataset['tntTheme']
+    root.render(
+      <Viewer payload={state.payload} trace={state.trace} step={state.step} options={state.options} onStepChange={onStepChange} />,
+    )
   }
 
   const listeners: [string, () => void][] = TRAITS.map((trait) => [`change:${trait}`, draw])

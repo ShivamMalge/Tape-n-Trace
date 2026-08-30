@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "vyakarana"
-version = "0.0.1"
+version = "0.0.2"
 description = "The Python face of the Tape-n-Trace engine: build a machine in a notebook cell, watch the trace inline."
 readme = { text = "Unreleased development version. See documentation.md in the repository.", content-type = "text/markdown" }
 requires-python = ">=3.10"

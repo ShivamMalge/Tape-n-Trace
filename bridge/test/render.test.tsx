@@ -123,6 +123,25 @@ describe('the bridge widget', () => {
     expect(el.textContent).toContain('Read 0 and move to state b.')
   })
 
+  it('renders a nondeterministic run as a branch tree, not a single path', () => {
+    const nodes = [
+      { id: 'n0', state: 'q0', position: 0, parent: null, via: null, status: 'live' },
+      { id: 'n1', state: 'q0', position: 1, parent: 'n0', via: 't1', status: 'dead', diedAtStep: 1 },
+      { id: 'n2', state: 'q1', position: 1, parent: 'n0', via: 't2', status: 'accepting' },
+    ]
+    const trace = {
+      ...TRACE,
+      kind: 'simulate.tm',
+      steps: [{ ...TRACE.steps[0], snapshot: { ...(TRACE.steps[0] as { snapshot: object }).snapshot, nodes } }],
+      meta: { stepCount: 1, counters: {} },
+    } as unknown as Trace
+    const model = makeModel({ payload: null, trace, step: 0, options: {} })
+    const { el } = mount(model)
+    const tree = el.querySelector('[aria-label^="Branch tree"]')
+    expect(tree).not.toBeNull()
+    expect(el.querySelectorAll('[data-node-id]').length).toBe(3)
+  })
+
   it('draws a bare machine payload with no trace at all', () => {
     const model = makeModel({ payload: MACHINE, trace: null, step: 0, options: {} })
     const { el } = mount(model)

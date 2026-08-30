@@ -13,14 +13,27 @@ reimplements an algorithm (architecture.md §2, ADR-004).
     d.run("011")            # renders the run with transport controls
 """
 
+from .cfg import CFG
 from .errors import ValidationError
 from .machines import DFA, ENFA, NFA
 from .options import options
+from .pda import PDA
 from .regular import RE, RegularExpression
-from .results import EquivalenceResult, ParseTree, Simulation
+from .results import (
+    Ambiguous,
+    AmbiguityResult,
+    Derivation,
+    DeterminismResult,
+    EquivalenceResult,
+    Halted,
+    NoCounterexample,
+    ParseTree,
+    Simulation,
+)
+from .tm import TM
 from .widget import TntWidget
 
-__version__ = "0.0.1"
+__version__ = "0.0.2"
 
 __all__ = [
     "DFA",
@@ -28,9 +41,18 @@ __all__ = [
     "ENFA",
     "RE",
     "RegularExpression",
+    "CFG",
+    "PDA",
+    "TM",
     "Simulation",
+    "Derivation",
     "EquivalenceResult",
     "ParseTree",
+    "Ambiguous",
+    "AmbiguityResult",
+    "NoCounterexample",
+    "DeterminismResult",
+    "Halted",
     "TntWidget",
     "ValidationError",
     "options",

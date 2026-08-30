@@ -1,8 +1,8 @@
 # Build Phases — Vyakarana
 
-> **Status: V0–V2 closed 2026-08-24** — ADR-004 decided (embedded V8 via `mini-racer`, sync API); the
-> bridge renders in JupyterLab; `vyakarana` 0.0.1 covers regular languages, 21 tests headless.
-> V3 onward not started. This is the execution plan for the Python package, which
+> **Status: V0–V3 closed 2026-08-24** — ADR-004 decided (embedded V8, sync API); the bridge renders in
+> JupyterLab; `vyakarana` 0.0.2 covers the whole documented surface — 48 tests headless, parity-gated.
+> V4 (packaging, the four environments) and V5 (release) remain. This is the execution plan for the Python package, which
 > [phases.md](phases.md) carries as the single row **P1.8** and which is too large to plan at that
 > resolution.
 
@@ -43,7 +43,7 @@ Updated in the same commit as the work it describes. ✅ done and pushed · 🔨
 | V0 ADR-004 spike | a decision, no code | ✅ | 2026-08-24 · `mini-racer` (V8), sync API; spike committed under `spikes/adr-004/` |
 | V1 The bridge | `bridge/` + `vyakarana/static/` | ✅ | 2026-08-24 · 6 tests, typecheck, lint, freshness, 205 KB bundle; **verified in JupyterLab by the author** (sizing then capped to the diagram's own viewBox) |
 | V2 The Python core | `vyakarana` 0.0.1, unreleased | ✅ | 2026-08-24 · 21 pytest tests, headless; trace schema generated in the bridge build |
-| V3 The rest of the surface | `vyakarana` 0.0.2, unreleased | ⬜ | CFG, PDA, TM, gallery, result objects |
+| V3 The rest of the surface | `vyakarana` 0.0.2, unreleased | ✅ | 2026-08-24 · 48 tests; the parity test covers all 227 engine exports |
 | V4 Packaging and the four environments | `vyakarana` 0.1.0rc | ⬜ | Colab is the blocking one |
 | V5 Release | **`vyakarana` 0.1** | ⬜ | PyPI, docs move, README table |
 
@@ -266,15 +266,20 @@ trace contract pinned down on both sides of the boundary.
 
 **Acceptance criteria**
 
-- [ ] Every method in [documentation.md](documentation.md) §5.4–5.6 exists and does what the table says,
+- [x] Every method in [documentation.md](documentation.md) §5.4–5.6 exists and does what the table says,
       or the table is corrected in the same commit.
-- [ ] The parity test passes, and is demonstrated to fail by deleting one entry from `_ENGINE_MAP`.
-- [ ] `is_ambiguous` on an unambiguous grammar prints the three-line disclaimer verbatim. Bounded results
+      *(All present; four table cells corrected in this commit where the notebook rendering is thinner than the web app, and the gallery example fixed to Exercise 8.2.3’s $N input.)*
+- [x] The parity test passes, and is demonstrated to fail by deleting one entry from `_ENGINE_MAP`.
+      *(ENGINE_MAP behind every public member, UNBOUND accounting for every other engine export with a reason; the teeth test deletes an entry in each direction and watches it fail.)*
+- [x] `is_ambiguous` on an unambiguous grammar prints the three-line disclaimer verbatim. Bounded results
       are reported as bounded — architecture.md §2.6, which does not stop applying because the caller is
       Python.
-- [ ] A TM that does not halt returns the guard result and does **not** hang the kernel, driven twice
+      *(repr asserted character for character; Derivation misses print “A bound, not a verdict”; TM.accepts returns the falsy-but-not-False Halted.NO.)*
+- [x] A TM that does not halt returns the guard result and does **not** hang the kernel, driven twice
       through the cap in a test.
-- [ ] Nondeterministic runs render the branch tree, not a single path.
+      *(gallery.never_halts driven through the cap at 50 and continued for 50 more; Simulation.continue_for is the offer.)*
+- [x] Nondeterministic runs render the branch tree, not a single path.
+      *(Engine: the Exercise 8.4.2 machine’s trace carries the tree of IDs. Bridge: the viewer draws BranchTree for branch-shaped nodes, asserted under jsdom.)*
 
 ---
 

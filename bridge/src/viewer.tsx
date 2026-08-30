@@ -10,10 +10,13 @@ import { useEffect, useRef, useState } from 'react'
 import type { FiniteAutomaton, Step, Sym, Trace, TraceResult } from '@tape-n-trace/engine'
 import { AutomatonRenderer, InputStrip, TransportBar } from '@tape-n-trace/ui'
 
+import { NodesPanel, TapesPanel } from './panels.js'
+
 export interface ViewerProps {
   payload: Record<string, unknown> | null
   trace: Trace | null
   step: number
+  options: Record<string, unknown>
   onStepChange: (step: number) => void
 }
 
@@ -43,14 +46,23 @@ function resultText(result: TraceResult): string {
   }
 }
 
-export function Viewer({ payload, trace, step, onStepChange }: ViewerProps): React.JSX.Element {
+export function Viewer({ payload, trace, step, options, onStepChange }: ViewerProps): React.JSX.Element {
   const [playing, setPlaying] = useState(false)
   const [speed, setSpeed] = useState(1)
   const stepCount = trace?.steps.length ?? 0
   const index = Math.min(Math.max(0, step), Math.max(0, stepCount - 1))
   const current = trace?.steps[index] ?? null
   const machine = machineOf(current, payload)
-  const snapshot = current?.snapshot as { input?: Sym[]; position?: number } | undefined
+  const snapshot = current?.snapshot as
+    | {
+        input?: Sym[]
+        position?: number
+        nodes?: unknown[]
+        current?: { state: string; tapes: { cells: string[]; offset: number; head: number }[] }
+        machine?: { blank?: string }
+      }
+    | undefined
+  const tapeMode = options['convention'] === 'head-moves' ? 'tape-fixed' : 'head-fixed'
 
   const timer = useRef<ReturnType<typeof setInterval> | null>(null)
   useEffect(() => {
@@ -75,6 +87,14 @@ export function Viewer({ payload, trace, step, onStepChange }: ViewerProps): Rea
       {snapshot?.input !== undefined && typeof snapshot.position === 'number' ? (
         <InputStrip input={snapshot.input} position={snapshot.position} step={current} />
       ) : null}
+      <TapesPanel
+        tapes={snapshot?.current?.tapes}
+        blank={snapshot?.machine?.blank ?? 'B'}
+        mode={tapeMode}
+        state={snapshot?.current?.state}
+        step={current}
+      />
+      <NodesPanel nodes={snapshot?.nodes} input={snapshot?.input} step={current} />
       {trace === null ? null : (
         <>
           <TransportBar

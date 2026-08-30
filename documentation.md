@@ -1,11 +1,11 @@
 # Vyakarana — Python Library Documentation
 
-> ## ⚠ Status: 0.0.1 built, unreleased — regular languages only
+> ## ⚠ Status: 0.0.2 built, unreleased — the full surface
 >
-> **§5.1–§5.3 work today** (`DFA`, `NFA`, `ENFA`, `RegularExpression`), from a development checkout:
-> `pnpm -F @tape-n-trace/bridge build`, then `pip install -e ./vyakarana` — 21 tests, headless.
-> **§5.4–§5.6 (`CFG`, `PDA`, `TM`) are still specification** and land with phase V3 of
-> [phases-vyakarana.md](phases-vyakarana.md). Nothing is on PyPI yet.
+> **§5.1–§5.6 work today** (`DFA`, `NFA`, `ENFA`, `RegularExpression`, `CFG`, `PDA`, `TM` and the
+> gallery), from a development checkout: `pnpm -F @tape-n-trace/bridge build`, then
+> `pip install -e ./vyakarana` — 48 tests, headless, including the API parity test.
+> Nothing is on PyPI yet; packaging is phase V4 of [phases-vyakarana.md](phases-vyakarana.md).
 >
 > When the package ships, this file moves to `vyakarana/docs/` and gains a "what actually works today"
 > table matching [README.md](README.md).
@@ -255,7 +255,7 @@ carry a source position and all surface at once.
 |---|---|---|
 | `derive(w, order="leftmost")` | derivation stepper + growing parse tree | `Derivation` |
 | `parse_tree(w)` | the tree, with its yield under the leaves | `ParseTree` |
-| `is_ambiguous(max_length=10)` | two parse trees side by side, if found | `AmbiguityResult` |
+| `is_ambiguous(max_length=10)` | — (the two trees come back on the result; the side-by-side view lands with the bridge's growth) | `AmbiguityResult` |
 | `remove_useless()` | generating then reachable, each set highlighted as it grows | `CFG` |
 | `remove_epsilon()` | nullable symbols, then expansion | `CFG` |
 | `remove_unit()` | the unit-pair graph and its transitive closure | `CFG` |
@@ -288,7 +288,7 @@ top**; `()` means pop only.
 
 | Method | Renders | Returns |
 |---|---|---|
-| `run(w)` | ID `(q, w, γ)` as three synced panels, plus the textbook ID log | `Simulation` |
+| `run(w)` | the branch tree of IDs; the textbook ID log via `.id_log()` | `Simulation` |
 | `accepts(w)` | — | `bool` |
 | `to_empty_stack()` / `to_final_state()` | the conversion, animated | `PDA` |
 | `is_deterministic()` | the violating transition pairs, if any | `DeterminismResult` |
@@ -316,13 +316,13 @@ Transitions map `(state, read_tuple)` to `(next_state, write_tuple, move_tuple)`
 |---|---|---|
 | `run(w, max_steps=10000)` | the tape strip with a moving head, plus the ID log | `Simulation` |
 | `accepts(w, max_steps=10000)` | — | `bool` or `Halted.NO` if the guard fires |
-| `to_single_tape()` | the animated multitape reduction with a live cost counter | `TM` |
+| `to_single_tape(show_run=None)` | pass an input as `show_run` to watch the reduction simulate it | `TM` |
 | `tape_view(convention="head-moves")` | toggles head-fixed vs tape-fixed rendering | widget |
 
 ```python
 from vyakarana.gallery import binary_increment, palindrome, busy_beaver_3
 
-binary_increment.run("1011")     # renders the tape, the head, the ID log
+binary_increment.run("$1011")    # renders the tape, the head, the ID log — Exercise 8.2.3's $N input
 ```
 
 The gallery ships binary increment, unary addition, `{0ⁿ1ⁿ}`, a palindrome checker, `{aⁿbⁿcⁿ}`,
