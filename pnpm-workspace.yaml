@@ -1,6 +1,7 @@
 packages:
   - 'packages/*'
   - 'apps/*'
+  - 'bridge'
 
 # pnpm blocks dependency build scripts by default. These two need theirs:
 # esbuild (under vitest) places its platform binary, and sharp (under Next's

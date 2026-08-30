@@ -1,0 +1,28 @@
+{
+  "name": "@tape-n-trace/bridge",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "The anywidget entry: takes a trace over a traitlet, draws it with the web app's own renderers, bundles into vyakarana/static/.",
+  "scripts": {
+    "build": "node build.mjs",
+    "check-fresh": "node check-fresh.mjs",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@tape-n-trace/engine": "workspace:*",
+    "@tape-n-trace/ui": "workspace:*",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^16.1.0",
+    "@types/react": "^19.0.7",
+    "@types/react-dom": "^19.0.3",
+    "esbuild": "^0.25.0",
+    "jsdom": "^26.0.0",
+    "typescript": "^5.7.3",
+    "vitest": "^3.0.4"
+  }
+}

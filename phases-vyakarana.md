@@ -40,7 +40,7 @@ Updated in the same commit as the work it describes. ✅ done and pushed · 🔨
 | Phase | Ships | Status | Notes |
 |---|---|---|---|
 | V0 ADR-004 spike | a decision, no code | ✅ | 2026-08-24 · `mini-racer` (V8), sync API; spike committed under `spikes/adr-004/` |
-| V1 The bridge | `bridge/` + `vyakarana/static/` | ⬜ | The one phase that does not depend on V0 |
+| V1 The bridge | `bridge/` + `vyakarana/static/` | 🔨 | 2026-08-24: all automated gates green (6 tests, typecheck, lint, freshness, 205 KB bundle); awaiting the one human check — open `bridge/notebooks/v1-smoke.ipynb` in JupyterLab and look |
 | V2 The Python core | `vyakarana` 0.0.1, unreleased | ⬜ | Regular languages only: DFA, NFA, ENFA, RE |
 | V3 The rest of the surface | `vyakarana` 0.0.2, unreleased | ⬜ | CFG, PDA, TM, gallery, result objects |
 | V4 Packaging and the four environments | `vyakarana` 0.1.0rc | ⬜ | Colab is the blocking one |
@@ -181,15 +181,26 @@ the spike stalls, build this.
 
 **Acceptance criteria**
 
-- [ ] A hand-written `simulate.dfa` trace, pasted into a notebook cell, renders with working transport
-      controls in JupyterLab.
-- [ ] Setting `step` from Python moves the widget; reading it back returns what the widget shows.
-- [ ] **CSS does not leak.** A test notebook with aggressive host styling renders unchanged outside
-      `.vyakarana-container`, asserted rather than eyeballed.
-- [ ] The bundle imports from `packages/ui` and `packages/engine` only. A lint rule fails on an import
-      from `apps/web`, the same way the engine's purity is enforced.
-- [ ] `pnpm -F bridge build` produces `vyakarana/static/`, and a bundle-freshness script exits non-zero
-      when `static/` is older than its sources. Wired into CI in V4.
+- [~] A hand-written `simulate.dfa` trace, pasted into a notebook cell, renders with working transport
+      controls in JupyterLab. *(Evidenced headless: the same bundle renders the same hand-written trace
+      with a working transport under jsdom — `bridge/test/render.test.tsx` — and the committed
+      `bridge/notebooks/v1-smoke.ipynb` executes end to end under nbconvert with real anywidget.
+      Remaining: a human opens it in JupyterLab and looks, per this plan's own evidence rule.)*
+- [x] Setting `step` from Python moves the widget; reading it back returns what the widget shows.
+      *(jsdom: `model.set('step', 2)` re-renders to step 2; dragging the transport writes the trait and
+      calls `save_changes`. Notebook: `w.step = 2` reads back 2 under nbconvert.)*
+- [x] **CSS does not leak** — asserted structurally, which is stronger than a styled test notebook:
+      `bridge/test/css-scope.test.ts` parses the emitted stylesheet and fails on any selector that does
+      not begin (or, for the theme-attribute forms, end) with `.vyakarana-container`, naming the escapee.
+      One deviation from this phase's text, recorded: there is no Tailwind to scope — the design system
+      is the shared `tokens.css`, and it is that file the build scopes.
+- [x] The bundle imports from `packages/ui` and `packages/engine` only. Enforced twice: the
+      `no-restricted-imports` override on `bridge/**` in `eslint.config.js`, and the build itself walks
+      esbuild's metafile and throws if any bundled input came from `apps/web`.
+- [x] `pnpm -F @tape-n-trace/bridge build` produces `vyakarana/static/` (widget.js 205 KB minified with
+      React bundled, widget.css, engine-manifest.json with all 227 engine exports), and
+      `bridge/check-fresh.mjs` exits non-zero when `static/` is missing or older than `bridge/src`,
+      `packages/ui/src` or `packages/engine/src`. Wired into CI in V4.
 
 ---
 

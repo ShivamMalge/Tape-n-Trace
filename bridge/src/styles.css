@@ -1,0 +1,35 @@
+/**
+ * The widget's own base styles. Concatenated BEFORE the shared tokens at build
+ * time, so anything tokens.css defines wins and these act as fallbacks; the
+ * whole result is then scoped under .vyakarana-container.
+ */
+
+:root {
+  --tnt-font: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --tnt-mono: ui-monospace, 'Cascadia Code', Consolas, Menlo, monospace;
+  font-family: var(--tnt-font);
+  color: var(--tnt-text, #10131a);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.vyk-stack {
+  display: grid;
+  gap: 12px;
+  padding: 4px 0;
+}
+
+.vyk-narration {
+  margin: 0;
+  max-width: 64ch;
+}
+
+.vyk-result {
+  margin: 0;
+  font-weight: 600;
+}
+
+.vyk-empty {
+  margin: 0;
+  color: var(--tnt-text-muted, #5b6472);
+}
