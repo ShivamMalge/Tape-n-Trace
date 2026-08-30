@@ -780,6 +780,15 @@ extract-the-parse-tree-from-the-table link is genuinely well worth showing.
 - **Classroom layer**: per-topic progress, lecturer dashboard, per-exercise failure clustering
   ("18 of 40 students' DFAs fail on strings ending in 01" — a genuinely new teaching signal that falls
   out of witness strings for free).
+- **Board mode — freehand machine sketching** (idea recorded 2026-08-24). A fullscreen stylus/touch
+  canvas for a lecturer: ink strokes are recognised live into the standard `FiniteAutomaton` — a closed
+  roundish stroke becomes a state (a circle inside a circle, accepting), a stroke between two states an
+  edge, a stroke returning to its origin a self-loop — and the existing renderer redraws them clean, so
+  **the renderer is the beautifier** and the teacher's spatial layout is kept. One "Simulate" action then
+  slides in the existing tables, traces and grading with no re-drawing. Scope discipline: **no handwriting
+  recognition** — edge labels come from a chip picker (alphabet + ε) at the stroke, states auto-name q0,
+  q1, …; that dodge keeps a v1 at ~2–4 days ($1/$P-style shape recognition, no ML). Directly answers the
+  department's gap #1 (§2.2) and pairs with presentation mode below.
 - **Presentation mode**: chrome-free, large-type, keyboard-driven. Trivial to build, disproportionately used.
 - **Predict-the-next-step quizzes**, generated automatically from any trace.
 - **Share-by-link** for any machine or trace.
