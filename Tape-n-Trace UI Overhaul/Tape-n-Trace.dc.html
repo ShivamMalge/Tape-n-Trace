@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  body { margin: 0; background: #EDE7DC; }
+  a { color: oklch(0.50 0.12 255); text-decoration: none; }
+  a:hover { color: oklch(0.40 0.12 255); }
+  @keyframes tntPulse { 0%,100% { opacity: 1 } 50% { opacity: 0.35 } }
+  input[type=range] { accent-color: oklch(0.50 0.12 255); }
+</style>
+</helmet>
+
+<section style="display:flex; flex-direction:column; gap:64px; padding:56px 40px 0; font-family:'IBM Plex Sans',sans-serif; color:#211E1A;">
+  <div id="2a" style="max-width:1120px; width:100%; margin:0 auto; display:flex; flex-direction:column; gap:14px;">
+    <div style="display:flex; align-items:baseline; gap:12px;">
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.16em; text-transform:uppercase; color:#8A8175;">07 &#183; Board mode</span>
+      <span style="font-family:Spectral,serif; font-size:20px; font-weight:600;">Classroom board &mdash; ink recognised into machines</span>
+      <div style="flex:1; height:1px; background:#DED5C6;"></div>
+      <span style="font-family:'IBM Plex Sans',sans-serif; font-size:13px; color:#8A8175;">press Simulate</span>
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.12em; text-transform:uppercase; color:#8A8175; border:1px solid #D6CDBD; border-radius:999px; padding:5px 11px;">2a</span>
+    </div>
+
+    <div style="display:flex; background:oklch(0.155 0.006 250); border:1px solid oklch(0.30 0.01 250); border-radius:10px; overflow:hidden; height:660px;">
+
+      <div style="{{ boardStyle }}">
+        <div style="position:absolute; inset:0; background-image:radial-gradient(oklch(0.26 0.01 250) 1.2px, transparent 1.2px); background-size:34px 34px;"></div>
+
+        <svg viewBox="0 0 1118 660" style="position:absolute; top:0; left:0; width:1118px; height:660px;">
+          <g stroke="oklch(0.97 0.005 250)" stroke-width="3" fill="none" stroke-linecap="round">
+            <path d="M 40 330 L 88 330"></path>
+            <path d="M 76 320 L 90 330 L 76 340"></path>
+            <circle cx="150" cy="330" r="56"></circle>
+            <path d="M 208 322 L 336 306"></path>
+            <path d="M 322 297 L 338 306 L 324 316"></path>
+          </g>
+
+          <path d="M 466 300 Q 460 272 441 259 Q 421 240 400 232 Q 373 232 355 255 Q 333 274 338 300 Q 337 328 357 347 Q 376 366 400 372 Q 429 366 443 340 Q 470 328 466 300" fill="none" stroke="oklch(0.80 0.05 255)" stroke-width="6" stroke-linecap="round" opacity="0.28"></path>
+          <circle cx="400" cy="300" r="56" fill="none" stroke="oklch(0.80 0.15 255)" stroke-width="3.4"></circle>
+          <circle cx="400" cy="300" r="74" fill="none" stroke="oklch(0.80 0.15 255)" stroke-width="1.4" stroke-dasharray="3 7" opacity="0.6"></circle>
+
+          <path d="M 468 372 C 520 440 566 392 624 462" fill="none" stroke="oklch(0.97 0.005 250)" stroke-width="6" stroke-linecap="round" opacity="0.5"></path>
+          <circle cx="626" cy="464" r="9" fill="oklch(0.97 0.005 250)" opacity="0.7"></circle>
+
+          <g font-family="'IBM Plex Mono',monospace" font-size="30" fill="oklch(0.97 0.005 250)" text-anchor="middle" dominant-baseline="central">
+            <text x="150" y="330">q&#8320;</text>
+            <text x="400" y="300" fill="oklch(0.86 0.13 255)">q&#8321;</text>
+          </g>
+        </svg>
+
+        <div style="position:absolute; top:20px; left:24px; display:flex; align-items:center; gap:12px;">
+          <div style="display:flex; gap:3px; align-items:center;">
+            <div style="width:11px; height:16px; border:1.5px solid oklch(0.90 0.005 250); border-radius:2px;"></div>
+            <div style="width:11px; height:16px; border:1.5px solid oklch(0.78 0.14 255); background:oklch(0.78 0.14 255); border-radius:2px;"></div>
+            <div style="width:11px; height:16px; border:1.5px solid oklch(0.90 0.005 250); border-radius:2px;"></div>
+          </div>
+          <span style="font-family:Spectral,serif; font-size:17px; font-weight:600; color:oklch(0.95 0.005 250);">Board</span>
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:oklch(0.62 0.01 250);">BTOCH503 &#183; L2</span>
+        </div>
+
+        <div style="position:absolute; top:16px; right:24px; display:flex; gap:10px;">
+          <button style="display:flex; align-items:center; gap:10px; height:52px; padding:0 22px; font-family:'IBM Plex Sans',sans-serif; font-size:17px; font-weight:500; color:oklch(0.16 0.02 255); background:oklch(0.97 0.005 250); border:none; border-radius:8px; cursor:pointer;"><span style="font-size:21px;">&#8630;</span>Undo</button>
+          <button style="width:52px; height:52px; font-size:21px; color:oklch(0.95 0.005 250); background:oklch(0.24 0.01 250); border:1px solid oklch(0.40 0.01 250); border-radius:8px; cursor:pointer;">&#8631;</button>
+          <button style="width:52px; height:52px; font-size:17px; font-family:'IBM Plex Sans',sans-serif; color:oklch(0.95 0.005 250); background:oklch(0.24 0.01 250); border:1px solid oklch(0.40 0.01 250); border-radius:8px; cursor:pointer;">&#9998;</button>
+        </div>
+
+        <div style="position:absolute; top:212px; left:214px; display:flex; flex-direction:column; align-items:center; gap:8px;">
+          <div style="display:flex; gap:8px; background:oklch(0.19 0.008 250); border:1px solid oklch(0.40 0.01 250); border-radius:12px; padding:8px; box-shadow:0 8px 28px rgba(0,0,0,0.45);">
+            <sc-for list="{{ chips }}" as="ch" hint-placeholder-count="3">
+              <div style="{{ ch.style }}" onClick="{{ ch.onClick }}">{{ ch.c }}</div>
+            </sc-for>
+          </div>
+          <div style="width:1px; height:26px; background:oklch(0.45 0.01 250);"></div>
+          <div style="font-family:'IBM Plex Mono',monospace; font-size:19px; color:oklch(0.16 0.02 255); background:oklch(0.78 0.14 255); border-radius:6px; padding:5px 14px;">{{ chipLabel }}</div>
+        </div>
+
+        <div style="position:absolute; top:196px; left:492px; display:flex; align-items:center; gap:9px; background:oklch(0.22 0.03 255); border:1px solid oklch(0.44 0.06 255); border-radius:999px; padding:7px 15px;">
+          <span style="width:7px; height:7px; border-radius:999px; background:oklch(0.80 0.15 255); animation:tntPulse 1.6s ease-in-out infinite;"></span>
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:13px; color:oklch(0.90 0.04 255);">stroke &#8594; state &#183; named q&#8321;</span>
+        </div>
+
+        <div style="position:absolute; bottom:24px; left:24px; display:flex; gap:10px;">
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:13px; color:oklch(0.70 0.01 250); background:oklch(0.21 0.008 250); border:1px solid oklch(0.34 0.01 250); border-radius:999px; padding:11px 18px;">2 states &#183; 1 arc</span>
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:13px; color:oklch(0.70 0.01 250); background:oklch(0.21 0.008 250); border:1px solid oklch(0.34 0.01 250); border-radius:999px; padding:11px 18px; cursor:pointer;">mark accepting</span>
+        </div>
+
+        <button onClick="{{ toggleSim }}" style="position:absolute; bottom:22px; right:26px; height:62px; padding:0 34px; font-family:'IBM Plex Sans',sans-serif; font-size:21px; font-weight:600; letter-spacing:-0.01em; color:oklch(0.16 0.02 255); background:oklch(0.80 0.15 255); border:none; border-radius:12px; cursor:pointer; box-shadow:0 10px 30px oklch(0.40 0.10 255 / 0.55);">{{ simLabel }}</button>
+      </div>
+
+      <div style="{{ panelStyle }}">
+        <div style="display:flex; justify-content:space-between; align-items:baseline;">
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.14em; text-transform:uppercase; color:oklch(0.66 0.01 250);">Transition table</span>
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:13px; color:oklch(0.62 0.01 250);">&#948;</span>
+        </div>
+
+        <div style="border:1px solid oklch(0.34 0.01 250); border-radius:6px; overflow:hidden;">
+          <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; font-family:'IBM Plex Mono',monospace; font-size:16px; color:oklch(0.95 0.005 250);">
+            <div style="padding:11px 14px; background:oklch(0.24 0.01 250); color:oklch(0.66 0.01 250); font-size:12px; letter-spacing:0.12em;">STATE</div>
+            <div style="padding:11px 14px; background:oklch(0.24 0.01 250); color:oklch(0.66 0.01 250); font-size:12px;">0</div>
+            <div style="padding:11px 14px; background:oklch(0.24 0.01 250); color:oklch(0.66 0.01 250); font-size:12px;">1</div>
+            <div style="padding:11px 14px; background:oklch(0.24 0.01 250); color:oklch(0.66 0.01 250); font-size:12px;">&#949;</div>
+            <div style="padding:13px 14px; border-top:1px solid oklch(0.30 0.01 250);">&#8594; q&#8320;</div>
+            <div style="padding:13px 14px; border-top:1px solid oklch(0.30 0.01 250); color:oklch(0.86 0.13 255);">q&#8321;</div>
+            <div style="padding:13px 14px; border-top:1px solid oklch(0.30 0.01 250); color:oklch(0.55 0.01 250);">&#8212;</div>
+            <div style="padding:13px 14px; border-top:1px solid oklch(0.30 0.01 250); color:oklch(0.55 0.01 250);">&#8212;</div>
+            <div style="padding:13px 14px; border-top:1px solid oklch(0.30 0.01 250);">q&#8321;</div>
+            <div style="padding:13px 14px; border-top:1px solid oklch(0.30 0.01 250); color:oklch(0.55 0.01 250);">&#8212;</div>
+            <div style="padding:13px 14px; border-top:1px solid oklch(0.30 0.01 250); color:oklch(0.55 0.01 250);">&#8212;</div>
+            <div style="padding:13px 14px; border-top:1px solid oklch(0.30 0.01 250); color:oklch(0.55 0.01 250);">&#8212;</div>
+          </div>
+        </div>
+
+        <p style="margin:0; font-family:Spectral,serif; font-size:17px; line-height:1.6; color:oklch(0.92 0.005 250);">Two states so far. Draw an arc back to <span style="font-family:'IBM Plex Mono',monospace;">q&#8320;</span> or mark <span style="font-family:'IBM Plex Mono',monospace;">q&#8321;</span> accepting to run a string.</p>
+
+        <div style="display:flex; flex-direction:column; gap:10px; margin-top:auto;">
+          <div style="display:flex; gap:10px; align-items:center;">
+            <div style="flex:1; font-family:'IBM Plex Mono',monospace; font-size:20px; letter-spacing:0.16em; color:oklch(0.95 0.005 250); background:oklch(0.24 0.01 250); border:1px solid oklch(0.40 0.01 250); border-radius:8px; padding:13px 16px;">01</div>
+            <div style="display:flex; gap:8px;">
+              <span style="min-width:52px; height:52px; display:flex; align-items:center; justify-content:center; font-family:'IBM Plex Mono',monospace; font-size:17px; color:oklch(0.95 0.005 250); background:oklch(0.24 0.01 250); border:1px solid oklch(0.40 0.01 250); border-radius:8px; cursor:pointer;">0011</span>
+              <span style="min-width:52px; height:52px; display:flex; align-items:center; justify-content:center; font-family:'IBM Plex Mono',monospace; font-size:19px; color:oklch(0.95 0.005 250); background:oklch(0.24 0.01 250); border:1px solid oklch(0.40 0.01 250); border-radius:8px; cursor:pointer;">&#949;</span>
+            </div>
+          </div>
+          <div style="display:flex; gap:10px;">
+            <button style="width:56px; height:56px; font-size:18px; color:oklch(0.95 0.005 250); background:oklch(0.24 0.01 250); border:1px solid oklch(0.40 0.01 250); border-radius:8px; cursor:pointer;">&#9664;</button>
+            <button style="flex:1; height:56px; font-family:'IBM Plex Sans',sans-serif; font-size:18px; font-weight:600; color:oklch(0.16 0.02 255); background:oklch(0.97 0.005 250); border:none; border-radius:8px; cursor:pointer;">Play</button>
+            <button style="width:56px; height:56px; font-size:18px; color:oklch(0.95 0.005 250); background:oklch(0.24 0.01 250); border:1px solid oklch(0.40 0.01 250); border-radius:8px; cursor:pointer;">&#9654;</button>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:baseline;">
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:13px; color:oklch(0.68 0.01 250);">Step 1 of 2</span>
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:13px; color:oklch(0.68 0.01 250);">1.0&#215;</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section style="display:flex; flex-direction:column; gap:64px; padding:56px 40px 120px; font-family:'IBM Plex Sans',sans-serif; color:#211E1A;">
+  <div id="1a" style="display:flex; flex-direction:column; gap:56px;">
+
+    <div style="display:flex; align-items:flex-end; gap:20px; max-width:1120px; margin:0 auto; width:100%;">
+      <div style="display:flex; flex-direction:column; gap:14px;">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div style="display:flex; gap:3px;">
+            <div style="width:14px; height:20px; border:1.5px solid #211E1A; border-radius:2px;"></div>
+            <div style="width:14px; height:20px; border:1.5px solid #211E1A; border-radius:2px;"></div>
+            <div style="width:14px; height:20px; border:1.5px solid oklch(0.50 0.12 255); background:oklch(0.50 0.12 255); border-radius:2px;"></div>
+            <div style="width:14px; height:20px; border:1.5px solid #211E1A; border-radius:2px;"></div>
+            <div style="width:14px; height:20px; border:1.5px solid #211E1A; border-radius:2px; opacity:0.35;"></div>
+          </div>
+          <span style="font-family:Spectral,serif; font-size:30px; font-weight:600; letter-spacing:-0.01em;">Tape&#8209;n&#8209;Trace</span>
+        </div>
+        <p style="margin:0; max-width:660px; font-family:Spectral,serif; font-size:18px; line-height:1.65; color:#5C554B;">A UI overhaul for the BTOCH503 workbench: a reading surface first, an instrument second. Five artboards, one mobile variant, one component system, two themes.</p>
+      </div>
+      <div style="flex:1;"></div>
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.12em; text-transform:uppercase; color:#8A8175; border:1px solid #D6CDBD; border-radius:999px; padding:6px 12px;">1a</span>
+    </div>
+
+    <div style="max-width:1120px; width:100%; margin:0 auto; display:flex; flex-direction:column; gap:14px;">
+      <div style="display:flex; align-items:baseline; gap:12px;">
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.16em; text-transform:uppercase; color:#8A8175;">00 &#183; System</span>
+        <span style="font-family:Spectral,serif; font-size:20px; font-weight:600;">Components, colour roles and type</span>
+        <div style="flex:1; height:1px; background:#DED5C6;"></div>
+      </div>
+
+      <div style="background:#FFFFFF; border:1px solid #E2DACC; border-radius:6px; padding:36px 40px 40px; display:grid; grid-template-columns:1fr 1fr; gap:40px 48px;">
+
+        <div style="grid-column:1 / -1; display:grid; grid-template-columns:repeat(5,1fr); gap:16px;">
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <div style="height:44px; border-radius:4px; background:oklch(0.50 0.12 255);"></div>
+            <div style="height:20px; border-radius:3px; background:oklch(0.955 0.022 255); border:1px solid oklch(0.90 0.035 255);"></div>
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#6B6357;">current / active</span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <div style="height:44px; border-radius:4px; background:oklch(0.48 0.12 150);"></div>
+            <div style="height:20px; border-radius:3px; background:oklch(0.955 0.03 150); border:1px solid oklch(0.90 0.045 150);"></div>
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#6B6357;">accepting</span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <div style="height:44px; border-radius:4px; background:oklch(0.52 0.10 25);"></div>
+            <div style="height:20px; border-radius:3px; background:oklch(0.955 0.022 25); border:1px solid oklch(0.90 0.035 25);"></div>
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#6B6357;">dead / removed</span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <div style="height:44px; border-radius:4px; background:oklch(0.60 0.12 75);"></div>
+            <div style="height:20px; border-radius:3px; background:oklch(0.96 0.035 75); border:1px solid oklch(0.91 0.055 75);"></div>
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#6B6357;">marked / stopped</span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <div style="height:44px; border-radius:4px; background:#211E1A;"></div>
+            <div style="height:20px; border-radius:3px; background:#F3EEE5; border:1px solid #E2DACC;"></div>
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#6B6357;">text / surface</span>
+          </div>
+        </div>
+
+        <div style="grid-column:1 / -1; height:1px; background:#EFE9DE;"></div>
+
+        <div style="display:flex; flex-direction:column; gap:18px;">
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:#8A8175;">Type</span>
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <span style="font-family:Spectral,serif; font-size:34px; font-weight:600; letter-spacing:-0.015em;">Spectral &#183; prose &amp; headings</span>
+            <span style="font-family:'IBM Plex Sans',sans-serif; font-size:15px; color:#5C554B;">IBM Plex Sans &#183; interface labels, buttons, navigation</span>
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:19px; letter-spacing:0.01em;">q&#8320;0011 &#8866; Xq&#8321;011 &nbsp; S &#8594; aSb | &#949; &nbsp; &#931; = {0,1}</span>
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#8A8175;">IBM Plex Mono &#183; every mathematical object</span>
+          </div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:18px;">
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:#8A8175;">Verb tags</span>
+          <div style="display:flex; flex-wrap:wrap; gap:8px;">
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:0.14em; text-transform:uppercase; padding:4px 9px; border-radius:3px; color:oklch(0.50 0.12 255); background:oklch(0.955 0.022 255);">simulate</span>
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:0.14em; text-transform:uppercase; padding:4px 9px; border-radius:3px; color:oklch(0.50 0.12 300); background:oklch(0.955 0.022 300);">convert</span>
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:0.14em; text-transform:uppercase; padding:4px 9px; border-radius:3px; color:oklch(0.50 0.12 75); background:oklch(0.955 0.03 75);">decide</span>
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:0.14em; text-transform:uppercase; padding:4px 9px; border-radius:3px; color:oklch(0.48 0.12 150); background:oklch(0.955 0.03 150);">prove</span>
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:0.14em; text-transform:uppercase; padding:4px 9px; border-radius:3px; color:#6B6357; background:#F1ECE3;">learn</span>
+          </div>
+          <p style="margin:0; font-family:Spectral,serif; font-size:15px; line-height:1.6; color:#5C554B;">One verb per tool, never two. The verb answers &ldquo;what will this do to my thinking?&rdquo; before the title answers &ldquo;on what?&rdquo;</p>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:18px;">
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:#8A8175;">Buttons &amp; chips</span>
+          <div style="display:flex; flex-wrap:wrap; align-items:center; gap:10px;">
+            <button style="font-family:'IBM Plex Sans',sans-serif; font-size:14px; font-weight:500; color:#FFFFFF; background:#211E1A; border:1px solid #211E1A; border-radius:4px; padding:10px 18px; cursor:pointer;" style-hover="background:#3A342C; border-color:#3A342C;">Run machine</button>
+            <button style="font-family:'IBM Plex Sans',sans-serif; font-size:14px; font-weight:500; color:#211E1A; background:#FFFFFF; border:1px solid #CFC5B3; border-radius:4px; padding:10px 18px; cursor:pointer;" style-hover="border-color:#211E1A;">Reset</button>
+            <button style="font-family:'IBM Plex Sans',sans-serif; font-size:14px; color:#6B6357; background:transparent; border:none; padding:10px 8px; cursor:pointer;" style-hover="color:#211E1A;">Load example</button>
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:13px; color:#211E1A; background:#F3EEE5; border:1px solid #E2DACC; border-radius:999px; padding:6px 14px; cursor:pointer;" style-hover="border-color:#211E1A;">0011</span>
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:13px; color:oklch(0.40 0.10 255); background:oklch(0.955 0.022 255); border:1px solid oklch(0.86 0.05 255); border-radius:999px; padding:6px 14px; cursor:pointer;">&#949;</span>
+          </div>
+          <div style="display:inline-flex; align-self:flex-start; background:#F3EEE5; border:1px solid #E2DACC; border-radius:5px; padding:3px;">
+            <span style="font-family:'IBM Plex Sans',sans-serif; font-size:13px; padding:7px 16px; border-radius:3px; background:#FFFFFF; color:#211E1A; box-shadow:0 1px 2px rgba(33,30,26,0.07);">head fixed</span>
+            <span style="font-family:'IBM Plex Sans',sans-serif; font-size:13px; padding:7px 16px; border-radius:3px; color:#6B6357; cursor:pointer;">tape fixed</span>
+          </div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:18px;">
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:#8A8175;">Mono editor with inline errors</span>
+          <div style="border:1px solid #CFC5B3; border-radius:5px; overflow:hidden;">
+            <div style="display:flex; font-family:'IBM Plex Mono',monospace; font-size:14px; line-height:1.9;">
+              <div style="padding:12px 10px; color:#B4AB9B; background:#FAF7F1; border-right:1px solid #EFE9DE; text-align:right; min-width:34px;">1<br>2<br>3</div>
+              <div style="padding:12px 14px; flex:1;">
+                <div>S &#8594; aSb | &#949;</div>
+                <div>A &#8594; aA | a</div>
+                <div style="background:oklch(0.96 0.03 25); box-shadow:inset 2px 0 0 oklch(0.52 0.10 25); margin:0 -14px; padding:0 14px;">B &#8594; bB | </div>
+              </div>
+            </div>
+            <div style="border-top:1px solid #EFE9DE; background:oklch(0.975 0.015 25); padding:9px 14px; display:flex; gap:10px; align-items:baseline;">
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:oklch(0.52 0.10 25);">line 3</span>
+              <span style="font-family:Spectral,serif; font-size:14px; color:#4A423A;">Empty alternative after <span style="font-family:'IBM Plex Mono',monospace;">|</span> &mdash; write <span style="font-family:'IBM Plex Mono',monospace;">&#949;</span> if the erasure is intended.</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="grid-column:1 / -1; display:flex; flex-direction:column; gap:12px;">
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:#8A8175;">Verdict banners &mdash; three states, never two</span>
+          <div style="display:flex; align-items:center; gap:14px; background:oklch(0.965 0.03 150); border:1px solid oklch(0.88 0.05 150); border-left:3px solid oklch(0.48 0.12 150); border-radius:4px; padding:14px 18px;">
+            <span style="font-family:'IBM Plex Sans',sans-serif; font-size:14px; font-weight:600; color:oklch(0.40 0.10 150);">Accepted</span>
+            <span style="font-family:Spectral,serif; font-size:15px; color:#4A423A;">The machine halted in <span style="font-family:'IBM Plex Mono',monospace;">q&#8324;</span> after 13 moves.</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:14px; background:oklch(0.965 0.022 25); border:1px solid oklch(0.88 0.04 25); border-left:3px solid oklch(0.52 0.10 25); border-radius:4px; padding:14px 18px;">
+            <span style="font-family:'IBM Plex Sans',sans-serif; font-size:14px; font-weight:600; color:oklch(0.44 0.10 25);">Rejected</span>
+            <span style="font-family:Spectral,serif; font-size:15px; color:#4A423A;">No move is defined for <span style="font-family:'IBM Plex Mono',monospace;">&#948;(q&#8321;, &#8294;&#9109;)</span>, so the machine halts outside <span style="font-family:'IBM Plex Mono',monospace;">F</span>.</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:14px; background:oklch(0.97 0.035 75); border:1px solid oklch(0.89 0.06 75); border-left:3px solid oklch(0.60 0.12 75); border-radius:4px; padding:14px 18px;">
+            <span style="font-family:'IBM Plex Sans',sans-serif; font-size:14px; font-weight:600; color:oklch(0.46 0.10 75);">Stopped</span>
+            <span style="font-family:Spectral,serif; font-size:15px; color:#4A423A; flex:1;">{{ capNote }}</span>
+            <button style="font-family:'IBM Plex Sans',sans-serif; font-size:13px; font-weight:500; color:oklch(0.40 0.10 75); background:#FFFFFF; border:1px solid oklch(0.80 0.08 75); border-radius:4px; padding:8px 14px; cursor:pointer; white-space:nowrap;">{{ capLabel }}</button>
+          </div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:18px;">
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:#8A8175;">Stat counters</span>
+          <div style="display:flex; gap:36px;">
+            <div style="display:flex; flex-direction:column; gap:2px;">
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:38px; font-weight:500; letter-spacing:-0.02em;">13</span>
+              <span style="font-family:'IBM Plex Sans',sans-serif; font-size:12px; color:#8A8175;">moves</span>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:2px;">
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:38px; font-weight:500; letter-spacing:-0.02em;">5</span>
+              <span style="font-family:'IBM Plex Sans',sans-serif; font-size:12px; color:#8A8175;">states</span>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:2px;">
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:38px; font-weight:500; letter-spacing:-0.02em; color:oklch(0.50 0.12 300);">4</span>
+              <span style="font-family:'IBM Plex Sans',sans-serif; font-size:12px; color:#8A8175;">cells written</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:18px;">
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:#8A8175;">Docs card</span>
+          <details open="true" style="border:1px solid #E2DACC; background:#FAF7F1; border-radius:5px; padding:14px 18px;">
+            <summary style="font-family:'IBM Plex Sans',sans-serif; font-size:14px; font-weight:500; cursor:pointer; list-style:none; display:flex; justify-content:space-between;"><span>Why marking with X and Y terminates</span><span style="color:#8A8175; font-family:'IBM Plex Mono',monospace; font-size:11px;">Hopcroft 2e &#167;8.2.3</span></summary>
+            <p style="margin:10px 0 0; font-family:Spectral,serif; font-size:15px; line-height:1.7; color:#4A423A;">Each pass converts exactly one <span style="font-family:'IBM Plex Mono',monospace;">0</span> into <span style="font-family:'IBM Plex Mono',monospace;">X</span> and one <span style="font-family:'IBM Plex Mono',monospace;">1</span> into <span style="font-family:'IBM Plex Mono',monospace;">Y</span>, so the number of unmarked symbols strictly decreases and the computation cannot run forever.</p>
+          </details>
+        </div>
+
+      </div>
+    </div>
+
+    <div style="max-width:1120px; width:100%; margin:0 auto; display:flex; flex-direction:column; gap:14px;">
+      <div style="display:flex; align-items:baseline; gap:12px;">
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.16em; text-transform:uppercase; color:#8A8175;">01 &#183; Home</span>
+        <span style="font-family:Spectral,serif; font-size:20px; font-weight:600;">Catalog, with the 13-link nav folded into five modules</span>
+        <div style="flex:1; height:1px; background:#DED5C6;"></div>
+      </div>
+
+      <div style="background:#FAF7F1; border:1px solid #E2DACC; border-radius:6px; overflow:hidden;">
+
+        <div style="background:#FFFFFF; border-bottom:1px solid #E2DACC; padding:14px 32px; display:flex; align-items:center; gap:24px;">
+          <div style="display:flex; align-items:center; gap:9px;">
+            <div style="display:flex; gap:2px;">
+              <div style="width:9px; height:13px; border:1.2px solid #211E1A; border-radius:1.5px;"></div>
+              <div style="width:9px; height:13px; border:1.2px solid oklch(0.50 0.12 255); background:oklch(0.50 0.12 255); border-radius:1.5px;"></div>
+              <div style="width:9px; height:13px; border:1.2px solid #211E1A; border-radius:1.5px;"></div>
+            </div>
+            <span style="font-family:Spectral,serif; font-size:17px; font-weight:600;">Tape&#8209;n&#8209;Trace</span>
+          </div>
+          <div style="display:flex; gap:2px; background:#FAF7F1; border-radius:5px; padding:3px;">
+            <sc-for list="{{ modules }}" as="m" hint-placeholder-count="5">
+              <div style="{{ m.style }}" onClick="{{ m.onClick }}"><span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#8A8175;">{{ m.n }}</span><span>{{ m.label }}</span></div>
+            </sc-for>
+          </div>
+          <div style="flex:1;"></div>
+          <span style="font-family:'IBM Plex Sans',sans-serif; font-size:14px; color:#5C554B; cursor:pointer;">Practice</span>
+          <div style="display:flex; align-items:center; gap:8px; border:1px solid #E2DACC; border-radius:999px; padding:7px 14px; min-width:170px;">
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#B4AB9B;">&#8984;K</span>
+            <span style="font-family:'IBM Plex Sans',sans-serif; font-size:13px; color:#8A8175;">Search 21 tools</span>
+          </div>
+        </div>
+
+        <div style="background:#FFFFFF; border-bottom:1px solid #E2DACC; padding:22px 32px 26px; display:flex; gap:56px; align-items:flex-start;">
+          <div style="max-width:330px; display:flex; flex-direction:column; gap:6px;">
+            <span style="font-family:Spectral,serif; font-size:17px; font-weight:600;">{{ panel.t }}</span>
+            <span style="font-family:Spectral,serif; font-size:15px; line-height:1.6; color:#6B6357;">{{ panel.b }}</span>
+          </div>
+          <div style="display:flex; flex-wrap:wrap; gap:10px; padding-top:2px;">
+            <sc-for list="{{ panel.l }}" as="link" hint-placeholder-count="3">
+              <span style="font-family:'IBM Plex Sans',sans-serif; font-size:14px; color:#211E1A; border:1px solid #E2DACC; border-radius:999px; padding:7px 16px; cursor:pointer;" style-hover="border-color:#211E1A; background:#FAF7F1;">{{ link }}</span>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="padding:44px 32px 20px; display:flex; justify-content:space-between; align-items:flex-end; gap:40px;">
+          <div style="max-width:620px; display:flex; flex-direction:column; gap:14px;">
+            <h1 style="margin:0; font-family:Spectral,serif; font-size:40px; font-weight:600; letter-spacing:-0.02em; line-height:1.15;">Twenty-one instruments for one course.</h1>
+            <p style="margin:0; font-family:Spectral,serif; font-size:18px; line-height:1.65; color:#5C554B;">Every tool runs step by step and writes down what it did in the language your exam expects. Nothing here hides its working.</p>
+          </div>
+          <div style="display:flex; gap:32px; padding-bottom:6px;">
+            <div style="display:flex; flex-direction:column;">
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:30px; font-weight:500;">21</span>
+              <span style="font-family:'IBM Plex Sans',sans-serif; font-size:12px; color:#8A8175;">tools</span>
+            </div>
+            <div style="display:flex; flex-direction:column;">
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:30px; font-weight:500;">5</span>
+              <span style="font-family:'IBM Plex Sans',sans-serif; font-size:12px; color:#8A8175;">modules</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="padding:20px 32px 40px; display:grid; grid-template-columns:repeat(3,1fr); gap:16px;">
+          <sc-for list="{{ catalog }}" as="c" hint-placeholder-count="9">
+            <div style="background:#FFFFFF; border:1px solid #E2DACC; border-radius:5px; padding:20px 20px 18px; display:flex; flex-direction:column; gap:10px; cursor:pointer;" style-hover="border-color:#CFC5B3; box-shadow:0 2px 10px rgba(33,30,26,0.05);">
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+                <span style="{{ c.tagStyle }}">{{ c.verb }}</span>
+                <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#B4AB9B;">{{ c.mod }}</span>
+              </div>
+              <span style="font-family:Spectral,serif; font-size:19px; font-weight:600; letter-spacing:-0.01em; line-height:1.25;">{{ c.title }}</span>
+              <span style="font-family:Spectral,serif; font-size:15px; line-height:1.6; color:#6B6357; text-wrap:pretty;">{{ c.sum }}</span>
+            </div>
+          </sc-for>
+        </div>
+
+      </div>
+    </div>
+
+    <div style="max-width:1120px; width:100%; margin:0 auto; display:flex; flex-direction:column; gap:14px;">
+      <div style="display:flex; align-items:baseline; gap:12px;">
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.16em; text-transform:uppercase; color:#8A8175;">02 &#183; Simulator</span>
+        <span style="font-family:Spectral,serif; font-size:20px; font-weight:600;">Turing machine &mdash; the diagram is the hero</span>
+        <div style="flex:1; height:1px; background:#DED5C6;"></div>
+        <span style="font-family:'IBM Plex Sans',sans-serif; font-size:13px; color:#8A8175;">live &mdash; press play</span>
+      </div>
+
+      <div style="background:#FAF7F1; border:1px solid #E2DACC; border-radius:6px; overflow:hidden;">
+
+        <div style="background:#FFFFFF; border-bottom:1px solid #E2DACC; padding:13px 32px; display:flex; align-items:center; gap:14px;">
+          <div style="display:flex; gap:2px;">
+            <div style="width:9px; height:13px; border:1.2px solid #211E1A; border-radius:1.5px;"></div>
+            <div style="width:9px; height:13px; border:1.2px solid oklch(0.50 0.12 255); background:oklch(0.50 0.12 255); border-radius:1.5px;"></div>
+            <div style="width:9px; height:13px; border:1.2px solid #211E1A; border-radius:1.5px;"></div>
+          </div>
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#B4AB9B;">/</span>
+          <span style="font-family:'IBM Plex Sans',sans-serif; font-size:14px; color:#5C554B;">Module 5</span>
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#B4AB9B;">/</span>
+          <span style="font-family:'IBM Plex Sans',sans-serif; font-size:14px; font-weight:500;">Turing Machine Simulator</span>
+          <div style="flex:1;"></div>
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:#6B6357;">L = { 0&#8319;1&#8319; | n &#8805; 1 }</span>
+        </div>
+
+        <div style="padding:26px 32px 30px; display:flex; flex-direction:column; gap:22px;">
+
+          <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+            <span style="font-family:'IBM Plex Sans',sans-serif; font-size:13px; color:#6B6357;">Input</span>
+            <div style="font-family:'IBM Plex Mono',monospace; font-size:18px; letter-spacing:0.16em; background:#FFFFFF; border:1px solid #CFC5B3; border-radius:4px; padding:10px 16px; min-width:220px;">0011</div>
+            <button style="font-family:'IBM Plex Sans',sans-serif; font-size:14px; font-weight:500; color:#FFFFFF; background:#211E1A; border:none; border-radius:4px; padding:11px 20px; cursor:pointer;">Run</button>
+            <div style="width:1px; height:26px; background:#E2DACC; margin:0 4px;"></div>
+            <span style="font-family:'IBM Plex Sans',sans-serif; font-size:13px; color:#8A8175;">Try</span>
+            <div style="display:flex; gap:7px;">
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:13px; background:oklch(0.955 0.022 255); border:1px solid oklch(0.86 0.05 255); color:oklch(0.40 0.10 255); border-radius:999px; padding:6px 14px; cursor:pointer;">0011</span>
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:13px; background:#FFFFFF; border:1px solid #E2DACC; border-radius:999px; padding:6px 14px; cursor:pointer;" style-hover="border-color:#211E1A;">000111</span>
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:13px; background:#FFFFFF; border:1px solid #E2DACC; border-radius:999px; padding:6px 14px; cursor:pointer;" style-hover="border-color:#211E1A;">0101</span>
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:13px; background:#FFFFFF; border:1px solid #E2DACC; border-radius:999px; padding:6px 14px; cursor:pointer;" style-hover="border-color:#211E1A;">&#949;</span>
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:13px; background:#FFFFFF; border:1px solid #E2DACC; border-radius:999px; padding:6px 14px; cursor:pointer;" style-hover="border-color:#211E1A;">0&#185;&#8304;1&#185;&#8304;</span>
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 344px; gap:20px; align-items:start;">
+
+            <div style="display:flex; flex-direction:column; gap:20px;">
+
+              <div style="background:#FFFFFF; border:1px solid #E2DACC; border-radius:5px; padding:8px 12px 4px;">
+                <svg viewBox="0 0 640 310" style="width:100%; height:auto; display:block;">
+                  <defs>
+                    <marker id="tntArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                      <path d="M 0 0 L 10 5 L 0 10 z" fill="#8A8175"></path>
+                    </marker>
+                  </defs>
+                  <g transform="{{ ring }}">
+                    <circle r="26" fill="oklch(0.955 0.022 255)"></circle>
+                    <circle r="34" fill="none" stroke="oklch(0.50 0.12 255)" stroke-width="1.2" opacity="0.45"></circle>
+                  </g>
+                  <g stroke="#8A8175" stroke-width="1.3" fill="none" marker-end="url(#tntArrow)">
+                    <path d="M 30 155 L 60 155"></path>
+                    <path d="M 114 145 L 226 102"></path>
+                    <path d="M 250 118 L 250 208"></path>
+                    <path d="M 227 224 L 114 167"></path>
+                    <path d="M 106 133 Q 250 24 393 78"></path>
+                    <path d="M 436 103 L 524 144"></path>
+                    <path d="M 236 72 Q 250 26 263 69"></path>
+                    <path d="M 236 256 Q 250 302 263 259"></path>
+                    <path d="M 398 72 Q 412 26 425 69"></path>
+                  </g>
+                  <g fill="#FFFFFF" stroke="#211E1A" stroke-width="1.4">
+                    <circle cx="90" cy="155" r="26" fill="none"></circle>
+                    <circle cx="250" cy="92" r="26" fill="none"></circle>
+                    <circle cx="250" cy="236" r="26" fill="none"></circle>
+                    <circle cx="412" cy="92" r="26" fill="none"></circle>
+                    <circle cx="548" cy="155" r="26" fill="none" stroke="oklch(0.48 0.12 150)"></circle>
+                    <circle cx="548" cy="155" r="21" fill="none" stroke="oklch(0.48 0.12 150)"></circle>
+                  </g>
+                  <g font-family="'IBM Plex Mono',monospace" font-size="16" fill="#211E1A" text-anchor="middle" dominant-baseline="central">
+                    <text x="90" y="155">q&#8320;</text>
+                    <text x="250" y="92">q&#8321;</text>
+                    <text x="250" y="236">q&#8322;</text>
+                    <text x="412" y="92">q&#8323;</text>
+                    <text x="548" y="155" fill="oklch(0.40 0.10 150)">q&#8324;</text>
+                  </g>
+                  <g font-family="'IBM Plex Mono',monospace" font-size="12.5" fill="#6B6357" text-anchor="middle">
+                    <text x="158" y="112">0/X,R</text>
+                    <text x="271" y="168">1/Y,L</text>
+                    <text x="150" y="209">X/X,R</text>
+                    <text x="250" y="42">Y/Y,R</text>
+                    <text x="250" y="18">0/0,R</text>
+                    <text x="250" y="288">0/0,L</text>
+                    <text x="250" y="304">Y/Y,L</text>
+                    <text x="412" y="18">Y/Y,R</text>
+                    <text x="252" y="60" fill="#B4AB9B" font-size="11">&#8635;</text>
+                    <text x="330" y="52">Y/Y,R</text>
+                    <text x="498" y="112">&#9109;/&#9109;,R</text>
+                  </g>
+                </svg>
+              </div>
+
+              <div style="background:#FFFFFF; border:1px solid #E2DACC; border-radius:5px; padding:18px 20px 16px; display:flex; flex-direction:column; gap:2px;">
+                <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px;">
+                  <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:#8A8175;">Tape</span>
+                  <div style="display:inline-flex; background:#F3EEE5; border:1px solid #E2DACC; border-radius:5px; padding:2px;">
+                    <span style="font-family:'IBM Plex Sans',sans-serif; font-size:12px; padding:5px 12px; border-radius:3px; background:#FFFFFF; box-shadow:0 1px 2px rgba(33,30,26,0.07);">head fixed</span>
+                    <span style="font-family:'IBM Plex Sans',sans-serif; font-size:12px; padding:5px 12px; border-radius:3px; color:#6B6357; cursor:pointer;">tape fixed</span>
+                  </div>
+                </div>
+                <div style="display:flex; padding-left:1px;">
+                  <sc-for list="{{ cells }}" as="c" hint-placeholder-count="13">
+                    <div style="{{ c.headStyle }}">&#9660;</div>
+                  </sc-for>
+                </div>
+                <div style="display:flex; border:1px solid #CFC5B3; border-right:none; border-radius:3px; overflow:hidden; width:fit-content;">
+                  <sc-for list="{{ cells }}" as="c" hint-placeholder-count="13">
+                    <div style="{{ c.cellStyle }}">{{ c.sym }}</div>
+                  </sc-for>
+                </div>
+                <div style="display:flex; padding-left:1px; margin-top:5px;">
+                  <sc-for list="{{ cells }}" as="c" hint-placeholder-count="13">
+                    <div style="{{ c.underStyle }}">{{ c.qlab }}</div>
+                  </sc-for>
+                </div>
+              </div>
+
+              <div style="background:#FFFFFF; border:1px solid #E2DACC; border-radius:5px; padding:14px 20px; display:flex; align-items:center; gap:18px;">
+                <div style="display:flex; gap:6px;">
+                  <button onClick="{{ onPrev }}" style="font-family:'IBM Plex Sans',sans-serif; font-size:14px; width:38px; height:38px; border:1px solid #CFC5B3; background:#FFFFFF; border-radius:4px; cursor:pointer;" style-hover="border-color:#211E1A;">&#9664;</button>
+                  <button onClick="{{ onPlay }}" style="font-family:'IBM Plex Sans',sans-serif; font-size:14px; font-weight:500; color:#FFFFFF; background:#211E1A; border:none; border-radius:4px; padding:0 20px; height:38px; cursor:pointer; min-width:92px;">{{ playLabel }}</button>
+                  <button onClick="{{ onNext }}" style="font-family:'IBM Plex Sans',sans-serif; font-size:14px; width:38px; height:38px; border:1px solid #CFC5B3; background:#FFFFFF; border-radius:4px; cursor:pointer;" style-hover="border-color:#211E1A;">&#9654;</button>
+                </div>
+                <div style="flex:1; display:flex; flex-direction:column; gap:4px;">
+                  <input type="range" min="0" max="13" step="1" value="{{ step }}" onChange="{{ onScrub }}" style="width:100%;">
+                  <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#6B6357;">{{ stepLabel }}</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:10px; border-left:1px solid #EFE9DE; padding-left:18px;">
+                  <span style="font-family:'IBM Plex Sans',sans-serif; font-size:12px; color:#8A8175;">Speed</span>
+                  <input type="range" min="0.5" max="4" step="0.5" value="{{ speed }}" onChange="{{ onSpeed }}" style="width:96px;">
+                  <span style="font-family:'IBM Plex Mono',monospace; font-size:13px; min-width:34px;">{{ speedLabel }}</span>
+                </div>
+              </div>
+
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:16px;">
+
+              <div style="background:#FFFFFF; border:1px solid #E2DACC; border-radius:5px; padding:20px;">
+                <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px;">
+                  <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:#8A8175;">Narration</span>
+                  <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#B4AB9B;">{{ stateLabel }}</span>
+                </div>
+                <p style="margin:0; font-family:Spectral,serif; font-size:17px; line-height:1.6; color:#211E1A; text-wrap:pretty; min-height:82px;">{{ narration }}</p>
+              </div>
+
+              <div style="background:#FFFFFF; border:1px solid #E2DACC; border-radius:5px; padding:20px;">
+                <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px;">
+                  <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:#8A8175;">ID sequence</span>
+                  <button style="font-family:'IBM Plex Sans',sans-serif; font-size:12px; color:#5C554B; background:#FAF7F1; border:1px solid #E2DACC; border-radius:3px; padding:4px 10px; cursor:pointer;" style-hover="border-color:#211E1A; color:#211E1A;">Copy</button>
+                </div>
+                <div style="font-family:'IBM Plex Mono',monospace; font-size:14.5px; line-height:2; word-spacing:0.1em;">
+                  <sc-for list="{{ ids }}" as="x" hint-placeholder-count="5">
+                    <span style="color:{{ x.dim }};">{{ x.id }}{{ x.sep }} </span>
+                  </sc-for>
+                </div>
+              </div>
+
+              <div style="display:flex; align-items:center; gap:14px; background:oklch(0.965 0.03 150); border:1px solid oklch(0.88 0.05 150); border-left:3px solid oklch(0.48 0.12 150); border-radius:4px; padding:14px 16px;">
+                <span style="font-family:'IBM Plex Sans',sans-serif; font-size:14px; font-weight:600; color:oklch(0.40 0.10 150);">Accepted</span>
+                <span style="font-family:Spectral,serif; font-size:15px; color:#4A423A;">Halts in <span style="font-family:'IBM Plex Mono',monospace;">q&#8324;</span> after 13 moves.</span>
+              </div>
+
+              <details style="background:#FFFFFF; border:1px solid #E2DACC; border-radius:5px; padding:14px 18px;">
+                <summary style="font-family:'IBM Plex Sans',sans-serif; font-size:14px; font-weight:500; cursor:pointer; list-style:none; display:flex; justify-content:space-between; gap:10px;"><span>Reading an instantaneous description</span><span style="color:#8A8175; font-family:'IBM Plex Mono',monospace; font-size:11px;">&#167;8.2.2</span></summary>
+                <p style="margin:10px 0 0; font-family:Spectral,serif; font-size:15px; line-height:1.7; color:#4A423A;">The state symbol is written immediately to the left of the cell being scanned, so <span style="font-family:'IBM Plex Mono',monospace;">X0q&#8321;11</span> means the head is on the third cell.</p>
+              </details>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="max-width:1120px; width:100%; margin:0 auto; display:flex; gap:40px; align-items:flex-start;">
+      <div style="display:flex; flex-direction:column; gap:14px;">
+        <div style="display:flex; align-items:baseline; gap:12px;">
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.16em; text-transform:uppercase; color:#8A8175;">02b &#183; Mobile</span>
+          <span style="font-family:Spectral,serif; font-size:20px; font-weight:600;">Simulator, 390&#8239;pt</span>
+        </div>
+        <div style="width:390px; background:#FAF7F1; border:1px solid #CFC5B3; border-radius:18px; overflow:hidden; box-shadow:0 6px 24px rgba(33,30,26,0.08);">
+          <div style="background:#FFFFFF; border-bottom:1px solid #E2DACC; padding:12px 16px; display:flex; align-items:center; gap:10px;">
+            <span style="font-family:'IBM Plex Sans',sans-serif; font-size:20px; color:#6B6357;">&#8249;</span>
+            <span style="font-family:'IBM Plex Sans',sans-serif; font-size:15px; font-weight:500;">TM Simulator</span>
+            <div style="flex:1;"></div>
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:#8A8175;">0&#8319;1&#8319;</span>
+          </div>
+          <div style="padding:14px 16px 16px; display:flex; flex-direction:column; gap:14px;">
+            <div style="background:#FFFFFF; border:1px solid #E2DACC; border-radius:5px; padding:6px;">
+              <svg viewBox="0 0 640 310" style="width:100%; height:auto; display:block;">
+                <g transform="{{ ring }}"><circle r="26" fill="oklch(0.955 0.022 255)"></circle><circle r="34" fill="none" stroke="oklch(0.50 0.12 255)" stroke-width="1.4" opacity="0.45"></circle></g>
+                <g stroke="#8A8175" stroke-width="1.6" fill="none">
+                  <path d="M 114 145 L 226 102"></path><path d="M 250 118 L 250 208"></path><path d="M 227 224 L 114 167"></path>
+                  <path d="M 106 133 Q 250 24 393 78"></path><path d="M 436 103 L 524 144"></path>
+                  <path d="M 236 72 Q 250 26 263 69"></path><path d="M 236 256 Q 250 302 263 259"></path><path d="M 398 72 Q 412 26 425 69"></path>
+                </g>
+                <g fill="none" stroke="#211E1A" stroke-width="1.8">
+                  <circle cx="90" cy="155" r="26"></circle><circle cx="250" cy="92" r="26"></circle><circle cx="250" cy="236" r="26"></circle><circle cx="412" cy="92" r="26"></circle>
+                  <circle cx="548" cy="155" r="26" stroke="oklch(0.48 0.12 150)"></circle><circle cx="548" cy="155" r="21" stroke="oklch(0.48 0.12 150)"></circle>
+                </g>
+                <g font-family="'IBM Plex Mono',monospace" font-size="19" fill="#211E1A" text-anchor="middle" dominant-baseline="central">
+                  <text x="90" y="155">q&#8320;</text><text x="250" y="92">q&#8321;</text><text x="250" y="236">q&#8322;</text><text x="412" y="92">q&#8323;</text><text x="548" y="155" fill="oklch(0.40 0.10 150)">q&#8324;</text>
+                </g>
+              </svg>
+            </div>
+            <div style="background:#FFFFFF; border:1px solid #E2DACC; border-radius:5px; padding:12px 12px 10px; overflow:hidden;">
+              <div style="display:flex; padding-left:1px;">
+                <sc-for list="{{ cells }}" as="c" hint-placeholder-count="13"><div style="{{ c.headStyle }}">&#9660;</div></sc-for>
+              </div>
+              <div style="display:flex; border:1px solid #CFC5B3; border-right:none; border-radius:3px; width:fit-content;">
+                <sc-for list="{{ cells }}" as="c" hint-placeholder-count="13"><div style="{{ c.cellStyle }}">{{ c.sym }}</div></sc-for>
+              </div>
+              <div style="display:flex; padding-left:1px; margin-top:4px;">
+                <sc-for list="{{ cells }}" as="c" hint-placeholder-count="13"><div style="{{ c.underStyle }}">{{ c.qlab }}</div></sc-for>
+              </div>
+            </div>
+            <p style="margin:0; font-family:Spectral,serif; font-size:16px; line-height:1.55; color:#211E1A; text-wrap:pretty; min-height:76px;">{{ narration }}</p>
+            <div style="font-family:'IBM Plex Mono',monospace; font-size:13.5px; line-height:1.9; background:#FFFFFF; border:1px solid #E2DACC; border-radius:5px; padding:12px; max-height:96px; overflow:hidden;">
+              <sc-for list="{{ ids }}" as="x" hint-placeholder-count="4"><span style="color:{{ x.dim }};">{{ x.id }}{{ x.sep }} </span></sc-for>
+            </div>
+          </div>
+          <div style="background:#FFFFFF; border-top:1px solid #E2DACC; padding:12px 16px 16px; display:flex; flex-direction:column; gap:10px;">
+            <input type="range" min="0" max="13" step="1" value="{{ step }}" onChange="{{ onScrub }}" style="width:100%;">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <button onClick="{{ onPrev }}" style="flex:1; height:46px; font-size:15px; border:1px solid #CFC5B3; background:#FFFFFF; border-radius:4px; cursor:pointer;">&#9664;</button>
+              <button onClick="{{ onPlay }}" style="flex:2; height:46px; font-family:'IBM Plex Sans',sans-serif; font-size:15px; font-weight:500; color:#FFFFFF; background:#211E1A; border:none; border-radius:4px; cursor:pointer;">{{ playLabel }}</button>
+              <button onClick="{{ onNext }}" style="flex:1; height:46px; font-size:15px; border:1px solid #CFC5B3; background:#FFFFFF; border-radius:4px; cursor:pointer;">&#9654;</button>
+            </div>
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#6B6357; text-align:center;">{{ stepLabel }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="flex:1; display:flex; flex-direction:column; gap:14px; padding-top:2px;">
+        <div style="display:flex; align-items:baseline; gap:12px;">
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.16em; text-transform:uppercase; color:#8A8175;">03 &#183; Conversion</span>
+          <span style="font-family:Spectral,serif; font-size:20px; font-weight:600;">NFA &#8594; DFA stepper</span>
+          <div style="flex:1; height:1px; background:#DED5C6;"></div>
+        </div>
+        <div style="background:#FAF7F1; border:1px solid #E2DACC; border-radius:6px; padding:22px 24px 24px; display:flex; flex-direction:column; gap:18px;">
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+            <div style="background:#FFFFFF; border:1px solid #E2DACC; border-radius:5px; padding:14px 16px;">
+              <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px;">
+                <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:#8A8175;">Source &#183; NFA</span>
+                <span style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:#B4AB9B;">fixed</span>
+              </div>
+              <svg viewBox="0 0 320 150" style="width:100%; height:auto; display:block;">
+                <g stroke="#8A8175" stroke-width="1.3" fill="none">
+                  <path d="M 16 78 L 42 78"></path>
+                  <path d="M 92 78 L 138 78"></path>
+                  <path d="M 188 78 L 234 78"></path>
+                  <path d="M 56 56 Q 68 22 82 55"></path>
+                </g>
+                <g fill="none" stroke="#211E1A" stroke-width="1.4">
+                  <circle cx="68" cy="78" r="24"></circle><circle cx="163" cy="78" r="24"></circle>
+                  <circle cx="258" cy="78" r="24" stroke="oklch(0.48 0.12 150)"></circle><circle cx="258" cy="78" r="19" stroke="oklch(0.48 0.12 150)"></circle>
+                </g>
+                <g font-family="'IBM Plex Mono',monospace" font-size="15" fill="#211E1A" text-anchor="middle" dominant-baseline="central">
+                  <text x="68" y="78">A</text><text x="163" y="78">B</text><text x="258" y="78" fill="oklch(0.40 0.10 150)">C</text>
+                </g>
+                <g font-family="'IBM Plex Mono',monospace" font-size="12" fill="#6B6357" text-anchor="middle">
+                  <text x="115" y="70">0</text><text x="211" y="70">1</text><text x="68" y="26">0, 1</text>
+                </g>
+              </svg>
+            </div>
+            <div style="background:#FFFFFF; border:1px solid oklch(0.86 0.05 255); border-radius:5px; padding:14px 16px;">
+              <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px;">
+                <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:oklch(0.50 0.12 255);">Target &#183; DFA</span>
+                <span style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:oklch(0.50 0.12 255);">3 of 3 states</span>
+              </div>
+              <svg viewBox="0 0 320 150" style="width:100%; height:auto; display:block;">
+                <g stroke="#8A8175" stroke-width="1.3" fill="none">
+                  <path d="M 8 78 L 30 78"></path>
+                  <path d="M 92 70 L 130 70"></path>
+                  <path d="M 196 70 L 232 70"></path>
+                  <path d="M 232 92 Q 163 128 92 92"></path>
+                </g>
+                <g fill="none" stroke="#211E1A" stroke-width="1.4">
+                  <circle cx="60" cy="78" r="28"></circle><circle cx="163" cy="70" r="28"></circle>
+                  <circle cx="262" cy="70" r="28" stroke="oklch(0.48 0.12 150)"></circle><circle cx="262" cy="70" r="23" stroke="oklch(0.48 0.12 150)"></circle>
+                </g>
+                <g font-family="'IBM Plex Mono',monospace" font-size="13" fill="#211E1A" text-anchor="middle" dominant-baseline="central">
+                  <text x="60" y="78">{A}</text><text x="163" y="70">{A,B}</text><text x="262" y="70" fill="oklch(0.40 0.10 150)">{A,C}</text>
+                </g>
+                <g font-family="'IBM Plex Mono',monospace" font-size="12" fill="#6B6357" text-anchor="middle">
+                  <text x="111" y="60">0</text><text x="214" y="60">1</text><text x="163" y="124">0</text>
+                </g>
+              </svg>
+            </div>
+          </div>
+
+          <div style="background:#FFFFFF; border:1px solid #E2DACC; border-radius:5px; overflow:hidden;">
+            <div style="display:grid; grid-template-columns:1.4fr 1fr 1fr; font-family:'IBM Plex Mono',monospace; font-size:13.5px;">
+              <div style="padding:9px 16px; background:#FAF7F1; border-bottom:1px solid #E2DACC; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:#8A8175;">subset</div>
+              <div style="padding:9px 16px; background:#FAF7F1; border-bottom:1px solid #E2DACC; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:#8A8175;">&#948;(&#183;, 0)</div>
+              <div style="padding:9px 16px; background:#FAF7F1; border-bottom:1px solid #E2DACC; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:#8A8175;">&#948;(&#183;, 1)</div>
+              <div style="padding:10px 16px; border-bottom:1px solid #EFE9DE;">&#8594; {A}</div>
+              <div style="padding:10px 16px; border-bottom:1px solid #EFE9DE;">{A,B}</div>
+              <div style="padding:10px 16px; border-bottom:1px solid #EFE9DE;">{A}</div>
+              <div style="padding:10px 16px; border-bottom:1px solid #EFE9DE;">{A,B}</div>
+              <div style="padding:10px 16px; border-bottom:1px solid #EFE9DE;">{A,B}</div>
+              <div style="padding:10px 16px; border-bottom:1px solid #EFE9DE;">{A,C}</div>
+              <div style="padding:10px 16px; background:oklch(0.972 0.014 255);">&#42; {A,C}</div>
+              <div style="padding:10px 16px; background:oklch(0.972 0.014 255);">{A,B}</div>
+              <div style="padding:10px 16px; background:oklch(0.972 0.014 255); color:#B4AB9B;">&#8212;</div>
+            </div>
+          </div>
+
+          <div style="display:flex; gap:16px; align-items:stretch;">
+            <p style="flex:1; margin:0; font-family:Spectral,serif; font-size:16.5px; line-height:1.6; color:#211E1A; text-wrap:pretty;">Row 3 is new: from <span style="font-family:'IBM Plex Mono',monospace;">{A,B}</span> on input <span style="font-family:'IBM Plex Mono',monospace;">1</span> the NFA can reach both <span style="font-family:'IBM Plex Mono',monospace;">A</span> and <span style="font-family:'IBM Plex Mono',monospace;">C</span>, so the subset <span style="font-family:'IBM Plex Mono',monospace;">{A,C}</span> becomes a DFA state and is accepting because it contains <span style="font-family:'IBM Plex Mono',monospace;">C</span>.</p>
+            <div style="display:flex; flex-direction:column; justify-content:center; gap:8px; border-left:1px solid #E2DACC; padding-left:16px; min-width:180px;">
+              <div style="display:flex; gap:6px;">
+                <button style="width:34px; height:34px; border:1px solid #CFC5B3; background:#FFFFFF; border-radius:4px; cursor:pointer;">&#9664;</button>
+                <button style="flex:1; height:34px; font-family:'IBM Plex Sans',sans-serif; font-size:13px; font-weight:500; color:#FFFFFF; background:#211E1A; border:none; border-radius:4px; cursor:pointer;">Play</button>
+                <button style="width:34px; height:34px; border:1px solid #CFC5B3; background:#FFFFFF; border-radius:4px; cursor:pointer;">&#9654;</button>
+              </div>
+              <input type="range" min="0" max="5" step="1" value="3" style="width:100%;">
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#6B6357;">Step 3 of 5 &#183; 1.0&#215;</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="max-width:1120px; width:100%; margin:0 auto; display:flex; flex-direction:column; gap:14px;">
+      <div style="display:flex; align-items:baseline; gap:12px;">
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.16em; text-transform:uppercase; color:#8A8175;">04 &#183; Practice</span>
+        <span style="font-family:Spectral,serif; font-size:20px; font-weight:600;">Exercise, student machine, and a counterexample instead of a score</span>
+        <div style="flex:1; height:1px; background:#DED5C6;"></div>
+      </div>
+
+      <div style="background:#FAF7F1; border:1px solid #E2DACC; border-radius:6px; padding:26px 32px 30px; display:grid; grid-template-columns:1fr 400px; gap:24px; align-items:start;">
+
+        <div style="display:flex; flex-direction:column; gap:20px;">
+          <div style="background:#FFFFFF; border:1px solid #E2DACC; border-radius:5px; padding:24px 26px; display:flex; flex-direction:column; gap:14px;">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:0.14em; text-transform:uppercase; color:#6B6357; background:#F1ECE3; border-radius:3px; padding:4px 9px;">6 marks &#183; CO2 &#183; Apply</span>
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:#B4AB9B;">Exercise 4.2 &#183; Module 2</span>
+            </div>
+            <h2 style="margin:0; font-family:Spectral,serif; font-size:26px; font-weight:600; letter-spacing:-0.015em; line-height:1.25;">Construct a DFA over &#931; = {0, 1}</h2>
+            <p style="margin:0; font-family:Spectral,serif; font-size:18px; line-height:1.7; color:#3A342C; text-wrap:pretty;">Design a deterministic finite automaton that accepts exactly those strings in which every occurrence of <span style="font-family:'IBM Plex Mono',monospace;">01</span> is immediately followed by a <span style="font-family:'IBM Plex Mono',monospace;">1</span>. State the transition function <span style="font-family:'IBM Plex Mono',monospace;">&#948;</span> in full and mark the accepting states; the empty string <span style="font-family:'IBM Plex Mono',monospace;">&#949;</span> is in the language.</p>
+          </div>
+
+          <div style="background:#FFFFFF; border:1px solid #E2DACC; border-radius:5px; padding:16px 20px;">
+            <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:4px;">
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:#8A8175;">Your machine</span>
+              <span style="font-family:'IBM Plex Sans',sans-serif; font-size:13px; color:#5C554B; cursor:pointer;">Edit in Drawer</span>
+            </div>
+            <svg viewBox="0 0 620 170" style="width:100%; height:auto; display:block;">
+              <g stroke="#8A8175" stroke-width="1.3" fill="none">
+                <path d="M 22 90 L 52 90"></path>
+                <path d="M 112 82 L 168 82"></path>
+                <path d="M 228 82 L 284 82"></path>
+                <path d="M 344 82 L 400 82"></path>
+                <path d="M 284 104 Q 200 148 112 104"></path>
+                <path d="M 66 62 Q 82 26 98 60"></path>
+                <path d="M 400 62 Q 416 26 432 60"></path>
+              </g>
+              <g fill="none" stroke="#211E1A" stroke-width="1.4">
+                <circle cx="82" cy="90" r="28" stroke="oklch(0.48 0.12 150)"></circle><circle cx="82" cy="90" r="23" stroke="oklch(0.48 0.12 150)"></circle>
+                <circle cx="198" cy="82" r="28"></circle>
+                <circle cx="314" cy="82" r="28" stroke="oklch(0.52 0.10 25)"></circle>
+                <circle cx="430" cy="82" r="28" stroke="oklch(0.48 0.12 150)"></circle><circle cx="430" cy="82" r="23" stroke="oklch(0.48 0.12 150)"></circle>
+              </g>
+              <g font-family="'IBM Plex Mono',monospace" font-size="16" text-anchor="middle" dominant-baseline="central">
+                <text x="82" y="90" fill="oklch(0.40 0.10 150)">q&#8320;</text>
+                <text x="198" y="82" fill="#211E1A">q&#8321;</text>
+                <text x="314" y="82" fill="oklch(0.44 0.10 25)">q&#8322;</text>
+                <text x="430" y="82" fill="oklch(0.40 0.10 150)">q&#8323;</text>
+              </g>
+              <g font-family="'IBM Plex Mono',monospace" font-size="12.5" fill="#6B6357" text-anchor="middle">
+                <text x="140" y="72">0</text><text x="256" y="72">1</text><text x="372" y="72">1</text>
+                <text x="198" y="142">0</text><text x="82" y="30">1</text><text x="430" y="30">0, 1</text>
+              </g>
+              <text x="314" y="132" font-family="'IBM Plex Sans',sans-serif" font-size="12" fill="oklch(0.44 0.10 25)" text-anchor="middle">missing &#948;(q&#8322;, 0)</text>
+            </svg>
+          </div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:16px;">
+          <div style="display:flex; flex-direction:column; gap:12px; background:oklch(0.965 0.022 25); border:1px solid oklch(0.88 0.04 25); border-left:3px solid oklch(0.52 0.10 25); border-radius:4px; padding:18px 20px;">
+            <div style="display:flex; align-items:baseline; gap:12px;">
+              <span style="font-family:'IBM Plex Sans',sans-serif; font-size:15px; font-weight:600; color:oklch(0.44 0.10 25);">Not equivalent</span>
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#8A8175;">3 / 6 marks</span>
+            </div>
+            <p style="margin:0; font-family:Spectral,serif; font-size:16px; line-height:1.6; color:#3A342C;">Your machine and the reference machine first disagree on the shortest string</p>
+            <div style="font-family:'IBM Plex Mono',monospace; font-size:26px; letter-spacing:0.18em; background:#FFFFFF; border:1px solid oklch(0.88 0.04 25); border-radius:4px; padding:12px 16px; text-align:center;">010</div>
+            <p style="margin:0; font-family:Spectral,serif; font-size:16px; line-height:1.6; color:#3A342C;">The reference machine rejects it, because the <span style="font-family:'IBM Plex Mono',monospace;">01</span> at position 1 is followed by <span style="font-family:'IBM Plex Mono',monospace;">0</span>. Your machine has no move for <span style="font-family:'IBM Plex Mono',monospace;">&#948;(q&#8322;, 0)</span> and so halts, which your drawing treats as acceptance.</p>
+            <div style="display:flex; gap:10px; padding-top:2px;">
+              <button style="font-family:'IBM Plex Sans',sans-serif; font-size:13px; font-weight:500; color:#FFFFFF; background:#211E1A; border:none; border-radius:4px; padding:9px 16px; cursor:pointer;">Trace 010 side by side</button>
+              <button style="font-family:'IBM Plex Sans',sans-serif; font-size:13px; color:#3A342C; background:#FFFFFF; border:1px solid oklch(0.84 0.05 25); border-radius:4px; padding:9px 16px; cursor:pointer;">Fix &#948;</button>
+            </div>
+          </div>
+
+          <div style="background:#FFFFFF; border:1px solid #E2DACC; border-radius:5px; padding:18px 20px; display:flex; gap:28px;">
+            <div style="display:flex; flex-direction:column;"><span style="font-family:'IBM Plex Mono',monospace; font-size:30px; font-weight:500;">4</span><span style="font-family:'IBM Plex Sans',sans-serif; font-size:12px; color:#8A8175;">states</span></div>
+            <div style="display:flex; flex-direction:column;"><span style="font-family:'IBM Plex Mono',monospace; font-size:30px; font-weight:500;">7</span><span style="font-family:'IBM Plex Sans',sans-serif; font-size:12px; color:#8A8175;">of 8 moves</span></div>
+            <div style="display:flex; flex-direction:column;"><span style="font-family:'IBM Plex Mono',monospace; font-size:30px; font-weight:500; color:oklch(0.52 0.10 25);">1</span><span style="font-family:'IBM Plex Sans',sans-serif; font-size:12px; color:#8A8175;">disagreement</span></div>
+          </div>
+
+          <details style="background:#FFFFFF; border:1px solid #E2DACC; border-radius:5px; padding:14px 18px;">
+            <summary style="font-family:'IBM Plex Sans',sans-serif; font-size:14px; font-weight:500; cursor:pointer; list-style:none; display:flex; justify-content:space-between; gap:10px;"><span>Why a DFA needs a total &#948;</span><span style="color:#8A8175; font-family:'IBM Plex Mono',monospace; font-size:11px;">Hopcroft 2e &#167;2.2.1</span></summary>
+            <p style="margin:10px 0 0; font-family:Spectral,serif; font-size:15px; line-height:1.7; color:#4A423A;">A deterministic automaton defines exactly one move for every state&#8211;symbol pair; a missing entry is a dead state, and dead states reject.</p>
+          </details>
+        </div>
+      </div>
+    </div>
+
+    <div style="max-width:1120px; width:100%; margin:0 auto; display:flex; flex-direction:column; gap:14px;">
+      <div style="display:flex; align-items:baseline; gap:12px;">
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.16em; text-transform:uppercase; color:#8A8175;">05 &#183; Pumping</span>
+        <span style="font-family:Spectral,serif; font-size:20px; font-weight:600;">The adversary game, round 3 of 3</span>
+        <div style="flex:1; height:1px; background:#DED5C6;"></div>
+        <span style="font-family:'IBM Plex Sans',sans-serif; font-size:13px; color:#8A8175;">drag the sliders</span>
+      </div>
+
+      <div style="background:#FAF7F1; border:1px solid #E2DACC; border-radius:6px; padding:26px 32px 30px; display:flex; flex-direction:column; gap:20px;">
+        <div style="display:flex; align-items:baseline; gap:16px;">
+          <span style="font-family:Spectral,serif; font-size:22px; font-weight:600;">Is <span style="font-family:'IBM Plex Mono',monospace; font-size:20px;">L = { 0&#8319;1&#8319; | n &#8805; 1 }</span> regular?</span>
+          <div style="flex:1;"></div>
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:#6B6357;">you defend &#183; engine challenges</span>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+          <div style="background:#FFFFFF; border:1px solid #E2DACC; border-radius:5px; padding:20px 22px; display:flex; flex-direction:column; gap:10px;">
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:#8A8175;">Engine &#183; move 1</span>
+            <p style="margin:0; font-family:Spectral,serif; font-size:17px; line-height:1.65; color:#211E1A;">You claim a pumping length <span style="font-family:'IBM Plex Mono',monospace;">p = 4</span>. I choose the string</p>
+            <div style="font-family:'IBM Plex Mono',monospace; font-size:24px; letter-spacing:0.16em; background:#FAF7F1; border:1px solid #E2DACC; border-radius:4px; padding:10px 14px; text-align:center;">00001111</div>
+            <p style="margin:0; font-family:Spectral,serif; font-size:16px; line-height:1.6; color:#5C554B;">It is in <span style="font-family:'IBM Plex Mono',monospace;">L</span> and <span style="font-family:'IBM Plex Mono',monospace;">|w| = 8 &#8805; p</span>. Now split it.</p>
+          </div>
+
+          <div style="background:#FFFFFF; border:1px solid oklch(0.86 0.05 255); border-radius:5px; padding:20px 22px; display:flex; flex-direction:column; gap:14px;">
+            <div style="display:flex; justify-content:space-between; align-items:baseline;">
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:oklch(0.50 0.12 255);">You &#183; move 2</span>
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:#8A8175;">|xy| &#8804; 4, y &#8800; &#949;</span>
+            </div>
+            <div style="display:flex; align-items:flex-end; gap:2px; font-family:'IBM Plex Mono',monospace; font-size:22px; letter-spacing:0.14em;">
+              <div style="display:flex; flex-direction:column; align-items:center; gap:4px; padding:6px 10px; border-bottom:2px solid #CFC5B3;"><span>{{ pumpX }}</span><span style="font-size:11px; letter-spacing:0.1em; color:#8A8175;">x</span></div>
+              <div style="display:flex; flex-direction:column; align-items:center; gap:4px; padding:6px 10px; border-bottom:2px solid oklch(0.50 0.12 255); background:oklch(0.972 0.014 255);"><span style="color:oklch(0.40 0.10 255);">{{ pumpY }}</span><span style="font-size:11px; letter-spacing:0.1em; color:oklch(0.50 0.12 255);">y</span></div>
+              <div style="display:flex; flex-direction:column; align-items:center; gap:4px; padding:6px 10px; border-bottom:2px solid #CFC5B3;"><span>{{ pumpZ }}</span><span style="font-size:11px; letter-spacing:0.1em; color:#8A8175;">z</span></div>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:8px;">
+              <div style="display:flex; align-items:center; gap:12px;"><span style="font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:#6B6357; width:28px;">|x|</span><input type="range" min="0" max="3" step="1" value="{{ px }}" onChange="{{ onPx }}" style="flex:1;"><span style="font-family:'IBM Plex Mono',monospace; font-size:13px; width:16px;">{{ px }}</span></div>
+              <div style="display:flex; align-items:center; gap:12px;"><span style="font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:#6B6357; width:28px;">|y|</span><input type="range" min="1" max="4" step="1" value="{{ py }}" onChange="{{ onPy }}" style="flex:1;"><span style="font-family:'IBM Plex Mono',monospace; font-size:13px; width:16px;">{{ py }}</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:14px; background:oklch(0.97 0.035 75); border:1px solid oklch(0.89 0.06 75); border-left:3px solid oklch(0.60 0.12 75); border-radius:4px; padding:14px 18px;">
+          <span style="font-family:'IBM Plex Sans',sans-serif; font-size:14px; font-weight:600; color:oklch(0.46 0.10 75);">Engine &#183; move 3</span>
+          <span style="font-family:Spectral,serif; font-size:16px; color:#3A342C; flex:1;">I pump with <span style="font-family:'IBM Plex Mono',monospace;">i = 2</span>: {{ pumpVerdict }}</span>
+        </div>
+
+        <div style="background:#FFFFFF; border:1px solid #E2DACC; border-radius:5px; padding:24px 28px; display:flex; flex-direction:column; gap:14px;">
+          <div style="display:flex; justify-content:space-between; align-items:baseline;">
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:#8A8175;">Proof, written from the round</span>
+            <button style="font-family:'IBM Plex Sans',sans-serif; font-size:12px; color:#5C554B; background:#FAF7F1; border:1px solid #E2DACC; border-radius:3px; padding:4px 10px; cursor:pointer;">Copy</button>
+          </div>
+          <p style="margin:0; font-family:Spectral,serif; font-size:18px; line-height:1.8; color:#211E1A; max-width:70ch; text-wrap:pretty;">Suppose, for contradiction, that <span style="font-family:'IBM Plex Mono',monospace;">L = { 0&#8319;1&#8319; }</span> is regular with pumping length <span style="font-family:'IBM Plex Mono',monospace;">p = 4</span>. Take <span style="font-family:'IBM Plex Mono',monospace;">w = 0&#8308;1&#8308; &#8712; L</span>, so that <span style="font-family:'IBM Plex Mono',monospace;">|w| &#8805; p</span>. By the pumping lemma there is a decomposition <span style="font-family:'IBM Plex Mono',monospace;">w = xyz</span> with <span style="font-family:'IBM Plex Mono',monospace;">|xy| &#8804; p</span>, <span style="font-family:'IBM Plex Mono',monospace;">y &#8800; &#949;</span> and <span style="font-family:'IBM Plex Mono',monospace;">xy&#8305;z &#8712; L</span> for every <span style="font-family:'IBM Plex Mono',monospace;">i &#8805; 0</span>. Since <span style="font-family:'IBM Plex Mono',monospace;">|xy| &#8804; 4</span>, the block <span style="font-family:'IBM Plex Mono',monospace;">y</span> consists only of <span style="font-family:'IBM Plex Mono',monospace;">0</span>s. Pumping with <span style="font-family:'IBM Plex Mono',monospace;">i = 2</span> yields <span style="font-family:'IBM Plex Mono',monospace;">{{ pumped }}</span>, which has strictly more <span style="font-family:'IBM Plex Mono',monospace;">0</span>s than <span style="font-family:'IBM Plex Mono',monospace;">1</span>s and therefore lies outside <span style="font-family:'IBM Plex Mono',monospace;">L</span>. This contradicts the lemma, so <span style="font-family:'IBM Plex Mono',monospace;">L</span> is not regular. &#9633;</p>
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:#8A8175;">Pattern after Hopcroft 2e &#167;4.1.2</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="max-width:1120px; width:100%; margin:0 auto; display:flex; flex-direction:column; gap:14px;">
+      <div style="display:flex; align-items:baseline; gap:12px;">
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.16em; text-transform:uppercase; color:#8A8175;">06 &#183; Dark</span>
+        <span style="font-family:Spectral,serif; font-size:20px; font-weight:600;">Same page after midnight</span>
+        <div style="flex:1; height:1px; background:#DED5C6;"></div>
+      </div>
+
+      <div style="background:oklch(0.19 0.006 70); border:1px solid oklch(0.30 0.008 70); border-radius:6px; overflow:hidden;">
+        <div style="background:oklch(0.235 0.007 70); border-bottom:1px solid oklch(0.30 0.008 70); padding:13px 32px; display:flex; align-items:center; gap:14px;">
+          <div style="display:flex; gap:2px;">
+            <div style="width:9px; height:13px; border:1.2px solid oklch(0.86 0.01 80); border-radius:1.5px;"></div>
+            <div style="width:9px; height:13px; border:1.2px solid oklch(0.72 0.12 255); background:oklch(0.72 0.12 255); border-radius:1.5px;"></div>
+            <div style="width:9px; height:13px; border:1.2px solid oklch(0.86 0.01 80); border-radius:1.5px;"></div>
+          </div>
+          <span style="font-family:'IBM Plex Sans',sans-serif; font-size:14px; font-weight:500; color:oklch(0.93 0.01 80);">Turing Machine Simulator</span>
+          <div style="flex:1;"></div>
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:oklch(0.66 0.01 80);">L = { 0&#8319;1&#8319; | n &#8805; 1 }</span>
+        </div>
+
+        <div style="padding:24px 32px 28px; display:grid; grid-template-columns:1fr 344px; gap:20px; align-items:start;">
+          <div style="display:flex; flex-direction:column; gap:18px;">
+            <div style="background:oklch(0.235 0.007 70); border:1px solid oklch(0.30 0.008 70); border-radius:5px; padding:8px 12px 4px;">
+              <svg viewBox="0 0 640 310" style="width:100%; height:auto; display:block;">
+                <g transform="{{ ring }}"><circle r="26" fill="oklch(0.30 0.045 255)"></circle><circle r="34" fill="none" stroke="oklch(0.72 0.12 255)" stroke-width="1.2" opacity="0.5"></circle></g>
+                <g stroke="oklch(0.55 0.01 80)" stroke-width="1.3" fill="none">
+                  <path d="M 30 155 L 60 155"></path><path d="M 114 145 L 226 102"></path><path d="M 250 118 L 250 208"></path><path d="M 227 224 L 114 167"></path>
+                  <path d="M 106 133 Q 250 24 393 78"></path><path d="M 436 103 L 524 144"></path>
+                  <path d="M 236 72 Q 250 26 263 69"></path><path d="M 236 256 Q 250 302 263 259"></path><path d="M 398 72 Q 412 26 425 69"></path>
+                </g>
+                <g fill="none" stroke="oklch(0.88 0.01 80)" stroke-width="1.4">
+                  <circle cx="90" cy="155" r="26"></circle><circle cx="250" cy="92" r="26"></circle><circle cx="250" cy="236" r="26"></circle><circle cx="412" cy="92" r="26"></circle>
+                  <circle cx="548" cy="155" r="26" stroke="oklch(0.74 0.12 150)"></circle><circle cx="548" cy="155" r="21" stroke="oklch(0.74 0.12 150)"></circle>
+                </g>
+                <g font-family="'IBM Plex Mono',monospace" font-size="16" fill="oklch(0.93 0.01 80)" text-anchor="middle" dominant-baseline="central">
+                  <text x="90" y="155">q&#8320;</text><text x="250" y="92">q&#8321;</text><text x="250" y="236">q&#8322;</text><text x="412" y="92">q&#8323;</text><text x="548" y="155" fill="oklch(0.80 0.12 150)">q&#8324;</text>
+                </g>
+                <g font-family="'IBM Plex Mono',monospace" font-size="12.5" fill="oklch(0.68 0.01 80)" text-anchor="middle">
+                  <text x="158" y="112">0/X,R</text><text x="271" y="168">1/Y,L</text><text x="150" y="209">X/X,R</text>
+                  <text x="250" y="42">Y/Y,R</text><text x="250" y="18">0/0,R</text><text x="250" y="288">0/0,L</text><text x="250" y="304">Y/Y,L</text>
+                  <text x="412" y="18">Y/Y,R</text><text x="330" y="52">Y/Y,R</text><text x="498" y="112">&#9109;/&#9109;,R</text>
+                </g>
+              </svg>
+            </div>
+
+            <div style="background:oklch(0.235 0.007 70); border:1px solid oklch(0.30 0.008 70); border-radius:5px; padding:16px 20px 14px;">
+              <div style="display:flex; padding-left:1px;">
+                <sc-for list="{{ cellsDark }}" as="c" hint-placeholder-count="13"><div style="{{ c.headStyle }}">&#9660;</div></sc-for>
+              </div>
+              <div style="display:flex; border:1px solid oklch(0.36 0.008 70); border-right:none; border-radius:3px; width:fit-content;">
+                <sc-for list="{{ cellsDark }}" as="c" hint-placeholder-count="13"><div style="{{ c.cellStyle }}">{{ c.sym }}</div></sc-for>
+              </div>
+              <div style="display:flex; padding-left:1px; margin-top:5px;">
+                <sc-for list="{{ cellsDark }}" as="c" hint-placeholder-count="13"><div style="{{ c.underStyle }}">{{ c.qlab }}</div></sc-for>
+              </div>
+            </div>
+
+            <div style="background:oklch(0.235 0.007 70); border:1px solid oklch(0.30 0.008 70); border-radius:5px; padding:14px 20px; display:flex; align-items:center; gap:18px;">
+              <div style="display:flex; gap:6px;">
+                <button onClick="{{ onPrev }}" style="font-size:14px; width:38px; height:38px; border:1px solid oklch(0.38 0.008 70); background:transparent; color:oklch(0.90 0.01 80); border-radius:4px; cursor:pointer;">&#9664;</button>
+                <button onClick="{{ onPlay }}" style="font-family:'IBM Plex Sans',sans-serif; font-size:14px; font-weight:500; color:oklch(0.18 0.006 70); background:oklch(0.93 0.01 80); border:none; border-radius:4px; padding:0 20px; height:38px; min-width:92px; cursor:pointer;">{{ playLabel }}</button>
+                <button onClick="{{ onNext }}" style="font-size:14px; width:38px; height:38px; border:1px solid oklch(0.38 0.008 70); background:transparent; color:oklch(0.90 0.01 80); border-radius:4px; cursor:pointer;">&#9654;</button>
+              </div>
+              <div style="flex:1; display:flex; flex-direction:column; gap:4px;">
+                <input type="range" min="0" max="13" step="1" value="{{ step }}" onChange="{{ onScrub }}" style="width:100%;">
+                <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:oklch(0.68 0.01 80);">{{ stepLabel }}</span>
+              </div>
+              <div style="display:flex; align-items:center; gap:10px; border-left:1px solid oklch(0.30 0.008 70); padding-left:18px;">
+                <span style="font-family:'IBM Plex Sans',sans-serif; font-size:12px; color:oklch(0.66 0.01 80);">Speed</span>
+                <input type="range" min="0.5" max="4" step="0.5" value="{{ speed }}" onChange="{{ onSpeed }}" style="width:96px;">
+                <span style="font-family:'IBM Plex Mono',monospace; font-size:13px; min-width:34px; color:oklch(0.90 0.01 80);">{{ speedLabel }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:16px;">
+            <div style="background:oklch(0.235 0.007 70); border:1px solid oklch(0.30 0.008 70); border-radius:5px; padding:20px;">
+              <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px;">
+                <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:oklch(0.62 0.01 80);">Narration</span>
+                <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:oklch(0.72 0.12 255);">{{ stateLabel }}</span>
+              </div>
+              <p style="margin:0; font-family:Spectral,serif; font-size:17px; line-height:1.6; color:oklch(0.93 0.01 80); text-wrap:pretty; min-height:82px;">{{ narration }}</p>
+            </div>
+
+            <div style="background:oklch(0.235 0.007 70); border:1px solid oklch(0.30 0.008 70); border-radius:5px; padding:20px;">
+              <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px;">
+                <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:oklch(0.62 0.01 80);">ID sequence</span>
+                <button style="font-family:'IBM Plex Sans',sans-serif; font-size:12px; color:oklch(0.86 0.01 80); background:transparent; border:1px solid oklch(0.36 0.008 70); border-radius:3px; padding:4px 10px; cursor:pointer;">Copy</button>
+              </div>
+              <div style="font-family:'IBM Plex Mono',monospace; font-size:14.5px; line-height:2;">
+                <sc-for list="{{ idsDark }}" as="x" hint-placeholder-count="5"><span style="color:{{ x.dim }};">{{ x.id }}{{ x.sep }} </span></sc-for>
+              </div>
+            </div>
+
+            <div style="display:flex; align-items:center; gap:12px; background:oklch(0.26 0.05 150); border:1px solid oklch(0.36 0.06 150); border-left:3px solid oklch(0.74 0.12 150); border-radius:4px; padding:13px 16px;">
+              <span style="font-family:'IBM Plex Sans',sans-serif; font-size:14px; font-weight:600; color:oklch(0.84 0.12 150);">Accepted</span>
+              <span style="font-family:Spectral,serif; font-size:15px; color:oklch(0.90 0.02 150);">Halts in <span style="font-family:'IBM Plex Mono',monospace;">q&#8324;</span> after 13 moves.</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:12px; background:oklch(0.26 0.04 25); border:1px solid oklch(0.36 0.05 25); border-left:3px solid oklch(0.68 0.12 25); border-radius:4px; padding:13px 16px;">
+              <span style="font-family:'IBM Plex Sans',sans-serif; font-size:14px; font-weight:600; color:oklch(0.82 0.10 25);">Rejected</span>
+              <span style="font-family:Spectral,serif; font-size:15px; color:oklch(0.90 0.02 25);">Halts outside <span style="font-family:'IBM Plex Mono',monospace;">F</span>.</span>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:10px; background:oklch(0.27 0.05 75); border:1px solid oklch(0.38 0.06 75); border-left:3px solid oklch(0.78 0.11 75); border-radius:4px; padding:13px 16px;">
+              <div style="display:flex; align-items:center; gap:12px;">
+                <span style="font-family:'IBM Plex Sans',sans-serif; font-size:14px; font-weight:600; color:oklch(0.88 0.10 75);">Stopped</span>
+                <span style="font-family:Spectral,serif; font-size:15px; color:oklch(0.91 0.02 75);">{{ capNote }}</span>
+              </div>
+              <button style="align-self:flex-start; font-family:'IBM Plex Sans',sans-serif; font-size:13px; font-weight:500; color:oklch(0.92 0.05 75); background:transparent; border:1px solid oklch(0.46 0.07 75); border-radius:4px; padding:7px 13px; cursor:pointer;">{{ capLabel }}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1360,&quot;height&quot;:900},&quot;verbTagStyle&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;tinted&quot;,&quot;outline&quot;],&quot;default&quot;:&quot;tinted&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Catalog&quot;},&quot;narration&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Exam language&quot;,&quot;Plain English&quot;],&quot;default&quot;:&quot;Exam language&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Simulator&quot;},&quot;stepCap&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:1000,&quot;min&quot;:100,&quot;max&quot;:5000,&quot;step&quot;:100,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Simulator&quot;}}">
+class Component extends DCLogic {
+  state = { i: 4, playing: false, speed: 1, mod: 1, px: 2, py: 3, seg: 0, tab: 0, sim: true, chip: "1" };
+
+  TRACE = [
+    { t: "0011", h: 0, q: "0", id: "q\u20800011", exam: "Initial ID: the head rests on the leftmost input symbol with the machine in start state q\u2080.", plain: "We start on the first symbol in state q\u2080." },
+    { t: "X011", h: 1, q: "1", id: "Xq\u2081011", exam: "Reading 0 in q\u2080, the machine writes X to mark the leftmost 0 and moves right in q\u2081.", plain: "Mark the first 0 as X, then go right." },
+    { t: "X011", h: 2, q: "1", id: "X0q\u208111", exam: "In q\u2081 the machine skips over the remaining 0s, leaving them unaltered.", plain: "Skip past the other 0s." },
+    { t: "X0Y1", h: 1, q: "2", id: "Xq\u20820Y1", exam: "The first unmatched 1 is overwritten by Y and the head turns left in q\u2082.", plain: "Match a 1 by writing Y, then turn back." },
+    { t: "X0Y1", h: 0, q: "2", id: "q\u2082X0Y1", exam: "In q\u2082 the head sweeps left across the 0s in search of the marker X.", plain: "Sweep left looking for the X." },
+    { t: "X0Y1", h: 1, q: "0", id: "Xq\u20800Y1", exam: "On seeing X the machine re-enters q\u2080 with the head on the next unmarked symbol.", plain: "Found X, so start the next pass." },
+    { t: "XXY1", h: 2, q: "1", id: "XXq\u2081Y1", exam: "The next leftmost 0 is marked X and the head moves right in q\u2081.", plain: "Mark the next 0 as X." },
+    { t: "XXY1", h: 3, q: "1", id: "XXYq\u20811", exam: "Ys written on earlier passes are skipped to the right, being already matched.", plain: "Skip the Ys \u2014 they are already matched." },
+    { t: "XXYY", h: 2, q: "2", id: "XXq\u2082YY", exam: "The second 1 is matched with Y and the head turns left again in q\u2082.", plain: "Match the second 1 with Y." },
+    { t: "XXYY", h: 1, q: "2", id: "Xq\u2082XYY", exam: "The leftward sweep passes the Ys without change.", plain: "Sweep left over the Ys." },
+    { t: "XXYY", h: 2, q: "0", id: "XXq\u2080YY", exam: "The marker X is found once more, so control returns to q\u2080.", plain: "Back to q\u2080 for another pass." },
+    { t: "XXYY", h: 3, q: "3", id: "XXYq\u2083Y", exam: "q\u2080 now reads Y, so every 0 has been matched and the machine enters the checking state q\u2083.", plain: "No 0s left \u2014 start checking." },
+    { t: "XXYY", h: 4, q: "3", id: "XXYYq\u2083\u2294", exam: "In q\u2083 the machine verifies that nothing but Ys lies to the right of the head.", plain: "Confirm only Ys remain." },
+    { t: "XXYY", h: 5, q: "4", id: "XXYY\u2294q\u2084", exam: "The blank \u2294 is reached in q\u2083, so the machine enters the accepting state q\u2084 and halts.", plain: "Blank reached \u2014 the machine accepts." }
+  ];
+
+  CATALOG = [
+    ["Turing Machine Simulator", "Run a single-tape machine and watch the tape, head and instantaneous descriptions evolve move by move.", "simulate", "M5"],
+    ["DFA / NFA Simulator", "Trace a finite automaton on any string, with every active state highlighted at once for nondeterminism.", "simulate", "M1"],
+    ["PDA Simulator", "Follow the stack alongside the input as a pushdown automaton reads its way through a string.", "simulate", "M4"],
+    ["CYK Parser", "Fill the recognition triangle bottom-up and read a parse tree out of the completed table.", "simulate", "M4"],
+    ["Machine Drawer", "Place states and transitions on a canvas; the tool keeps \u03b4 and the drawing in step with each other.", "learn", "M1"],
+    ["\u03b5-NFA \u2192 NFA", "Remove \u03b5-transitions by taking \u03b5-closures, one state at a time with the reasoning shown.", "convert", "M2"],
+    ["NFA \u2192 DFA", "Build the subset construction row by row, watching each new DFA state appear as a set of NFA states.", "convert", "M2"],
+    ["DFA Minimiser", "Partition states by distinguishability and merge the equivalent ones into the minimal machine.", "convert", "M2"],
+    ["Regex \u2192 \u03b5-NFA", "Apply Thompson's construction to a regular expression, nesting the fragments as you go.", "convert", "M2"],
+    ["DFA \u2192 Regex", "Eliminate states one by one and read the resulting regular expression off the remaining arc.", "convert", "M2"],
+    ["Regex Tester", "Match strings against a regular expression and see which subexpression consumed which symbols.", "learn", "M2"],
+    ["Closure Constructions", "Compose two machines under union, intersection, complement, concatenation or reversal.", "prove", "M3"],
+    ["Pumping Lemma Game", "Play the adversary game for a non-regular language and turn the winning round into a written proof.", "prove", "M3"],
+    ["Myhill\u2013Nerode", "Collect distinguishable prefixes to certify how many states any DFA for the language must have.", "decide", "M3"],
+    ["Emptiness & Finiteness", "Decide whether a machine accepts nothing, finitely many strings, or infinitely many.", "decide", "M3"],
+    ["Equivalence Checker", "Compare two machines and, when they differ, produce the shortest string that separates them.", "decide", "M3"],
+    ["Grammar Workbench", "Write a context-free grammar, derive strings from it and inspect the derivation tree.", "learn", "M4"],
+    ["CNF Converter", "Take a grammar to Chomsky normal form through the standard four cleanup stages.", "convert", "M4"],
+    ["Grammar Ambiguity", "Search for a string with two distinct leftmost derivations and display both trees side by side.", "decide", "M4"],
+    ["Case Studies", "Worked examples from lexical analysis, protocol checking and tokenisers, annotated end to end.", "learn", "M5"],
+    ["Practice & Exams", "Graded exercises mapped to course outcomes, marked against a reference machine.", "learn", "M5"]
+  ];
+
+  TAGCOLORS = {
+    simulate: ["oklch(0.50 0.12 255)", "oklch(0.955 0.022 255)"],
+    convert: ["oklch(0.50 0.12 300)", "oklch(0.955 0.022 300)"],
+    decide: ["oklch(0.50 0.12 75)", "oklch(0.955 0.03 75)"],
+    prove: ["oklch(0.48 0.12 150)", "oklch(0.955 0.03 150)"],
+    learn: ["#6B6357", "#F1ECE3"]
+  };
+
+  componentWillUnmount() { clearInterval(this._t); }
+
+  play = () => {
+    clearInterval(this._t);
+    if (this.state.playing) { this.setState({ playing: false }); return; }
+    this.setState({ playing: true });
+    this._t = setInterval(() => {
+      this.setState(s => {
+        if (s.i >= this.TRACE.length - 1) { clearInterval(this._t); return { playing: false }; }
+        return { i: s.i + 1 };
+      });
+    }, 900 / this.state.speed);
+  };
+
+  go = (d) => { clearInterval(this._t); this.setState(s => ({ playing: false, i: Math.max(0, Math.min(this.TRACE.length - 1, s.i + d)) })); };
+
+  renderVals() {
+    const outline = (this.props.verbTagStyle ?? "tinted") === "outline";
+    const plain = (this.props.narration ?? "Exam language") === "Plain English";
+    const cap = this.props.stepCap ?? 1000;
+    const f = this.TRACE[this.state.i];
+    const blank = "\u2294";
+    const cells = [];
+    const qlab = "q" + "\u2080\u2081\u2082\u2083\u2084"[+f.q];
+    for (let k = 0; k < 13; k++) {
+      const isHead = k === f.h, sym = k < f.t.length ? f.t[k] : blank;
+      cells.push({
+        sym, isHead, key: k,
+        symColor: k < f.t.length ? (sym === "X" || sym === "Y" ? "oklch(0.50 0.12 300)" : "#211E1A") : "#B4AB9B",
+        cellStyle: { width: "46px", height: "52px", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'IBM Plex Mono',monospace", fontSize: "22px", borderRight: "1px solid #E2DACC", background: isHead ? "oklch(0.955 0.022 255)" : "#FFFFFF", color: k < f.t.length ? (sym === "X" || sym === "Y" ? "oklch(0.50 0.12 300)" : "#211E1A") : "#C4BCAC", boxShadow: isHead ? "inset 0 0 0 1.5px oklch(0.50 0.12 255)" : "none", transition: "background 140ms ease" },
+        headStyle: { width: "46px", textAlign: "center", fontSize: "13px", color: "oklch(0.50 0.12 255)", opacity: isHead ? 1 : 0, lineHeight: "1" },
+        underStyle: { width: "46px", textAlign: "center", fontFamily: "'IBM Plex Mono',monospace", fontSize: "14px", color: "oklch(0.50 0.12 255)", opacity: isHead ? 1 : 0 },
+        qlab
+      });
+    }
+    const cellsDark = cells.map(c => ({
+      ...c,
+      cellStyle: { ...c.cellStyle, borderRight: "1px solid oklch(0.30 0.008 70)", background: c.isHead ? "oklch(0.30 0.045 255)" : "oklch(0.235 0.007 70)", color: c.sym === blank ? "oklch(0.45 0.01 80)" : (c.sym === "X" || c.sym === "Y" ? "oklch(0.78 0.11 300)" : "oklch(0.93 0.01 80)"), boxShadow: c.isHead ? "inset 0 0 0 1.5px oklch(0.72 0.12 255)" : "none" },
+      headStyle: { ...c.headStyle, color: "oklch(0.72 0.12 255)" },
+      underStyle: { ...c.underStyle, color: "oklch(0.72 0.12 255)" }
+    }));
+    const centers = { "0": [90, 155], "1": [250, 92], "2": [250, 236], "3": [412, 92], "4": [548, 155] };
+    const c = centers[f.q];
+
+    const catalog = this.CATALOG.map(([title, sum, verb, mod]) => {
+      const [fg, bg] = this.TAGCOLORS[verb];
+      return {
+        title, sum, verb, mod,
+        tagStyle: { fontFamily: "'IBM Plex Mono',monospace", fontSize: "10.5px", letterSpacing: "0.14em", textTransform: "uppercase", padding: "4px 9px", borderRadius: "3px", color: fg, background: outline ? "transparent" : bg, border: outline ? "1px solid " + fg : "1px solid transparent" }
+      };
+    });
+
+    return {
+      catalog, cells, cellsDark,
+      step: this.state.i, stepLabel: "Step " + this.state.i + " of 13",
+      idNow: f.id,
+      narration: plain ? f.plain : f.exam,
+      stateLabel: "q" + "\u2080\u2081\u2082\u2083\u2084"[+f.q],
+      ring: "translate(" + c[0] + "," + c[1] + ")",
+      ids: this.TRACE.slice(0, this.state.i + 1).map((x, n) => ({ id: x.id, sep: n === this.state.i ? "" : " \u22a2", dim: n === this.state.i ? "#211E1A" : "#6B6357" })),
+      idsDark: this.TRACE.slice(0, this.state.i + 1).map((x, n) => ({ id: x.id, sep: n === this.state.i ? "" : " \u22a2", dim: n === this.state.i ? "oklch(0.93 0.01 80)" : "oklch(0.66 0.01 80)" })),
+      playLabel: this.state.playing ? "Pause" : "Play",
+      onPlay: this.play, onNext: () => this.go(1), onPrev: () => this.go(-1),
+      onScrub: (e) => { clearInterval(this._t); this.setState({ playing: false, i: +e.target.value }); },
+      speed: this.state.speed, speedLabel: this.state.speed.toFixed(1) + "\u00d7",
+      onSpeed: (e) => this.setState({ speed: +e.target.value }),
+      capLabel: "Continue for " + cap + " more moves",
+      capNote: "Halted after the " + cap + "-move cap. No verdict yet \u2014 this is not a rejection.",
+      seg: this.state.seg, setSeg: (n) => () => this.setState({ seg: n }),
+      mod: this.state.mod, setMod: (n) => () => this.setState({ mod: n }),
+      px: this.state.px, py: this.state.py,
+      onPx: (e) => this.setState({ px: +e.target.value, py: Math.max(1, Math.min(8 - +e.target.value, this.state.py)) }),
+      onPy: (e) => this.setState({ py: +e.target.value }),
+      pumpX: "0".repeat(this.state.px),
+      pumpY: "0".repeat(this.state.py),
+      pumpZ: "0".repeat(Math.max(0, 4 - this.state.px - this.state.py)) + "1111",
+      pumped: "0".repeat(this.state.px) + "0".repeat(this.state.py * 2) + "0".repeat(Math.max(0, 4 - this.state.px - this.state.py)) + "1111",
+      simOpen: this.state.sim,
+      toggleSim: () => this.setState(s => ({ sim: !s.sim })),
+      simLabel: this.state.sim ? "Hide table" : "Simulate",
+      boardStyle: { display: "flex", flexDirection: "column", boxSizing: "border-box", flexShrink: 0, width: this.state.sim ? "740px" : "1118px", transition: "width 320ms cubic-bezier(0.4,0,0.2,1)", position: "relative", overflow: "hidden" },
+      panelStyle: { width: "378px", boxSizing: "border-box", flexShrink: 0, borderLeft: "1px solid oklch(0.34 0.01 250)", background: "oklch(0.20 0.008 250)", padding: "24px 26px 26px", display: "flex", flexDirection: "column", gap: "18px", marginRight: this.state.sim ? "0px" : "-380px", opacity: this.state.sim ? 1 : 0, transition: "margin-right 320ms cubic-bezier(0.4,0,0.2,1), opacity 220ms ease" },
+      chips: ["0", "1", "\u03b5"].map(c => ({
+        c, onClick: () => this.setState({ chip: c }),
+        style: { minWidth: "52px", height: "52px", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'IBM Plex Mono',monospace", fontSize: "22px", borderRadius: "8px", cursor: "pointer", background: c === this.state.chip ? "oklch(0.78 0.14 255)" : "oklch(0.26 0.01 250)", color: c === this.state.chip ? "oklch(0.16 0.02 255)" : "oklch(0.95 0.005 250)", border: "1px solid " + (c === this.state.chip ? "oklch(0.78 0.14 255)" : "oklch(0.40 0.01 250)"), fontWeight: c === this.state.chip ? 500 : 400 }
+      })),
+      chipLabel: this.state.chip,
+      modules: [
+        ["1", "Automata"], ["2", "Equivalence"], ["3", "Properties"], ["4", "Grammars"], ["5", "Machines"]
+      ].map(([n, label], k) => ({
+        n, label, onClick: () => this.setState({ mod: k }),
+        style: { fontFamily: "'IBM Plex Sans',sans-serif", fontSize: "14px", padding: "8px 14px", borderRadius: "4px", cursor: "pointer", border: "1px solid " + (k === this.state.mod ? "#E2DACC" : "transparent"), background: k === this.state.mod ? "#FFFFFF" : "transparent", color: k === this.state.mod ? "#211E1A" : "#5C554B", display: "flex", gap: "7px", alignItems: "baseline" }
+      })),
+      panel: [
+        { t: "Module 1 \u00b7 Finite automata", b: "Build a machine and watch it read.", l: ["Simulate", "Draw"] },
+        { t: "Module 2 \u00b7 Equivalence & conversion", b: "Move between the four representations of a regular language.", l: ["Convert", "Regex"] },
+        { t: "Module 3 \u00b7 Properties & proofs", b: "Decide what a language is, and write down why.", l: ["Closure", "Pumping", "Search"] },
+        { t: "Module 4 \u00b7 Grammars & pushdown automata", b: "Context-free languages, their grammars and their machines.", l: ["Grammars", "PDA", "CNF"] },
+        { t: "Module 5 \u00b7 Turing machines", b: "The full model, worked examples and graded practice.", l: ["TM", "Case studies", "Practice"] }
+      ][this.state.mod],
+      pumpVerdict: (this.state.px + this.state.py <= 4)
+        ? "y lies inside the block of 0s, so pumping i = 2 adds " + this.state.py + " extra 0s and breaks the count."
+        : "y straddles the boundary; choose a split with |xy| \u2264 4 to stay inside the 0-block."
+    };
+  }
+}
+</script>
+</body>
+</html>

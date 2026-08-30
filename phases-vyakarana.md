@@ -1,8 +1,9 @@
 # Build Phases — Vyakarana
 
-> **Status: not started.** Nothing in this document is built. This is the execution plan for the Python
-> package, which [phases.md](phases.md) carries as the single row **P1.8** and which is too large to
-> plan at that resolution.
+> **Status: V0 closed 2026-08-24** — ADR-004 is decided (embedded V8 via `mini-racer`, synchronous API).
+> V1 onward not started. This is the execution plan for the Python package, which
+> [phases.md](phases.md) carries as the single row **P1.8** and which is too large to plan at that
+> resolution.
 
 Companion documents: [documentation.md](documentation.md) — the target API · [architecture.md](architecture.md) §10.2 and ADR-004 · [phases.md](phases.md) · [README.md](README.md)
 
@@ -38,7 +39,7 @@ Updated in the same commit as the work it describes. ✅ done and pushed · 🔨
 
 | Phase | Ships | Status | Notes |
 |---|---|---|---|
-| V0 ADR-004 spike | a decision, no code | ⬜ | Gates every signature. Timeboxed — see §5 |
+| V0 ADR-004 spike | a decision, no code | ✅ | 2026-08-24 · `mini-racer` (V8), sync API; spike committed under `spikes/adr-004/` |
 | V1 The bridge | `bridge/` + `vyakarana/static/` | ⬜ | The one phase that does not depend on V0 |
 | V2 The Python core | `vyakarana` 0.0.1, unreleased | ⬜ | Regular languages only: DFA, NFA, ENFA, RE |
 | V3 The rest of the surface | `vyakarana` 0.0.2, unreleased | ⬜ | CFG, PDA, TM, gallery, result objects |
@@ -137,14 +138,17 @@ is attached**, which is the case under `pytest`, under `nbconvert`, and in a pla
 
 **Acceptance criteria**
 
-- [ ] ADR-004 in [architecture.md](architecture.md) is rewritten from `[OPEN]` to a decision, with the
+- [x] ADR-004 in [architecture.md](architecture.md) is rewritten from `[OPEN]` to a decision, with the
       measurements above recorded — including the numbers for the options **not** chosen, so the next
       person can see the trade rather than the conclusion.
-- [ ] [documentation.md](documentation.md) §3.1 is replaced by the outcome, and every value-returning
-      signature in §5 is corrected to match if the answer is `await`.
-- [ ] A committed spike script reproduces the decisive measurement in one command.
-- [ ] If the answer is the pure-Python fallback, it is confined to `accepts()` alone and the gating CI
-      test named in ADR-004 exists before any other phase begins.
+- [x] [documentation.md](documentation.md) §3.1 is replaced by the outcome, and every value-returning
+      signature in §5 is corrected to match if the answer is `await`. *(The answer is sync; §5 stood.)*
+- [x] A committed spike script reproduces the decisive measurement in one command:
+      `python spikes/adr-004/spike.py`, plus the same measurements as `pytest` and under `nbconvert`
+      (`spikes/adr-004/headless.ipynb`). The spike also caught and fixed the engine's unconditional
+      `TextEncoder` use, which would have crashed `export_trace()` in any embedded runtime.
+- [x] If the answer is the pure-Python fallback … — **not applicable**: the fallback was not taken,
+      and remains forbidden.
 
 > **Timebox.** One day. If the top three options are all still open at the end of it, take the
 > round-trip option, ship `await`, and record *that* as the decision with the reason — an `await` that
@@ -382,8 +386,8 @@ resolved.
 
 | # | Decision | Owner | By |
 |---|---|---|---|
-| 1 | **ADR-004** — where the engine executes in the Python path. Everything else waits on it. | Author + spike | V0, day 1 |
+| 1 | ~~**ADR-004**~~ — **decided 2026-08-24**: embedded V8 via `mini-racer`, synchronous API. | Author + spike | ✅ V0 |
 | 2 | **Build backend.** `hatchling` + `hatch-jupyter-builder` is the recommendation (anywidget's own path, and it makes forgetting the JS build impossible). Alternatives are `setuptools` with a custom command, or `uv`. | Author | V1 |
 | 3 | **Python version floor.** Set by what Colab ships, checked and dated rather than assumed. | Author | V4 |
-| 4 | **The name on PyPI.** `vyakarana` is not currently checked. If it is taken, the fallback and the rename cost are cheapest to discover now, not at V5. | Author | Before V2 |
+| 4 | ~~The name on PyPI~~ — **checked 2026-08-24: `vyakarana` is free** (PyPI returns 404). | Author | ✅ |
 | 5 | **Whether `docs/engine-contract.md` is written** (architecture.md §3 lists it, `docs/` does not contain it) or the layout is corrected to match reality. The V1 manifest covers what the parity test needs either way. | Author | V1 |

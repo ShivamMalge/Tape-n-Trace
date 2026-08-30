@@ -629,25 +629,47 @@ papers bound *examination*, and they do not perfectly agree. Left recursion elim
 8 marks despite sitting outside Hopcroft 5.1/5.2/5.4. Scheme configs therefore carry topics that no
 prescribed section covers, and that is expected rather than a data error.
 
-### ADR-004 — [OPEN] How the engine executes in the Python path
+### ADR-004 — [FINAL 2026-08-24] The engine executes in an embedded V8, via `mini-racer`
 
 **Context.** §2 forbids reimplementing any algorithm in Python, but Vyakarana's API includes
 value-returning calls such as `d.accepts("0110") -> True` that must work headless — under `pytest`,
-under `nbconvert`, and in a notebook with no frontend attached. Rendering can round-trip through
-anywidget to the browser; plain values cannot, at least not synchronously.
+under `nbconvert`, and in a notebook with no frontend attached. Rendering always round-trips through
+anywidget to the browser; the question was only where a plain value comes from.
 
-| Option | Sync API | Headless | Cost |
-|---|---|---|---|
-| Round-trip through the frontend | No — `await` | No | Free, but breaks nbconvert and pytest |
-| Embed a JS runtime (QuickJS / V8 bindings) | Yes | Yes | One binary dependency; needs a Pyodide story for the P2 browser IDE |
-| Engine compiled to WASM, run under `wasmtime-py` | Yes | Yes | Pure-Python wheels on every platform; one more build step; needs the engine to build to WASM |
-| Pure-Python reimplementation of predicates | Yes | Yes | Violates §2; two implementations to keep in sync forever |
+**Decision.** The package depends on [`mini-racer`](https://pypi.org/project/mini-racer/) (embedded V8)
+and evaluates the esbuild-bundled engine in it. **Every value-returning call is synchronous** —
+`d.accepts(w)` returns `bool`, no `await` anywhere in the public API. Rendering is unchanged
+(anywidget → browser). Under Pyodide (the P2 browser IDE), the binding detects the environment and
+calls the engine through the ambient browser JS engine via the `js` FFI — no embedded runtime is
+loaded exactly where none could be.
 
-**Status.** Unresolved. A one-day spike — phase V0 of [phases-vyakarana.md](phases-vyakarana.md), which
-sets out the four measurements it must produce and the fallback if the timebox expires — evaluates the
-options and records the outcome as ADR-004-final **before** the Python API is frozen. The pure-Python
-option is the last resort; if it is ever taken, the fallback is confined to `accepts()` and gated behind
-a CI test that compares it against the engine on a shared fixture corpus on every run.
+**Evidence** — the V0 spike (`spikes/adr-004/spike.py`, one command, reproducible; measured
+2026-08-24 on Windows/cp311, wheel data from PyPI for Colab's Linux):
+
+| | `quickjs` 1.19.4 | `mini-racer` 0.14.1 | `wasmtime` 48 | frontend round-trip |
+|---|---|---|---|---|
+| Real engine bundle (338 KB) evaluates | ✓ (needs an `Array.prototype.at` prelude — 2021-era engine) | ✓ untouched | not attempted | n/a |
+| `accepts()` sync, under plain Python / `pytest` / `nbconvert` | ✓ / ✓ / ✓ | ✓ / ✓ / ✓ | — | ✗ by construction: no frontend, no reply |
+| Full trace protocol (Fig. 8.9 ID log, char-for-char) + serialise round-trip | ✓ | ✓ | — | n/a |
+| Engine load / one call | 55 ms / 5 ms | 60 ms / 12 ms | — | — |
+| Linux (Colab) wheel | 2.2 MB, **cp38–cp312 per-version ABI** | 22.2 MB, **py3-none** | 9.8 MB, py3-none | none needed |
+| Windows wheel / `pip install` time | 0.4 MB / ~7 s | 15.5 MB / ~7 s | 8.2 MB | — |
+
+Why `mini-racer` over the smaller `quickjs`: it is V8 — the same engine family the web app runs in, so
+notebook and browser cannot disagree on JS semantics; its `py3-none` wheels survive a Colab Python
+bump, where quickjs's per-CPython wheels (stopping at cp312 today) would break `pip install` the day
+Colab upgrades; and it needed no compatibility prelude, where quickjs's 2021-era engine already lacked
+`Array.prototype.at` and would tax every future engine change. The 22 MB wheel is the accepted cost.
+`wasmtime` was not pursued: both simpler options passed every measurement, and it adds a JS→WASM
+toolchain of our own to maintain for an ABI-independence `mini-racer` already has. The frontend
+round-trip fails the headless criterion outright; the pure-Python reimplementation was not needed and
+stays forbidden.
+
+**A finding the spike forced into the engine:** `TextEncoder` is a web API, absent from both embedded
+runtimes, and `serialise()` used it unconditionally — `export_trace()` would have crashed. `trace.ts`
+now carries a portable UTF-8 byte-length fallback; the spike asserts the serialise round-trip in both
+runtimes. Fallback plan, recorded: if `mini-racer`'s platform coverage ever gaps, `quickjs` plus the
+committed prelude is the measured plan B.
 
 ### ADR-005 — Hopcroft 2nd edition is the citation baseline
 

@@ -39,3 +39,7 @@ venv/
 .DS_Store
 Thumbs.db
 *.swp
+
+# ADR-004 spike — generated artifacts (the script rebuilds them)
+spikes/adr-004/engine-bundle.js
+spikes/adr-004/headless-executed.ipynb

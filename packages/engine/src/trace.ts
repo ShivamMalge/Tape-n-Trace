@@ -329,5 +329,13 @@ export function deserialise<T extends Trace = Trace>(text: string): T {
 }
 
 function byteLength(text: string): number {
-  return new TextEncoder().encode(text).length
+  // TextEncoder is a web API, not a JavaScript builtin: the embedded runtimes
+  // the Python package executes the engine in (ADR-004) do not provide it.
+  if (typeof TextEncoder !== 'undefined') return new TextEncoder().encode(text).length
+  let bytes = 0
+  for (const ch of text) {
+    const cp = ch.codePointAt(0) as number
+    bytes += cp <= 0x7f ? 1 : cp <= 0x7ff ? 2 : cp <= 0xffff ? 3 : 4
+  }
+  return bytes
 }

@@ -9,7 +9,8 @@
 > When the package ships, this file moves to `vyakarana/docs/` and gains a "what actually works today"
 > table matching [README.md](README.md). Until then, treat every example as a design sketch.
 >
-> **One signature-level question is still open** — see [§3.1](#31-an-open-question-that-affects-every-signature).
+> The signature-level question that was open here is **closed**: every value-returning call is
+> synchronous — see [§3.1](#31-where-the-engine-executes-decided).
 
 Companion documents: [README.md](README.md) · [architecture.md](architecture.md) · [phases.md](phases.md) · [phases-vyakarana.md](phases-vyakarana.md) — how this gets built
 
@@ -99,25 +100,15 @@ d.minimize()                     # renders table-filling, returns a DFA
 d.minimize().to_regex()          # renders both steppers in order
 ```
 
-### 3.1 An open question that affects every signature
+### 3.1 Where the engine executes — decided
 
-**Where the engine executes in the Python path is not yet decided** (architecture.md, ADR-004). The
-choice determines whether value-returning calls are synchronous:
-
-```python
-d.accepts("0110")           # if an embedded JS runtime is bundled
-await d.accepts("0110")     # if calls round-trip through the notebook frontend
-```
-
-Rendering is unaffected either way — that always goes through `anywidget` to the browser. The problem is
-only headless value returns, which must also work under `pytest` and `nbconvert` where no frontend is
-attached.
-
-A one-day spike closes this **before the API is frozen** — it is phase V0 of
-[phases-vyakarana.md](phases-vyakarana.md), which states what the spike must measure and what to do if
-the day runs out without a clear winner. This document assumes the synchronous form throughout; if the
-spike lands the other way, every value-returning signature below gains `await` and this note is replaced
-by the outcome.
+**ADR-004 is closed (2026-08-24): the package embeds V8 via `mini-racer` and every value-returning
+call is synchronous.** `d.accepts("0110")` returns a plain `bool` — there is no `await` anywhere in
+this API, including under `pytest` and `nbconvert` with no frontend attached. Rendering still goes
+through `anywidget` to the browser; under Pyodide the binding uses the browser's own JS engine instead
+of the embedded one. The measurements, the options not chosen, and the fallback plan are recorded in
+architecture.md ADR-004; the spike that produced them is `spikes/adr-004/spike.py`. Every signature in
+§5 is the synchronous form it always showed — now by decision rather than by assumption.
 
 ---
 
