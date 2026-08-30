@@ -104,10 +104,12 @@ jobs:
           python -m pip install --quiet build
           python -m build --wheel vyakarana
 
+      # --find-links serves the local wheel; the index stays on for its
+      # dependencies (anywidget, traitlets, mini-racer), which only PyPI has.
       - name: Install the wheel, not the checkout
         run: |
           python -m pip install --quiet pytest jsonschema
-          python -m pip install --no-index --find-links vyakarana/dist vyakarana
+          python -m pip install --find-links vyakarana/dist vyakarana==0.1.0rc1
 
       # From the repo root, not vyakarana/ — with the project directory as the
       # cwd, `python -m pytest` would put the source tree ahead of the wheel on
