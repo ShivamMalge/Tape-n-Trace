@@ -9,9 +9,9 @@ import path from 'node:path'
 
 const here = path.dirname(fileURLToPath(import.meta.url))
 const repo = path.dirname(here)
-const outDir = path.join(repo, 'vyakarana', 'static')
+const outDir = path.join(repo, 'vyakarana', 'vyakarana', 'static')
 
-const OUTPUTS = ['widget.js', 'widget.css', 'engine-manifest.json']
+const OUTPUTS = ['widget.js', 'engine.js', 'widget.css', 'engine-manifest.json']
 const SOURCES = [
   path.join(here, 'src'),
   path.join(here, 'build.mjs'),

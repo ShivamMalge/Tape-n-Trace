@@ -1,13 +1,14 @@
 # Vyakarana — Python Library Documentation
 
-> ## ⚠ Status: specification, not released
+> ## ⚠ Status: 0.0.1 built, unreleased — regular languages only
 >
-> **No code exists yet. Nothing in this document works today.** This is the target API, written before
-> implementation so that the engine surface and the Python surface can be designed against each other.
-> Every signature here is subject to change until `vyakarana` 0.1 ships in phase P1.8.
+> **§5.1–§5.3 work today** (`DFA`, `NFA`, `ENFA`, `RegularExpression`), from a development checkout:
+> `pnpm -F @tape-n-trace/bridge build`, then `pip install -e ./vyakarana` — 21 tests, headless.
+> **§5.4–§5.6 (`CFG`, `PDA`, `TM`) are still specification** and land with phase V3 of
+> [phases-vyakarana.md](phases-vyakarana.md). Nothing is on PyPI yet.
 >
 > When the package ships, this file moves to `vyakarana/docs/` and gains a "what actually works today"
-> table matching [README.md](README.md). Until then, treat every example as a design sketch.
+> table matching [README.md](README.md).
 >
 > The signature-level question that was open here is **closed**: every value-returning call is
 > synchronous — see [§3.1](#31-where-the-engine-executes-decided).
@@ -169,7 +170,7 @@ DFA(states, alphabet, transitions, start, accepting)
 |---|---|---|
 | `accepts(w)` | — | `bool` |
 | `run(w)` | animated run, transport controls | `Simulation` |
-| `run_all(strings)` | multi-run table | `Dict[str, bool]` |
+| `run_all(strings)` | — (the multi-run table lands with the bridge viewer's growth) | `Dict[str, bool]` |
 | `minimize()` | table-filling stepper | `DFA` |
 | `to_regex()` | state-elimination stepper | `RegularExpression` |
 | `complement()` | construction | `DFA` |
@@ -210,7 +211,7 @@ n.epsilon_closure("q0")     # renders the BFS, returns {"q0", "q1"}
 | Method | Renders | Returns |
 |---|---|---|
 | `to_dfa()` | subset-construction stepper, table filling row by row | `DFA` |
-| `epsilon_closure(state)` | the BFS over epsilon-edges | `Set[str]` |
+| `epsilon_closure(state)` | — | `Set[str]` |
 | `remove_epsilon()` | per-state closure stepper | `NFA` |
 | `NFA.from_regex(re)` | Thompson construction, bottom-up | `ENFA` |
 | `NFA.for_keywords(words)` | the text-search NFA (Hopcroft 2.4) | `NFA` |
@@ -233,7 +234,7 @@ Operator precedence is star, then concatenation, then union — as Hopcroft 3.1.
 | `to_enfa()` | Thompson construction | `ENFA` |
 | `to_dfa()` | Thompson, then subset, then minimize | `DFA` |
 | `matches(w)` | — | `bool` |
-| `playground()` | **all four panels in sync**: RE, parse tree, epsilon-NFA, minimal DFA | widget |
+| `playground()` | the Thompson construction (the four synced panels land with the bridge's next phase) | widget |
 
 `playground()` is the single best conceptual view in the project — one language, four representations,
 all updating together.
@@ -421,15 +422,16 @@ Every guard that fires is visible in `trace["meta"]["truncated"]`. A silent cap 
 JupyterLab check that `anywidget` is installed in the *same* environment as the kernel. In VS Code,
 reload the window. In Colab this should not happen — if it does, it is a bug worth reporting.
 
-**`RuntimeError: JS bundle not found at .../static/index.js`.** You are on a development checkout
-without a built bundle. Run `pnpm -F bridge build`. This error never appears from a `pip install`.
+**`RuntimeError: JS engine bundle not found at .../static/engine.js`.** You are on a development
+checkout without a built bundle. Run `pnpm -F @tape-n-trace/bridge build`. This error never appears
+from a `pip install`.
 
 **My notebook's styling changed after importing vyakarana.** It should not — this is the exact bug the
 scoped Preflight-disabled build exists to prevent. Report it with your notebook theme; it is a
 regression against a test.
 
-**`accepts()` hangs in a script.** You are outside a notebook with no frontend attached. See §3.1 —
-the behaviour here depends on the unresolved ADR-004 decision.
+**`accepts()` in a script or under pytest.** Works, synchronously — the engine runs in an embedded V8
+(§3.1), and no frontend is involved in a value. Only *rendering* needs a notebook.
 
 **The diagram is unreadable — states overlap.** Try `layout="manual"` and drag, or reduce the machine.
 Layered layout is tuned for machines produced by conversions; hand-drawn graphs with many crossing edges

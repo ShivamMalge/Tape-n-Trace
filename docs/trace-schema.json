@@ -1,0 +1,1208 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/TraceSchema",
+  "definitions": {
+    "TraceSchema": {
+      "$ref": "#/definitions/Trace"
+    },
+    "Trace": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "$ref": "#/definitions/TraceKind"
+        },
+        "engineVersion": {
+          "type": "string"
+        },
+        "input": {
+          "description": "The machine / grammar / string this trace came from."
+        },
+        "steps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Step"
+          }
+        },
+        "result": {
+          "$ref": "#/definitions/TraceResult"
+        },
+        "meta": {
+          "$ref": "#/definitions/TraceMeta"
+        }
+      },
+      "required": [
+        "kind",
+        "engineVersion",
+        "input",
+        "steps",
+        "result",
+        "meta"
+      ]
+    },
+    "TraceKind": {
+      "anyOf": [
+        {
+          "type": "string",
+          "const": "simulate.dfa"
+        },
+        {
+          "type": "string",
+          "const": "simulate.nfa"
+        },
+        {
+          "type": "string",
+          "const": "simulate.enfa"
+        },
+        {
+          "type": "string",
+          "const": "simulate.pda"
+        },
+        {
+          "type": "string",
+          "const": "simulate.tm"
+        },
+        {
+          "type": "string",
+          "const": "simulate.tm.multitape"
+        },
+        {
+          "type": "string",
+          "const": "convert.nfa-to-dfa"
+        },
+        {
+          "type": "string",
+          "const": "convert.enfa-to-nfa"
+        },
+        {
+          "type": "string",
+          "const": "convert.re-to-enfa"
+        },
+        {
+          "type": "string",
+          "const": "convert.dfa-to-re.elim"
+        },
+        {
+          "type": "string",
+          "const": "convert.minimize"
+        },
+        {
+          "type": "string",
+          "const": "convert.grammar-to-nfa"
+        },
+        {
+          "type": "string",
+          "const": "convert.pda-acceptance"
+        },
+        {
+          "type": "string",
+          "const": "convert.cfg-to-pda"
+        },
+        {
+          "type": "string",
+          "const": "convert.tm-multitape-to-single"
+        },
+        {
+          "type": "string",
+          "const": "grammar.derive"
+        },
+        {
+          "type": "string",
+          "const": "grammar.parse-tree"
+        },
+        {
+          "type": "string",
+          "const": "grammar.ambiguity"
+        },
+        {
+          "type": "string",
+          "const": "grammar.useless"
+        },
+        {
+          "type": "string",
+          "const": "grammar.epsilon-prod"
+        },
+        {
+          "type": "string",
+          "const": "grammar.unit-prod"
+        },
+        {
+          "type": "string",
+          "const": "grammar.cnf"
+        },
+        {
+          "type": "string",
+          "const": "grammar.left-recursion"
+        },
+        {
+          "type": "string",
+          "const": "decide.membership"
+        },
+        {
+          "type": "string",
+          "const": "decide.equivalence"
+        },
+        {
+          "type": "string",
+          "const": "decide.state-equivalence"
+        },
+        {
+          "type": "string",
+          "const": "decide.diagonalization"
+        },
+        {
+          "type": "string",
+          "const": "prove.reduction"
+        },
+        {
+          "$ref": "#/definitions/ClosureTraceKind"
+        },
+        {
+          "type": "string",
+          "const": "game.pumping.regular"
+        },
+        {
+          "type": "string",
+          "const": "game.pumping.cfl"
+        },
+        {
+          "type": "string",
+          "const": "grade.language"
+        },
+        {
+          "type": "string",
+          "const": "grade.trace-match"
+        },
+        {
+          "type": "string",
+          "const": "grade.sample"
+        },
+        {
+          "type": "string",
+          "const": "convert.dfa-to-re.rij"
+        },
+        {
+          "type": "string",
+          "const": "convert.pda-to-cfg"
+        },
+        {
+          "type": "string",
+          "const": "grammar.cyk"
+        },
+        {
+          "type": "string",
+          "const": "decide.emptiness"
+        },
+        {
+          "type": "string",
+          "const": "decide.finiteness"
+        }
+      ],
+      "description": "Trace kinds. Fixed strings; the discriminants everything switches on. The kinds architecture.md marks `[E]` are enrichment, scheduled after v1.0 (ADR-003). They are listed so the union needs no widening when they land."
+    },
+    "ClosureTraceKind": {
+      "type": "string",
+      "enum": [
+        "closure.regular.union",
+        "closure.regular.intersection",
+        "closure.regular.complement",
+        "closure.regular.difference",
+        "closure.regular.concat",
+        "closure.regular.star",
+        "closure.regular.reverse",
+        "closure.regular.homomorphism",
+        "closure.regular.inverse-homomorphism",
+        "closure.regular.substitution",
+        "closure.cfl.union",
+        "closure.cfl.intersection",
+        "closure.cfl.complement",
+        "closure.cfl.difference",
+        "closure.cfl.concat",
+        "closure.cfl.star",
+        "closure.cfl.reverse",
+        "closure.cfl.homomorphism",
+        "closure.cfl.inverse-homomorphism",
+        "closure.cfl.substitution"
+      ]
+    },
+    "Step": {
+      "type": "object",
+      "properties": {
+        "index": {
+          "type": "number"
+        },
+        "narration": {
+          "type": "string",
+          "description": "One sentence of prose, exam-language. Rendered verbatim in the explanation panel, so it ends in a period and never contains placeholder text."
+        },
+        "highlight": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Highlight"
+          }
+        },
+        "snapshot": {
+          "description": "The full logical artifact state *after* this step. Logically complete, physically shared with the previous step, and frozen — see ADR-001."
+        },
+        "citation": {
+          "type": "string",
+          "description": "Hopcroft 2e, e.g. \"2.3.5, Thm 2.11\"."
+        }
+      },
+      "required": [
+        "index",
+        "narration",
+        "highlight",
+        "snapshot"
+      ]
+    },
+    "Highlight": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "state"
+            },
+            "id": {
+              "$ref": "#/definitions/StateId"
+            },
+            "role": {
+              "type": "string",
+              "enum": [
+                "current",
+                "new",
+                "dead",
+                "accepting",
+                "start",
+                "marked"
+              ]
+            }
+          },
+          "required": [
+            "type",
+            "id",
+            "role"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "transition"
+            },
+            "id": {
+              "$ref": "#/definitions/TransitionId"
+            },
+            "role": {
+              "type": "string",
+              "enum": [
+                "taken",
+                "candidate",
+                "added",
+                "removed"
+              ]
+            }
+          },
+          "required": [
+            "type",
+            "id",
+            "role"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "input"
+            },
+            "position": {
+              "type": "number"
+            },
+            "role": {
+              "type": "string",
+              "enum": [
+                "read",
+                "consumed",
+                "lookahead"
+              ]
+            }
+          },
+          "required": [
+            "type",
+            "position"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "stackCell"
+            },
+            "depth": {
+              "type": "number"
+            },
+            "role": {
+              "type": "string",
+              "enum": [
+                "top",
+                "pushed",
+                "popped"
+              ]
+            }
+          },
+          "required": [
+            "type",
+            "depth",
+            "role"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "tapeCell"
+            },
+            "tape": {
+              "type": "number"
+            },
+            "index": {
+              "type": "number"
+            },
+            "role": {
+              "type": "string",
+              "enum": [
+                "head",
+                "written",
+                "read"
+              ]
+            }
+          },
+          "required": [
+            "type",
+            "tape",
+            "index",
+            "role"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "tableCell"
+            },
+            "row": {
+              "type": "string"
+            },
+            "col": {
+              "type": "string"
+            },
+            "role": {
+              "type": "string",
+              "enum": [
+                "filling",
+                "filled",
+                "marked",
+                "witness"
+              ]
+            }
+          },
+          "required": [
+            "type",
+            "row",
+            "col",
+            "role"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "production"
+            },
+            "index": {
+              "type": "number"
+            },
+            "role": {
+              "type": "string",
+              "enum": [
+                "applied",
+                "added",
+                "removed",
+                "nullable",
+                "unit"
+              ]
+            }
+          },
+          "required": [
+            "type",
+            "index",
+            "role"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "treeNode"
+            },
+            "id": {
+              "type": "string"
+            },
+            "role": {
+              "type": "string",
+              "enum": [
+                "expanding",
+                "matched",
+                "dead",
+                "accepting"
+              ]
+            }
+          },
+          "required": [
+            "type",
+            "id",
+            "role"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "symbolSet"
+            },
+            "ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "role": {
+              "type": "string",
+              "enum": [
+                "generating",
+                "reachable",
+                "nullable",
+                "closure"
+              ]
+            }
+          },
+          "required": [
+            "type",
+            "ids",
+            "role"
+          ]
+        }
+      ],
+      "description": "What the renderer highlights this step. Renderer-agnostic and semantic — a highlight names *what* matters, never a colour or a coordinate."
+    },
+    "StateId": {
+      "type": "string",
+      "description": "Core types — architecture.md §5 and §6.\n\nThese match the textbook tuples deliberately: a student should be able to read `FiniteAutomaton` and see Hopcroft's 5-tuple (Q, Σ, δ, q0, F). Citations throughout the engine are to Hopcroft, Motwani & Ullman, *Introduction to Automata Theory, Languages, and Computation*, **2nd edition** (ADR-005)."
+    },
+    "TransitionId": {
+      "type": "string"
+    },
+    "TraceResult": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "acceptance"
+            },
+            "accepted": {
+              "type": "boolean"
+            },
+            "note": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "accepted"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "incomplete"
+            },
+            "reason": {
+              "type": "string"
+            },
+            "bounded": {
+              "$ref": "#/definitions/BoundedClaim"
+            }
+          },
+          "required": [
+            "type",
+            "reason",
+            "bounded"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "machine"
+            },
+            "machine": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/FiniteAutomaton"
+                },
+                {
+                  "$ref": "#/definitions/PDA"
+                },
+                {
+                  "$ref": "#/definitions/TuringMachine"
+                }
+              ]
+            }
+          },
+          "required": [
+            "type",
+            "machine"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "grammar"
+            },
+            "grammar": {
+              "$ref": "#/definitions/CFG"
+            }
+          },
+          "required": [
+            "type",
+            "grammar"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "regex"
+            },
+            "regex": {
+              "$ref": "#/definitions/RegexNode"
+            }
+          },
+          "required": [
+            "type",
+            "regex"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "verdict"
+            },
+            "holds": {
+              "type": "boolean"
+            },
+            "bounded": {
+              "$ref": "#/definitions/BoundedClaim"
+            },
+            "witness": {}
+          },
+          "required": [
+            "type",
+            "holds"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "value"
+            },
+            "value": {}
+          },
+          "required": [
+            "type",
+            "value"
+          ]
+        }
+      ],
+      "description": "The verdict a trace reached. New variants are added as phases land; these are the ones P0.1 can produce plus the shapes the P0.3 conversions will need."
+    },
+    "BoundedClaim": {
+      "type": "object",
+      "properties": {
+        "searchedUpTo": {
+          "type": "number"
+        },
+        "unit": {
+          "type": "string",
+          "enum": [
+            "inputLength",
+            "derivationDepth",
+            "steps"
+          ]
+        }
+      },
+      "required": [
+        "searchedUpTo",
+        "unit"
+      ],
+      "description": "A claim produced by a finite search. Principle §2.6: the UI never says a language \"is regular\" on the strength of a bounded search — it says \"no counterexample up to length 12\", and this is how it knows to."
+    },
+    "FiniteAutomaton": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "DFA",
+            "NFA",
+            "ENFA"
+          ]
+        },
+        "states": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/StateId"
+          },
+          "description": "Q"
+        },
+        "alphabet": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Sym"
+          },
+          "description": "Σ"
+        },
+        "transitions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/FATransition"
+          },
+          "description": "δ, held flat. A nested map cannot represent an NFA's multiple targets cleanly, cannot render as edges without inversion, and makes the partial and invalid machines the editor must hold unrepresentable."
+        },
+        "start": {
+          "$ref": "#/definitions/StateId",
+          "description": "q0"
+        },
+        "accepting": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/StateId"
+          },
+          "description": "F"
+        },
+        "layout": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/Point"
+          },
+          "propertyNames": {
+            "description": "Core types — architecture.md §5 and §6.\n\nThese match the textbook tuples deliberately: a student should be able to read `FiniteAutomaton` and see Hopcroft's 5-tuple (Q, Σ, δ, q0, F). Citations throughout the engine are to Hopcroft, Motwani & Ullman, *Introduction to Automata Theory, Languages, and Computation*, **2nd edition** (ADR-005)."
+          },
+          "description": "Editor-only. Every engine function ignores it; coordinates never influence semantics. Auto-layout is a UI concern."
+        }
+      },
+      "required": [
+        "kind",
+        "states",
+        "alphabet",
+        "transitions",
+        "start",
+        "accepting"
+      ],
+      "description": "DFA, NFA and ε-NFA in one type with a discriminant. A DFA *is* an NFA with a determinism invariant; `validateFA` checks the invariant and the editor shows the violation. Three separate types would triple every conversion signature."
+    },
+    "Sym": {
+      "type": "string",
+      "description": "Exactly one symbol of an alphabet. The empty string is not a symbol."
+    },
+    "FATransition": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/TransitionId",
+          "description": "Stable across relabelling, so trace highlights survive it. Highlighting by (from, symbol, to) is ambiguous for an NFA with parallel edges."
+        },
+        "from": {
+          "$ref": "#/definitions/StateId"
+        },
+        "read": {
+          "$ref": "#/definitions/Read"
+        },
+        "to": {
+          "$ref": "#/definitions/StateId"
+        }
+      },
+      "required": [
+        "id",
+        "from",
+        "read",
+        "to"
+      ]
+    },
+    "Read": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/Sym"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "A transition label. Epsilon is `null`, never the string \"ε\" — see ADR-002. Renderers map `null` to the glyph; the glyph itself lives in packages/ui."
+    },
+    "Point": {
+      "type": "object",
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "x",
+        "y"
+      ]
+    },
+    "PDA": {
+      "type": "object",
+      "properties": {
+        "states": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/StateId"
+          }
+        },
+        "inputAlphabet": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Sym"
+          }
+        },
+        "stackAlphabet": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Sym"
+          }
+        },
+        "transitions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PDATransition"
+          }
+        },
+        "start": {
+          "$ref": "#/definitions/StateId"
+        },
+        "startStack": {
+          "$ref": "#/definitions/Sym"
+        },
+        "accepting": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/StateId"
+          }
+        },
+        "acceptBy": {
+          "type": "string",
+          "enum": [
+            "finalState",
+            "emptyStack"
+          ]
+        },
+        "layout": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/Point"
+          },
+          "propertyNames": {
+            "description": "Core types — architecture.md §5 and §6.\n\nThese match the textbook tuples deliberately: a student should be able to read `FiniteAutomaton` and see Hopcroft's 5-tuple (Q, Σ, δ, q0, F). Citations throughout the engine are to Hopcroft, Motwani & Ullman, *Introduction to Automata Theory, Languages, and Computation*, **2nd edition** (ADR-005)."
+          }
+        }
+      },
+      "required": [
+        "states",
+        "inputAlphabet",
+        "stackAlphabet",
+        "transitions",
+        "start",
+        "startStack",
+        "accepting",
+        "acceptBy"
+      ]
+    },
+    "PDATransition": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/TransitionId"
+        },
+        "from": {
+          "$ref": "#/definitions/StateId"
+        },
+        "read": {
+          "$ref": "#/definitions/Read"
+        },
+        "pop": {
+          "$ref": "#/definitions/Read",
+          "description": "`null` = no pop. Hopcroft always pops; this is for JFLAP compatibility."
+        },
+        "to": {
+          "$ref": "#/definitions/StateId"
+        },
+        "push": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Sym"
+          },
+          "description": "Leftmost element becomes the new top. `[]` = pop only."
+        }
+      },
+      "required": [
+        "id",
+        "from",
+        "read",
+        "pop",
+        "to",
+        "push"
+      ]
+    },
+    "TuringMachine": {
+      "type": "object",
+      "properties": {
+        "states": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/StateId"
+          }
+        },
+        "inputAlphabet": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Sym"
+          }
+        },
+        "tapeAlphabet": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Sym"
+          }
+        },
+        "blank": {
+          "$ref": "#/definitions/Sym"
+        },
+        "transitions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TMTransition"
+          }
+        },
+        "start": {
+          "$ref": "#/definitions/StateId"
+        },
+        "accepting": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/StateId"
+          }
+        },
+        "rejecting": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/StateId"
+          }
+        },
+        "tapes": {
+          "type": "number",
+          "description": "1 = single-tape; greater than 1 activates the multitape renderer."
+        },
+        "layout": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/Point"
+          },
+          "propertyNames": {
+            "description": "Core types — architecture.md §5 and §6.\n\nThese match the textbook tuples deliberately: a student should be able to read `FiniteAutomaton` and see Hopcroft's 5-tuple (Q, Σ, δ, q0, F). Citations throughout the engine are to Hopcroft, Motwani & Ullman, *Introduction to Automata Theory, Languages, and Computation*, **2nd edition** (ADR-005)."
+          }
+        }
+      },
+      "required": [
+        "states",
+        "inputAlphabet",
+        "tapeAlphabet",
+        "blank",
+        "transitions",
+        "start",
+        "accepting",
+        "tapes"
+      ]
+    },
+    "TMTransition": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/TransitionId"
+        },
+        "from": {
+          "$ref": "#/definitions/StateId"
+        },
+        "read": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Sym"
+          },
+          "description": "One per tape."
+        },
+        "to": {
+          "$ref": "#/definitions/StateId"
+        },
+        "write": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Sym"
+          }
+        },
+        "move": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "L",
+              "R",
+              "S"
+            ]
+          }
+        }
+      },
+      "required": [
+        "id",
+        "from",
+        "read",
+        "to",
+        "write",
+        "move"
+      ]
+    },
+    "CFG": {
+      "type": "object",
+      "properties": {
+        "variables": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "V"
+        },
+        "terminals": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Sym"
+          },
+          "description": "T"
+        },
+        "productions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Production"
+          },
+          "description": "P"
+        },
+        "start": {
+          "type": "string",
+          "description": "S"
+        }
+      },
+      "required": [
+        "variables",
+        "terminals",
+        "productions",
+        "start"
+      ]
+    },
+    "Production": {
+      "type": "object",
+      "properties": {
+        "head": {
+          "type": "string"
+        },
+        "body": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "#/definitions/Sym"
+              }
+            ]
+          }
+        }
+      },
+      "required": [
+        "head",
+        "body"
+      ],
+      "description": "An empty `body` is an ε-production."
+    },
+    "RegexNode": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "type": "string",
+              "const": "empty"
+            }
+          },
+          "required": [
+            "op"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "type": "string",
+              "const": "epsilon"
+            }
+          },
+          "required": [
+            "op"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "type": "string",
+              "const": "symbol"
+            },
+            "sym": {
+              "$ref": "#/definitions/Sym"
+            }
+          },
+          "required": [
+            "op",
+            "sym"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "type": "string",
+              "const": "union"
+            },
+            "left": {
+              "$ref": "#/definitions/RegexNode"
+            },
+            "right": {
+              "$ref": "#/definitions/RegexNode"
+            }
+          },
+          "required": [
+            "op",
+            "left",
+            "right"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "type": "string",
+              "const": "concat"
+            },
+            "left": {
+              "$ref": "#/definitions/RegexNode"
+            },
+            "right": {
+              "$ref": "#/definitions/RegexNode"
+            }
+          },
+          "required": [
+            "op",
+            "left",
+            "right"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "type": "string",
+              "const": "star"
+            },
+            "inner": {
+              "$ref": "#/definitions/RegexNode"
+            }
+          },
+          "required": [
+            "op",
+            "inner"
+          ]
+        }
+      ],
+      "description": "The RE abstract syntax tree. Built by `regex/parse.ts` in P0.4; the type lives here because traces and results reference it."
+    },
+    "TraceMeta": {
+      "type": "object",
+      "properties": {
+        "stepCount": {
+          "type": "number"
+        },
+        "counters": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "number"
+          },
+          "description": "transitionsTaken, statesCreated, tapeMoves, ..."
+        },
+        "truncated": {
+          "type": "object",
+          "properties": {
+            "reason": {
+              "type": "string"
+            },
+            "cap": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "reason",
+            "cap"
+          ],
+          "description": "Set whenever a §9 size guard fired. A silent cap is a defect."
+        }
+      },
+      "required": [
+        "stepCount",
+        "counters"
+      ]
+    }
+  },
+  "$comment": "Generated by bridge/build.mjs from packages/engine/src/types.ts — do not edit."
+}

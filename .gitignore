@@ -45,4 +45,4 @@ spikes/adr-004/engine-bundle.js
 spikes/adr-004/headless-executed.ipynb
 
 # Built by `pnpm -F @tape-n-trace/bridge build`; the wheel packages it, git does not
-vyakarana/static/
+vyakarana/vyakarana/static/
