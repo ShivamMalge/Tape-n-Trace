@@ -17,6 +17,16 @@
   display: grid;
   gap: 12px;
   padding: 4px 0;
+  max-width: 640px;
+}
+
+/* The renderers ship width="100%" for the web app's layout; in a notebook
+   cell that blows a two-state machine up to the full output width. Size the
+   diagram by its own viewBox instead, capped to the cell. */
+.vyk-stack svg {
+  width: auto;
+  height: auto;
+  max-width: 100%;
 }
 
 .vyk-narration {

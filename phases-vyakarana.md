@@ -40,7 +40,7 @@ Updated in the same commit as the work it describes. ✅ done and pushed · 🔨
 | Phase | Ships | Status | Notes |
 |---|---|---|---|
 | V0 ADR-004 spike | a decision, no code | ✅ | 2026-08-24 · `mini-racer` (V8), sync API; spike committed under `spikes/adr-004/` |
-| V1 The bridge | `bridge/` + `vyakarana/static/` | 🔨 | 2026-08-24: all automated gates green (6 tests, typecheck, lint, freshness, 205 KB bundle); awaiting the one human check — open `bridge/notebooks/v1-smoke.ipynb` in JupyterLab and look |
+| V1 The bridge | `bridge/` + `vyakarana/static/` | ✅ | 2026-08-24 · 6 tests, typecheck, lint, freshness, 205 KB bundle; **verified in JupyterLab by the author** (sizing then capped to the diagram's own viewBox) |
 | V2 The Python core | `vyakarana` 0.0.1, unreleased | ⬜ | Regular languages only: DFA, NFA, ENFA, RE |
 | V3 The rest of the surface | `vyakarana` 0.0.2, unreleased | ⬜ | CFG, PDA, TM, gallery, result objects |
 | V4 Packaging and the four environments | `vyakarana` 0.1.0rc | ⬜ | Colab is the blocking one |
@@ -181,11 +181,11 @@ the spike stalls, build this.
 
 **Acceptance criteria**
 
-- [~] A hand-written `simulate.dfa` trace, pasted into a notebook cell, renders with working transport
-      controls in JupyterLab. *(Evidenced headless: the same bundle renders the same hand-written trace
-      with a working transport under jsdom — `bridge/test/render.test.tsx` — and the committed
-      `bridge/notebooks/v1-smoke.ipynb` executes end to end under nbconvert with real anywidget.
-      Remaining: a human opens it in JupyterLab and looks, per this plan's own evidence rule.)*
+- [x] A hand-written `simulate.dfa` trace, pasted into a notebook cell, renders with working transport
+      controls in JupyterLab. *(Headless: the same bundle renders the same trace with a working transport
+      under jsdom — `bridge/test/render.test.tsx` — and `bridge/notebooks/v1-smoke.ipynb` executes end to
+      end under nbconvert with real anywidget. Human: verified in JupyterLab by the author, 2026-08-24;
+      the one finding — the diagram filled the cell — fixed by sizing the SVG from its viewBox.)*
 - [x] Setting `step` from Python moves the widget; reading it back returns what the widget shows.
       *(jsdom: `model.set('step', 2)` re-renders to step 2; dragging the transport writes the trait and
       calls `save_changes`. Notebook: `w.step = 2` reads back 2 under nbconvert.)*
