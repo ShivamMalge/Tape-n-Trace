@@ -2,7 +2,7 @@
 
 > **Status: V0–V3 closed 2026-08-24** — ADR-004 decided (embedded V8, sync API); the bridge renders in
 > JupyterLab; `vyakarana` 0.0.2 covers the whole documented surface — 48 tests headless, parity-gated.
-> V4 (packaging, the four environments) and V5 (release) remain. This is the execution plan for the Python package, which
+> V4 is in progress 2026-08-30 (wheel built and evidenced; the Colab gate is the human check that remains). V5 (release) follows. This is the execution plan for the Python package, which
 > [phases.md](phases.md) carries as the single row **P1.8** and which is too large to plan at that
 > resolution.
 
@@ -44,7 +44,7 @@ Updated in the same commit as the work it describes. ✅ done and pushed · 🔨
 | V1 The bridge | `bridge/` + `vyakarana/static/` | ✅ | 2026-08-24 · 6 tests, typecheck, lint, freshness, 205 KB bundle; **verified in JupyterLab by the author** (sizing then capped to the diagram's own viewBox) |
 | V2 The Python core | `vyakarana` 0.0.1, unreleased | ✅ | 2026-08-24 · 21 pytest tests, headless; trace schema generated in the bridge build |
 | V3 The rest of the surface | `vyakarana` 0.0.2, unreleased | ✅ | 2026-08-24 · 48 tests; the parity test covers all 227 engine exports |
-| V4 Packaging and the four environments | `vyakarana` 0.1.0rc | ⬜ | Colab is the blocking one |
+| V4 Packaging and the four environments | `vyakarana` 0.1.0rc1 | 🔨 | 2026-08-30 · wheel + hook + CI + nbconvert + Windows venv done; awaiting first CI run and the human Colab/JupyterLab/VS Code checks |
 | V5 Release | **`vyakarana` 0.1** | ⬜ | PyPI, docs move, README table |
 
 ---
@@ -299,11 +299,26 @@ trace contract pinned down on both sides of the boundary.
 
 - [ ] **Colab, from a clean runtime: `!pip install vyakarana` and a DFA renders, with no Node present.**
       This is a release criterion, not a nice-to-have — it is what students use.
+      *(Prepared 2026-08-30: [docs/colab-gate.ipynb](docs/colab-gate.ipynb) installs the rc wheel
+      from the GitHub release, proves Node absent, renders. Blocked on a human running it in Colab and
+      committing the outputs.)*
 - [ ] JupyterLab 4+, Jupyter Notebook 7+, and VS Code notebooks each render.
-- [ ] `nbconvert` produces a document in which value-returning calls worked and widgets fell back to a
-      static image rather than a blank box.
+      *(JupyterLab rendering was author-verified at V1 with the dev install; the rc wheel re-check and
+      the other two hosts are pending — [docs/environments.md](docs/environments.md) has the steps.)*
+- [x] `nbconvert` produces a document in which value-returning calls worked and widget cells are not
+      blank boxes. *(2026-08-30: `--execute` over `vyakarana/notebooks/quickstart.ipynb` from a clean
+      wheel install — every value-returning cell produced its value, Fig 8.9 ID log verbatim. One
+      correction, per rule 2: the fallback is not a "static image" — anywidget embeds the widget MIME
+      and state (live in an HTML export) plus a `text/plain` repr; the criterion is amended to what the
+      toolchain actually does.)*
 - [ ] Installing into a virtualenv with no compiler succeeds on Linux and Windows.
+      *(Windows evidenced 2026-08-30 — fresh venv, wheel only, 48 tests against site-packages.
+      Linux is the ubuntu-latest leg of the CI `vyakarana` job; ticked when it is green on main.)*
 - [ ] CI fails when `static/` is stale.
+      *(Wired 2026-08-30: the `vyakarana` CI job builds the bridge, then runs `check-fresh` — which
+      exits non-zero on missing or out-of-date static/ — before the wheel is built or tested; the
+      jupyter-builder hook additionally rebuilds static/ from scratch when absent, demonstrated by
+      deleting it. Ticked when the job is green on main.)*
 
 > **On the Colab gate.** It cannot be automated from this repository, and pretending otherwise would be
 > the exact failure this project's documentation rules exist to prevent. It is evidenced by a notebook

@@ -1,11 +1,14 @@
 # Vyakarana — Python Library Documentation
 
-> ## ⚠ Status: 0.0.2 built, unreleased — the full surface
+> ## ⚠ Status: 0.1.0rc1 — a wheel, not yet on PyPI
 >
 > **§5.1–§5.6 work today** (`DFA`, `NFA`, `ENFA`, `RegularExpression`, `CFG`, `PDA`, `TM` and the
 > gallery), from a development checkout: `pnpm -F @tape-n-trace/bridge build`, then
-> `pip install -e ./vyakarana` — 48 tests, headless, including the API parity test.
-> Nothing is on PyPI yet; packaging is phase V4 of [phases-vyakarana.md](phases-vyakarana.md).
+> `pip install -e ./vyakarana` — 48 tests, headless, including the API parity test. The same
+> suite passes against the built wheel (`python -m build --wheel vyakarana`, pure `py3-none-any`)
+> in a clean no-compiler venv; the dated per-environment record is
+> [docs/environments.md](docs/environments.md). Nothing is on PyPI yet — release is phase V5 of
+> [phases-vyakarana.md](phases-vyakarana.md), behind the Colab gate.
 >
 > When the package ships, this file moves to `vyakarana/docs/` and gains a "what actually works today"
 > table matching [README.md](README.md).

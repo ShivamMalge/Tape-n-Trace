@@ -52,11 +52,72 @@ jobs:
       - name: Web app tests
         run: pnpm --filter @tape-n-trace/web test
 
+      - name: Bridge tests
+        run: pnpm --filter @tape-n-trace/bridge test
+
       - name: Build the web app
         run: pnpm --filter @tape-n-trace/web build
 
-# Gates that arrive with the phases that earn them (architecture.md §11):
-#   pytest                         — P1.8, with the vyakarana package
-#   bundle freshness for vyakarana — P1.8, alongside the anywidget bridge
-# They are deliberately absent rather than stubbed: a green check for a step
-# that runs nothing is worse than no check at all.
+  # The vyakarana gates (phases-vyakarana.md V4, §6): build the JS bundle,
+  # prove it fresh, build the wheel through the jupyter-builder hook, install
+  # that wheel — not the checkout — into a bare interpreter, and run pytest
+  # against it. The matrix floor is 3.10 (pyproject); 3.12 is what Colab ships
+  # (checked 2026-08-30). windows-latest is the no-compiler install check on
+  # the second platform; the wheel is pure py3-none-any, so a compiler being
+  # needed anywhere is a failing run.
+  vyakarana:
+    name: vyakarana wheel + pytest (py${{ matrix.python }}, ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python: ['3.10', '3.12']
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Build the bridge into vyakarana/static
+        run: pnpm --filter @tape-n-trace/bridge build
+
+      # Fails when static/ is missing or older than bridge/, packages/ui or
+      # packages/engine — the staleness gate V1 promised to CI.
+      - name: Bundle freshness
+        run: pnpm --filter @tape-n-trace/bridge check-fresh
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Build the wheel
+        run: |
+          python -m pip install --quiet build
+          python -m build --wheel vyakarana
+
+      - name: Install the wheel, not the checkout
+        run: |
+          python -m pip install --quiet pytest jsonschema
+          python -m pip install --no-index --find-links vyakarana/dist vyakarana
+
+      # From the repo root, not vyakarana/ — with the project directory as the
+      # cwd, `python -m pytest` would put the source tree ahead of the wheel on
+      # sys.path and quietly test the checkout instead.
+      - name: pytest against the installed wheel
+        run: python -m pytest -q vyakarana/tests
+
+      - name: Keep the wheel CI built
+        if: matrix.os == 'ubuntu-latest' && matrix.python == '3.12'
+        uses: actions/upload-artifact@v4
+        with:
+          name: vyakarana-wheel
+          path: vyakarana/dist/*.whl
