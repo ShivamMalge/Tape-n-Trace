@@ -4,7 +4,7 @@ The dated evidence phases-vyakarana.md V4 requires: each environment, the versio
 tested, and how the result was obtained. A row is either evidenced or says it is
 not — an unchecked box here is honest; a guessed ✅ is not.
 
-**Package under test:** `vyakarana 0.1.0` (verified through rc1–rc3), the wheel built by
+**Package under test:** `vyakarana 0.1.1` (0.1.0 verified through rc1–rc3; 0.1.1 adds the V8 close at exit that Python 3.13 on Linux needed — CI's 3.13 job went from a 20-minute hang after `48 passed` to 33 s), the wheel built by
 `python -m build --wheel vyakarana` (pure `py3-none-any`, ~0.2 MB, all four
 `static/` files inside — `widget.js`, `engine.js`, `widget.css`,
 `engine-manifest.json`).

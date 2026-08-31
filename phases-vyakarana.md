@@ -45,7 +45,7 @@ Updated in the same commit as the work it describes. ✅ done and pushed · 🔨
 | V2 The Python core | `vyakarana` 0.0.1, unreleased | ✅ | 2026-08-24 · 21 pytest tests, headless; trace schema generated in the bridge build |
 | V3 The rest of the surface | `vyakarana` 0.0.2, unreleased | ✅ | 2026-08-24 · 48 tests; the parity test covers all 227 engine exports |
 | V4 Packaging and the four environments | `vyakarana` 0.1.0rc1–rc3 | ✅ | 2026-08-31 · Colab verified by the author (rc1 found the widget too large; rc3 confirmed right); CI green on both platforms |
-| V5 Release | **`vyakarana` 0.1** | ✅ | 2026-08-31 · [on PyPI](https://pypi.org/project/vyakarana/0.1.0/) from tag `v0.1.0` via trusted publishing; GitHub release with wheel + sdist; `pip install vyakarana==0.1.0` verified from a clean venv |
+| V5 Release | **`vyakarana` 0.1** | ✅ | 2026-08-31 · [on PyPI](https://pypi.org/project/vyakarana/) from tag `v0.1.0` via trusted publishing; GitHub release with wheel + sdist; `pip install` verified from a clean venv. **0.1.1** the same day: the runtime closes the embedded V8 at interpreter exit — on Python 3.13 / Linux the process otherwise ran on for 20+ minutes after the last test passed |
 
 ---
 
