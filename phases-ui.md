@@ -1,6 +1,6 @@
 # Build Phases — UI Overhaul and the Classroom Board
 
-> **Status: U1–U3 closed 2026-08-31; U4 (the board) next.** The design is `Tape-n-Trace UIoverhaul/Tape-n-Trace.dc.html`
+> **Status: U1–U4 closed 2026-08-31; U5 (the sweep) next.** The design is `Tape-n-Trace UIoverhaul/Tape-n-Trace.dc.html`
 > (nine artboards, one component system, two themes) plus the board-mode feature phases.md §5 records.
 > This tracker exists so the design lands artboard by artboard, each one checked against its source
 > before the next begins — not as one sweep that gets the palette right and the details wrong.
@@ -34,7 +34,7 @@ Companion documents: [phases.md](phases.md) §5 (board mode) · [architecture.md
 | U1 Foundation | 00 System, 06 Dark | tokens, fonts, primitives, top bar + module panel, Home catalog | ✅ | 2026-08-31 · screenshots of Home in both themes checked against artboards 01 and 06 |
 | U2 Simulator pattern | 02 Simulator, 02b Mobile, 06 Dark | diagram hero, tape card, transport bar, narration / ID / verdict / docs column; TM page first, then FA and PDA | ✅ | 2026-08-31 · TM checked in both themes and at 390 px; FA and PDA in light |
 | U3 Conversion, Practice, Pumping | 03, 04, 05 | source/target cards + subset table; exercise + counterexample panel; adversary round + written proof | ✅ | 2026-08-31 · all three checked by screenshot in light |
-| U4 Classroom board | 07 Board mode | `/board`: ink → states and arcs, chip labels, live δ, simulate panel | ⬜ | phases.md §5 |
+| U4 Classroom board | 07 Board mode | `/board`: ink → states and arcs, chip labels, live δ, simulate panel | ✅ | 2026-08-31 · 10 tests; `?demo` opens a worked example; screenshot checked against artboard 07 |
 | U5 Sweep | all | every remaining route on the system; inline-style count down; a11y pass; screenshots beside artboards | ⬜ | |
 
 ---
@@ -107,15 +107,24 @@ Companion documents: [phases.md](phases.md) §5 (board mode) · [architecture.md
 
 ### U4 — The classroom board · artboard 07 · phases.md §5
 
-- [ ] Freehand strokes on the dark dotted board: a closed stroke becomes a state, a stroke between two
+- [x] Freehand strokes on the dark dotted board: a closed stroke becomes a state, a stroke between two
       states an arc, a stroke from a state to itself a loop; the raw ink shows while drawing and the
       recognised shape replaces it with the "stroke → state · named qᵢ" badge.
-- [ ] Labels come from the chip picker (the alphabet plus ε), never from handwriting recognition.
-- [ ] Undo / redo, "mark accepting", the states · arcs counter pill.
-- [ ] Simulate slides the panel in: the δ table grows as the machine does; input with Try chips;
+      *(`lib/board-recognize.ts`, pure and unit-tested with synthetic strokes: loop, arc, self-loop, second
+      ring, start marker, scribble, and "nothing" with a reason. Every state is redrawn at r = 56; the last
+      stroke's ink stays faint under what it became.)*
+- [x] Labels come from the chip picker (the alphabet plus ε), never from handwriting recognition.
+      *(Each chip toggles that transition on the drawn arc; the label under the chips is the arc's current set.)*
+- [x] Undo / redo, "mark accepting", the states · arcs counter pill.
+      *(History is the editor's `useMachineHistory`; a tap on a state, or a second loop inside it, toggles accepting; the pen button switches to an eraser.)*
+- [x] Simulate slides the panel in: the δ table grows as the machine does; input with Try chips;
       ◀ Play ▶ walks the engine's trace with the current states lit on the board.
-- [ ] The machine the board builds is the engine's `FiniteAutomaton`, validated by `validateFA`, and
+      *(The panel's prompt says what is still missing — the first state, an accepting state, a validation
+      problem — and the Try chips stay disabled until `validateFA` passes.)*
+- [x] The machine the board builds is the engine's `FiniteAutomaton`, validated by `validateFA`, and
       the run is `simulate` — no board-side automata logic.
+      *(Built with `addState` / `addTransition` / `toggleAccepting` / `setStart` / `removeState`; the
+      component test draws a machine and checks the engine's own verdict comes back.)*
 
 ### U5 — Sweep
 

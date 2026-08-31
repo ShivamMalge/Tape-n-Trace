@@ -780,7 +780,9 @@ extract-the-parse-tree-from-the-table link is genuinely well worth showing.
 - **Classroom layer**: per-topic progress, lecturer dashboard, per-exercise failure clustering
   ("18 of 40 students' DFAs fail on strings ending in 01" — a genuinely new teaching signal that falls
   out of witness strings for free).
-- **Board mode — freehand machine sketching** (idea recorded 2026-08-24). A fullscreen stylus/touch
+- **Board mode — freehand machine sketching** (idea recorded 2026-08-24; **built 2026-08-31 as `/board`**,
+  phases-ui.md U4 — the recogniser is `apps/web/lib/board-recognize.ts`, the screen is design artboard 07).
+  As planned: a fullscreen stylus/touch
   canvas for a lecturer: ink strokes are recognised live into the standard `FiniteAutomaton` — a closed
   roundish stroke becomes a state (a circle inside a circle, accepting), a stroke between two states an
   edge, a stroke returning to its origin a self-loop — and the existing renderer redraws them clean, so

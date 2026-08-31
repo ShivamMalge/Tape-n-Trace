@@ -45,6 +45,17 @@ export const CATALOG: Tool[] = [
     verb: 'simulate',
   },
   {
+    id: 'board',
+    title: 'Classroom board',
+    summary:
+      'Draw states and arcs freehand on a dark board; each stroke is recognised and redrawn, and the machine it makes runs from the same screen.',
+    href: '/board',
+    status: 'live',
+    phase: 'U4',
+    modules: [1],
+    verb: 'simulate',
+  },
+  {
     id: 'strings-and-languages',
     title: 'Strings and languages',
     summary: 'Alphabets, powers, Σ*, length and concatenation, with every string of length ≤ k listed.',
@@ -340,6 +351,7 @@ export const NAV: NavGroup[] = [
     links: [
       { href: '/simulate', label: 'Simulate' },
       { href: '/edit', label: 'Draw' },
+      { href: '/board', label: 'Classroom board' },
       { href: '/search', label: 'Text search' },
       { href: '/learn/strings', label: 'Strings & languages' },
     ],
