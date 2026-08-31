@@ -1,263 +1,185 @@
-# Tape-n-Trace
+<p align="center">
+  <img src="apps/web/public/logo.svg" alt="Tape-n-Trace" width="140">
+</p>
 
-**An interactive Theory of Computation workbench.** Draw a machine, run it, watch it move. Convert
-between representations and watch the *construction* happen. Ask decidable questions and get answers with
-evidence — including the shortest string on which two automata disagree.
+<h1 align="center">Tape-n-Trace</h1>
 
-Published as a web app, and as **Vyakarana**, a Python package that renders the same machines inline in
-Jupyter and Colab.
+<p align="center">
+  <strong>An interactive Theory of Computation workbench.</strong><br>
+  Draw a machine, run it, and watch every step — in the language your exam expects.
+</p>
 
----
+<p align="center">
+  <a href="https://tape-n-trace.vercel.app"><strong>Open the app →</strong></a>
+  &nbsp;·&nbsp;
+  <a href="https://pypi.org/project/vyakarana/">Python package <code>vyakarana</code></a>
+  &nbsp;·&nbsp;
+  <a href="https://colab.research.google.com/github/ShivamMalge/Tape-n-Trace/blob/main/docs/colab-gate.ipynb">Try it in Colab</a>
+</p>
 
-## ⚠ What actually works today
-
-**Full syllabus coverage — v1.0.** Every module BTOCH503 examines is built, verified and on screen.
-Module 5 is now complete: the chapter 8 Turing machines, and the chapter 9 undecidability results —
-the diagonalization table with every cell computed from a real machine run, the reduction builder,
-the hierarchy of language classes, and a syllabus index whose every link CI checks.
-
-| Area | Status | Notes |
-|---|---|---|
-| Engine — trace protocol, validation, canonical naming | ✅ P0.1 | frozen shared snapshots, every violation reported |
-| Engine — FA simulation (DFA / NFA / ε-NFA) | ✅ P0.1 | branch tree for NFAs, explicit ε-closure steps |
-| Renderers — automaton, branch tree, tables, parse tree | ✅ P0.2–0.3 | pure SVG, theme-aware, screen-reader labelled |
-| Web app — simulate and draw a machine | ✅ P0.2 | 7 presets, editor, multi-run table, export |
-| Engine — Module 1–2 conversions | ✅ P0.3 | subset, ε-elimination, minimisation, state elimination, Thompson |
-| Web app — conversion steppers | ✅ P0.3 | six `/convert` routes on one shared shell |
-| Engine — closure operations and keyword search | ✅ P0.4 | Hopcroft §4.2 and §2.4 |
-| Web app — RE playground, closure lab, text search | ✅ P0.4 | four synced panels, case studies, UNIX-RE explainer |
-| Practice — exact grading, compare view, 61 exercises | ✅ P1.1 | any correct machine passes; witness + lockstep compare |
-| Pumping lemma game | ✅ P1.2 | attack and defend, CFL variant, exportable proof prose |
-| Grammars — derivations, ambiguity, left recursion | ✅ P1.3 | parse trees grow with the derivation |
-| PDA — simulator, editor, acceptance conversions, CFG→PDA, DPDA checker | ✅ P1.4 | ID log in textbook notation, branch tree for guesses |
-| CFL properties — simplification pipeline, CNF, closure lab | ✅ P1.5 | the book's safe order, the grammar diffed per stage, the intersection that fails |
-| Turing machines — simulator, editor, gallery, multitape reduction, NTM | ✅ P1.6 | IDs in §8.2.3 notation, head-fixed or tape-fixed, the 4n + 2k cost counted |
-| Undecidability — diagonalization table, reduction builder | ✅ P1.7 | every cell a real machine run under a stated budget; the wrong-direction reduction refused |
-| Hierarchy map and syllabus index | ✅ P1.7 | six nested rings, two schemes, and a CI test that walks every topic to its page |
-| Vyakarana (Python package) | ✅ P1.8 | `pip install vyakarana` — DFA/NFA/ε-NFA, RE, CFG, PDA, TM and the gallery from a notebook cell; the engine runs in embedded V8, so Colab needs no Node |
-
-P0.3’s exit gate is the **grand round-trip**: 200 random NFAs pushed through
-`subset → minimise → state elimination → Thompson → ε-elimination → subset → minimise`, with the DFA that
-comes out required to accept exactly the language that went in. It is green.
-
-**956 tests**: 715 engine (97.0% line coverage, CI-gated at 90%), 46 renderer, 195 web app.
-
-Two of those hold v1.0's own promises. A CI test reads the app's routes off the filesystem and walks
-every topic in the syllabus, failing on any that points at a page that does not exist — so no link on
-`/syllabus` can rot. Another reads `app/layout.tsx` and fails if a navigation link is hard-coded
-there, which is what keeps "adding a tool means editing `catalog.ts` and `topics.ts`" true rather than
-merely intended.
-
-Every citation the engine emits has been checked against a printed copy of Hopcroft 2e rather than
-written from memory — the audit, including six corrections and four deliberate divergences, is in
-[docs/citations.md](docs/citations.md).
-
-*This table is updated in the same commit as the feature it describes. A capability is never claimed here
-before it is real — a rule this project inherits from a sibling whose docs advertised animations nothing
-imported and a QuickSort that did not sort.*
+<p align="center">
+  <a href="https://github.com/ShivamMalge/Tape-n-Trace/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/ShivamMalge/Tape-n-Trace/actions/workflows/ci.yml/badge.svg"></a>
+  <a href="https://pypi.org/project/vyakarana/"><img alt="PyPI" src="https://img.shields.io/pypi/v/vyakarana?label=vyakarana&color=3B63C4"></a>
+  <img alt="Python 3.10+" src="https://img.shields.io/badge/python-3.10%2B-3B63C4">
+  <img alt="MIT" src="https://img.shields.io/badge/licence-MIT-211E1A">
+</p>
 
 ---
 
-## The idea
+Tape-n-Trace covers a full university course in the theory of computation — finite automata, regular
+expressions, grammars, pushdown automata, Turing machines and undecidability — as **twenty-seven
+instruments** that all work the same way. Every tool runs its algorithm step by step and writes down
+what it did: one sentence of textbook language per step, the diagram updated, the working shown.
+Nothing here hides its working, and nothing here reports more than it knows.
 
-Theory of Computation is the subject where a visualiser has the highest teaching leverage and the worst
-existing tooling. Three reasons:
+It follows *Hopcroft, Motwani & Ullman, Introduction to Automata Theory, Languages, and Computation*
+(2nd edition), and every step cites the section it comes from.
 
-**The objects are already diagrams.** A DFA *is* a labelled graph. A parse tree *is* a tree. A Turing
-machine *is* a tape and a head. Students are asked to reason about pictures, examined on pictures, and
-taught with static pictures on a blackboard that cannot move.
+## Using the site
 
-**The hard part is the transformation, not the object.** Nobody fails this subject because they cannot
-draw a DFA. They fail because subset construction, state elimination, and CNF conversion are multi-step
-mechanical procedures whose intermediate artifacts a textbook prints only as a final answer.
+Open **[tape-n-trace.vercel.app](https://tape-n-trace.vercel.app)**. The top bar is the course's five
+modules; press one and a strip opens with that module's tools. Every tool page has the same shape, so
+once you have used one you have used them all:
 
-**Correctness is decidable, so feedback can be exact.** Language equivalence for regular languages is
-decidable. The app can tell a student *"your DFA is wrong, and the shortest string it disagrees with the
-answer on is `0110`"*. No data-structures visualiser can do that, and it is what turns this from a demo
-into something a department can assign homework on.
+| On the page | What it does |
+|---|---|
+| **Try chips** | One press loads a textbook example — `0011`, `aabb`, `(0+1)*01` — and runs it. |
+| **The diagram** | The machine, with the current state ringed in blue and the transition just taken lit. |
+| **The transport** | ◀ Play ▶, a scrub bar, and a speed slider. Step through at your own pace, or press Play and watch. Arrow keys work too. |
+| **Narration** | One sentence per step, in exam language, with the Hopcroft section beside it. |
+| **The ID sequence** | The run written the way an answer sheet wants it — `q₀0011 ⊢ Xq₁011 ⊢ …` — with a Copy button. |
+| **The verdict** | Green **Accepted**, red **Rejected**, or amber **Stopped** when a machine ran past its step budget. Three states, never two: a run that was cut short is never reported as a rejection. |
+| **Docs cards** | Why the construction works, folded away until you want it, each with its citation. |
 
----
+There is a light and a dark theme (the switch is at the top right), and every page works on a phone.
 
-## Three verbs
+## What's inside
 
-Everything in the product is one of exactly three things. This taxonomy is what keeps the codebase from
-sprawling into forty unrelated pages.
+### Module 1 · Automata
+- **DFA / NFA simulator** — seven textbook machines. Nondeterminism is drawn as a **tree, not a path**: every live branch at once, dead branches greyed at the step they died, the accepting branch lit at the end.
+- **Draw a machine** — click to add states, drag to connect them, and see every problem with the machine listed as you work rather than one at a time.
+- **Classroom board** — for the lecture theatre. Draw with a pen or a finger on a dark board: a loop becomes a state, a stroke between two states an arc, a loop inside a state makes it accepting. Pick each arc's symbols from the chips, then press **Simulate** and the transition table slides in with the run. Nothing is guessed from handwriting.
+- **Text search** — keywords to a guessing NFA to a recognising DFA, scanning real text with overlapping matches, both machines side by side so the cost of guessing is visible.
+- **Strings and languages** — Σ*, powers, ε, and every string up to a length you choose.
 
-**SIMULATE** — run a machine on an input and produce the sequence of configurations. Nondeterminism is
-rendered as a **tree, not a path**: every live branch at once, dead branches greyed at the step they died,
-the accepting path highlighted at the end.
+### Module 2 · Equivalence & conversion
+- **NFA → DFA** — the subset construction, the table filling row by row and the new state appearing as a set.
+- **ε-NFA → NFA**, **minimise a DFA** (table filling with the distinguishable pairs marked as they are found), **DFA → regular expression** (state elimination) and **regular expression → ε-NFA** (Thompson), all on one stepper.
+- **Regular expression playground** — four views of one expression kept in step: the parse tree, the Thompson ε-NFA, the minimal DFA and the strings it accepts.
+- **Closure lab** — union, intersection, difference, complement, reversal and homomorphisms, each built as a construction rather than stated as a fact.
 
-**TRANSFORM** — convert one representation into another, animated as the sequence of intermediate
-artifacts a student would write on paper. The subset table fills row by row. States are eliminated one at
-a time. ε-productions are struck out in sequence.
+### Module 3 · Properties & proofs
+- **The pumping lemma game** — the lemma as the two-player game it really is. You choose the string, the engine plays the hardest decomposition, you pump. Win the round and the proof writes itself, ready to copy. A defend mode shows why the lemma cannot prove a language regular; a CFL variant pumps `v` and `y` together.
+- **Practice** — the department's question bank, sixty-one exercises graded **exactly**: any correct machine passes, and a wrong one is answered with the shortest string it gets wrong, both machines run on it side by side. Prose questions say "marked by hand" rather than pretending.
+- **The hierarchy of language classes** — the whole course on one picture, each ring opening onto its machine, grammar, closure properties and pumping lemma.
 
-```
-RE ──Thompson──▶ ε-NFA ──ε-elimination──▶ NFA ──subset──▶ DFA ──table-filling──▶ min-DFA
- ▲                                                         │
- └──────────────── state elimination ─────────────────────┘
+### Module 4 · Grammars & pushdown automata
+- **Grammars** — type a grammar, derive a string, and watch the parse tree grow with the derivation; the ambiguity detector shows two trees for one string when it finds them, and says how far it looked when it does not.
+- **PDA simulator and editor** — the instantaneous description `(q, w, γ)` as three synced panels, the branch tree for every guess, the ID sequence written out; a determinism check that names the overlapping pairs.
+- **Acceptance conversions** — final state ↔ empty stack, and **grammar → PDA** (the one-state construction), each run on real inputs afterwards.
+- **Simplification and CNF** — ε-productions, unit productions, useless symbols, then Chomsky normal form, in the one order that is safe, the grammar diffed at every stage.
+- **CFL closure lab** — union, concatenation, star, reversal, substitution, and the intersection that fails.
 
-Regular grammar ⇄ NFA          CFG ──ε-prod──▶ ──unit-prod──▶ ──useless──▶ CNF
-CFG ──▶ PDA                    PDA(final state) ⇄ PDA(empty stack)
-CFG ──left-recursion──▶ CFG    multitape TM ──▶ single-tape TM
+### Module 5 · Turing machines & undecidability
+- **Turing machine simulator** — the chapter's machines on a tape that scrolls under a fixed head or a head that walks a fixed tape, the ID sequence in §8.2.3's notation. A machine that does not halt is stopped at a stated budget and **says so** — never reported as rejecting.
+- **Build a Turing machine** — type δ one move per line; the diagram, the checks and the run follow.
+- **Many tapes to one** — Theorem 8.9 animated, the 4n + 2k cost of Theorem 8.10 counted live.
+- **Undecidability** — the diagonalization table with every cell a real machine run under a step budget, the reduction builder that refuses a reduction pointed the wrong way, and where each language lives.
+
+## In a notebook: `vyakarana`
+
+The same engine, from Python, drawing in the cell.
+
+```bash
+pip install vyakarana
 ```
 
-**DECIDE** — answer a question about a language, and show the evidence. Is `w ∈ L(M)`? Is `L(A) = L(B)`,
-and if not, what is the shortest string that separates them? Are states `p` and `q` equivalent?
+```python
+from vyakarana import DFA, NFA, CFG, gallery
 
----
+d = DFA(states={"a", "b"}, alphabet={"0", "1"},
+        transitions={("a", "0"): "b", ("a", "1"): "a", ("b", "0"): "a", ("b", "1"): "b"},
+        start="a", accepting={"b"})
+d.accepts("011")            # True — an odd number of 0s
+d.run("011")                # the run, step by step, with transport controls
 
-## Everything returns a trace
+NFA(...).to_dfa()           # the subset construction, animated
+CFG.from_text("S -> a S b | a b").derive("aabb")
+gallery.zeros_ones.run("0011").id_log()   # 'q₀0011 ⊢ Xq₁011 ⊢ … ⊢ XXYYBq₄B'
+```
 
-The single most important rule in the codebase: **a function that returns only an answer is incomplete,
-even when the answer is correct.** Every simulation, conversion and decision procedure returns a `Trace` —
-an ordered, serialisable list of steps, each carrying one sentence of exam-language narration, a set of
-semantic highlights, and the full artifact state.
+Works in Colab, JupyterLab, Jupyter Notebook, VS Code and under `nbconvert`, with no Node and no
+extension: the TypeScript engine runs inside Python in an embedded V8, so every call returns
+synchronously. Python never reimplements an algorithm — it builds the object, the engine computes, a
+trace comes back and the web app's own renderers draw it. The API is documented in
+[vyakarana/docs/documentation.md](vyakarana/docs/documentation.md).
 
-The UI is a pure function of `(trace, stepIndex)`. Nothing else. That one constraint buys, for free and
-forever: transport controls written once and reused everywhere; replay from a JSON file with no engine on
-the client; predict-the-next-step quizzes generated from any algorithm; grading by diffing a student's
-trace against a reference and reporting the first divergent step; and the Python notebook path, where
-Python ships a machine and React renders the trace that comes back.
+## How it works
 
-See [architecture.md](architecture.md) §5 for the protocol.
+**Everything returns a trace.** Every simulation, conversion and decision procedure returns an ordered,
+serialisable list of steps — each with one sentence of narration, a set of highlights, and the full state
+of the artifact being built. The screen is a pure function of `(trace, stepIndex)`. That single rule is
+what makes the transport controls work identically everywhere, lets a notebook replay a trace with no
+engine on the client, and lets the grader compare a student's trace against a reference step by step.
 
----
+**The engine is one TypeScript package with no UI in it** — ~715 tests, 97% line coverage, and a
+round-trip property test that pushes random NFAs through every conversion and back and requires the same
+language to come out. The renderers are pure SVG. The web app and the notebook widget share both.
 
-## Repository layout
+**It does not overclaim.** A bounded search reports its bound (*"no counterexample up to length 10"*), a
+capped run reports the cap, and no document in this repository describes a feature that does not exist.
+
+The design is written up in [architecture.md](architecture.md); the citations were checked against a
+printed copy of the textbook, and the audit is in [docs/citations.md](docs/citations.md).
+
+## Run it locally
+
+```bash
+pnpm install
+pnpm --filter @tape-n-trace/web dev      # http://localhost:3000
+pnpm test                                 # engine, renderers, web app
+```
+
+For the Python package from a checkout: `pnpm -F @tape-n-trace/bridge build` then
+`pip install -e ./vyakarana` (tests: `pytest vyakarana/tests`).
 
 ```
-packages/engine     THE CORE. Pure TypeScript. Zero React, zero DOM. ≥90% coverage, CI-gated.
-packages/ui         Pure renderers. Props in, SVG out. Never calls the engine.
-packages/cli        [P2] grading pipelines
-apps/web            Next.js 15. Routes, controllers, docs panels.
-bridge/             anywidget React entry, bundled by tsup
+packages/engine     the algorithms and the trace protocol — TypeScript, no React, no DOM
+packages/ui         the renderers — props in, SVG out
+apps/web            the Next.js site
+bridge/             the notebook widget (anywidget), bundled into the Python package
 vyakarana/          the Python package
-docs/adr/           architecture decision records
+docs/               citations audit, environment record, the Colab gate, brand
 ```
-
-Full tree and rationale in [architecture.md](architecture.md) §3.
-
----
 
 ## Documentation
 
 | Document | What it covers |
 |---|---|
-| [architecture.md](architecture.md) | Boundaries, the trace protocol, core types, ADRs, prohibitions |
-| [phases.md](phases.md) | Build order, per-phase acceptance criteria, schedule, open decisions |
-| [phases-vyakarana.md](phases-vyakarana.md) | The Python package's own plan — V0–V5, and why it needed one |
-| [vyakarana/docs/documentation.md](vyakarana/docs/documentation.md) | The Vyakarana Python API — released as 0.1 |
+| [architecture.md](architecture.md) | Boundaries, the trace protocol, core types, decisions, prohibitions |
+| [vyakarana/docs/documentation.md](vyakarana/docs/documentation.md) | The Python API |
 | [docs/citations.md](docs/citations.md) | Every Hopcroft 2e citation, verified against the printed edition |
-| `prd (2).md` | The original product requirements document |
+| [docs/environments.md](docs/environments.md) | Where the notebook widget has been verified, and how to release |
+| [phases.md](phases.md) · [phases-vyakarana.md](phases-vyakarana.md) · [phases-ui.md](phases-ui.md) | How it was built, phase by phase, with each gate's evidence |
 
----
+## The course
 
-## Syllabus
-
-The default scheme is **BTOCH503 — Theory of Computation**, Atria Institute of Technology (autonomous),
-semester V, 3 credits, AY 2026–27. Reference text: **Hopcroft, Motwani & Ullman, 2nd edition**.
-
-| Module | Hours | Sections | CO | Covered by |
-|---|---|---|---|---|
-| 1 | 8 | 1.1, 1.5, 2.2–2.5 | CO1 | FA simulator, ε-closure, subset construction, text search |
-| 2 | 8 | 3.1, 3.2 (except 3.2.1), 3.3, 4.1, 4.2, 4.4 | CO2 | RE playground, state elimination, closure lab, minimization, pumping game |
-| 3 | 8 | 5.1, 5.2, 5.4, 6.1, 6.2, 6.3.1, 6.4 | CO3 | Grammar editor, derivations, parse trees, ambiguity, PDA simulator, CFG→PDA |
-| 4 | 8 | 7.1, 7.2, 7.3 | CO4 | Simplification pipeline, CNF, CFL pumping game, CFL closure lab |
-| 5 | 8 | 8.1–8.4, 9.1, 9.2 | CO5 | TM simulator, gallery, multitape, diagonalization table, reduction builder, hierarchy map |
-
-**VTU 2022 BCS503 ships as a second scheme** — its section list is identical and shared rather than
-copied, so it costs almost nothing and serves every non-autonomous VTU college. It ships with its
-outcome list *empty*: VTU's course outcomes differ from BTOCH503's and no VTU document here has been
-read to establish their wording, and since every exercise carries a CO tag, five invented outcomes
-would mislabel the whole question bank. The page prints that reason where the outcomes would be.
-
-The syllabus is **data, not code** — one scheme-independent topic graph, one config file per institution.
-Adding a university is a file in `apps/web/lib/schemes/`, not a code change.
-
-**Why this tool, for this course specifically.** The course allocates **42 lecture hours, zero tutorial
-hours, and 56 self-study hours**. More than half of a student's time with the subject is unsupervised and
-unsupported. That is the gap the trace protocol exists to fill: someone working alone needs to see *why*
-a step happened, not just that it did.
-
-The department's own gap analysis names four problem areas, and they map onto the roadmap one to one:
-difficulty visualising FA/RE conversions; difficulty constructing CFGs, parse trees and PDAs; weak grasp
-of language classification and the pumping lemma; and limited practical exposure to Turing machines. Six
-of the seven prescribed tutorial components — lexical analyser, pattern matching, balanced-parentheses
-PDA, CFG syntax validation, TM string processing, and language classification — are existing planned
-features.
-
-**Deliberately out of scope for v1.0**, because the published syllabus excludes them: PDA→CFG (6.3.2),
-CYK and CFL decision properties (7.4), the R⁽ᵏ⁾ᵢⱼ construction (3.2.1), decision properties of regular
-languages (4.3), and the formal-proof sections (1.2, 1.4). Each is recorded in [phases.md](phases.md) §2.3
-with the reason it was cut, and each is scheduled after v1.0. They are deliberately *not* in the topic
-graph: it carries only what a scheme places, so a test can require every topic to resolve to a page that
-exists, and nothing unbuilt can appear on `/syllabus`. Post's Correspondence Problem and P/NP are absent
-from the scheme entirely.
-
----
-
-## Roadmap
-
-| Ships | Contents |
-|---|---|
-| **v0.1** | A usable DFA/NFA simulator — editor, branch trees, transport controls, multi-run table |
-| v0.2 | All Module 1–2 conversions, minimization, the grand round-trip property test |
-| **v0.3** | RE playground with four synced panels, closure lab, text search — Modules 1–2 complete |
-| **v0.4** | Equivalence checker, lockstep compare view, 60 auto-graded exercises |
-| v0.5 | The pumping lemma game, both variants |
-| v0.6 | Grammar editor, derivations, parse trees, ambiguity detector, left recursion elimination |
-| **v0.7** | PDA editor, ID simulator, acceptance conversions, CFG→PDA — Module 3 complete |
-| **v0.8** | Simplification pipeline, CNF, CFL closure lab — Module 4 complete |
-| v0.9 | TM editor, simulator, gallery, multitape, programming techniques |
-| **v1.0** | Diagonalization table, reduction builder, hierarchy map, syllabus index — **full syllabus coverage** |
-| `vyakarana` 0.1 | The Python package, verified in Colab |
-| v1.x | Enrichment topics, JFLAP import, browser IDE, classroom layer |
-
-Roughly 16 weeks to v1.0 for one developer working with a coding agent. The estimate is optimistic, which
-is why phases ship independently — v0.1 is useful standing alone. Prefer shipping Modules 1–2 excellently
-over five modules shakily.
-
-Detail and acceptance criteria in [phases.md](phases.md).
-
----
-
-## Contributing
-
-Read [architecture.md](architecture.md) before writing code. These rules are enforced by lint and CI, and
-violating them is a defect regardless of whether tests pass:
-
-- The engine imports no React, no Next, and never touches the DOM.
-- Every algorithm returns a trace, not just a result.
-- Styling goes in `packages/ui`'s token and primitive layers, and every selector there starts with a
-  `.tnt-` class — those files are injected into a host notebook by the widget, so a bare element
-  selector would repaint somebody's Jupyter cell. Page chrome lives in the app's `globals.css`.
-  Inline `style` is for what genuinely varies per step or per verdict; see architecture.md §10.3.
-- No component exceeds ~300 lines, and no component both computes and renders.
-- State naming in conversions is canonical and deterministic — same input, byte-identical output.
-- No documentation claims a capability the code lacks, including the table at the top of this file.
-- Nothing asserts that a language "is regular" or a grammar "is unambiguous" from a bounded search.
-  Bounded results are always reported as bounded: *"no counterexample found up to length 12."*
-- No algorithm is reimplemented in Python. The engine is TypeScript, once.
-- No server-side arbitrary-code execution endpoint. Ever.
-
----
+Built for **BTOCH503 — Theory of Computation** (Atria Institute of Technology, semester V), with VTU's
+**BCS503** as a second scheme; the syllabus is data, so another university is a config file, not a code
+change. The course gives students 42 lecture hours and 56 hours alone with the subject — the tool is for
+the 56.
 
 ## Prior art
 
-[JFLAP](https://www.jflap.org/) is the canonical academic tool and has been since the late 1990s — Java
-desktop, comprehensive, and the source of the de-facto `.jff` interchange format, which this project
-imports. [Automata Tutor v3](https://arxiv.org/abs/2005.01419) demonstrated that automated grading and
-feedback for automata exercises genuinely helps students. [Automatarium](https://github.com/automatarium/automatarium)
-is the closest modern web editor in spirit.
+[JFLAP](https://www.jflap.org/) is the canonical academic tool; [Automata Tutor](https://arxiv.org/abs/2005.01419)
+showed that exact feedback on automata exercises helps students; [Automatarium](https://github.com/automatarium/automatarium)
+is the closest modern editor. Tape-n-Trace's addition is that simulation, conversion *and* decision are
+all traceable step by step, every trace is data that can be replayed and graded, and the same engine runs
+in a notebook.
 
-The gap: a workbench where simulation, transformation *and* decision procedures are all traceable step by
-step; where every trace is data that can be replayed, quizzed and graded; and where the same engine runs
-inside a Jupyter notebook. Nothing above does all four.
+Sibling project: [Stack-n-Flow](https://github.com/ShivamMalge/Stack-n-Flow), the same architecture for
+data structures and algorithms.
 
----
+## Licence
 
-## Related
-
-Sibling project: [Stack-n-Flow / Pratyaksha](https://github.com/ShivamMalge/Stack-n-Flow) — the same
-architecture applied to data structures and algorithms. The engine-first monorepo layout, the
-renderer/controller/docs triad, and the scoped Tailwind widget build are all lessons learned there first.
+MIT.

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 278 224" width="278" height="224" role="img" aria-label="Tape-n-Trace">
+  <!--
+    The mark: a fragment of Turing-machine tape — three equal cells, the middle
+    one under the head and lit — and the trace the head leaves behind, an L that
+    drops from the read cell and runs back along the baseline.
+    Ink #211E1A, the lit cell in the design system's `current` blue. The ink is
+    `currentColor`, so the mark can be set in any one colour; the cell keeps its blue.
+  -->
+  <g fill="none" stroke="currentColor" color="#211E1A" stroke-width="14" stroke-linejoin="miter" stroke-linecap="butt">
+    <rect x="7" y="7" width="264" height="136" />
+    <line x1="95" y1="7" x2="95" y2="143" />
+    <line x1="183" y1="7" x2="183" y2="143" />
+    <polyline points="143,143 143,210 7,210" />
+  </g>
+  <rect x="102" y="14" width="74" height="122" fill="#3B63C4" />
+</svg>
