@@ -312,14 +312,14 @@ trace contract pinned down on both sides of the boundary.
       correction, per rule 2: the fallback is not a "static image" — anywidget embeds the widget MIME
       and state (live in an HTML export) plus a `text/plain` repr; the criterion is amended to what the
       toolchain actually does.)*
-- [ ] Installing into a virtualenv with no compiler succeeds on Linux and Windows.
-      *(Windows evidenced 2026-08-30 — fresh venv, wheel only, 48 tests against site-packages.
-      Linux is the ubuntu-latest leg of the CI `vyakarana` job; ticked when it is green on main.)*
-- [ ] CI fails when `static/` is stale.
+- [x] Installing into a virtualenv with no compiler succeeds on Linux and Windows.
+      *(Windows evidenced 2026-08-30 — fresh venv, wheel only, 48 tests against site-packages. Linux and
+      Windows in CI on py3.10 and py3.12: green on every push to main since `dbfe54f`, e.g. run 33355659897.)*
+- [x] CI fails when `static/` is stale.
       *(Wired 2026-08-30: the `vyakarana` CI job builds the bridge, then runs `check-fresh` — which
       exits non-zero on missing or out-of-date static/ — before the wheel is built or tested; the
       jupyter-builder hook additionally rebuilds static/ from scratch when absent, demonstrated by
-      deleting it. Ticked when the job is green on main.)*
+      deleting it. Green on main since `dbfe54f`.)*
 
 > **On the Colab gate.** It cannot be automated from this repository, and pretending otherwise would be
 > the exact failure this project's documentation rules exist to prevent. It is evidenced by a notebook
