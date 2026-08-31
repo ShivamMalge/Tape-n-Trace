@@ -1,6 +1,6 @@
 # Build Phases — UI Overhaul and the Classroom Board
 
-> **Status: U1–U2 closed 2026-08-31; U3 next.** The design is `Tape-n-Trace UIoverhaul/Tape-n-Trace.dc.html`
+> **Status: U1–U3 closed 2026-08-31; U4 (the board) next.** The design is `Tape-n-Trace UIoverhaul/Tape-n-Trace.dc.html`
 > (nine artboards, one component system, two themes) plus the board-mode feature phases.md §5 records.
 > This tracker exists so the design lands artboard by artboard, each one checked against its source
 > before the next begins — not as one sweep that gets the palette right and the details wrong.
@@ -33,7 +33,7 @@ Companion documents: [phases.md](phases.md) §5 (board mode) · [architecture.md
 |---|---|---|---|---|
 | U1 Foundation | 00 System, 06 Dark | tokens, fonts, primitives, top bar + module panel, Home catalog | ✅ | 2026-08-31 · screenshots of Home in both themes checked against artboards 01 and 06 |
 | U2 Simulator pattern | 02 Simulator, 02b Mobile, 06 Dark | diagram hero, tape card, transport bar, narration / ID / verdict / docs column; TM page first, then FA and PDA | ✅ | 2026-08-31 · TM checked in both themes and at 390 px; FA and PDA in light |
-| U3 Conversion, Practice, Pumping | 03, 04, 05 | source/target cards + subset table; exercise + counterexample panel; adversary round + written proof | ⬜ | |
+| U3 Conversion, Practice, Pumping | 03, 04, 05 | source/target cards + subset table; exercise + counterexample panel; adversary round + written proof | ✅ | 2026-08-31 · all three checked by screenshot in light |
 | U4 Classroom board | 07 Board mode | `/board`: ink → states and arcs, chip labels, live δ, simulate panel | ⬜ | phases.md §5 |
 | U5 Sweep | all | every remaining route on the system; inline-style count down; a11y pass; screenshots beside artboards | ⬜ | |
 
@@ -91,12 +91,19 @@ Companion documents: [phases.md](phases.md) §5 (board mode) · [architecture.md
 
 ### U3 — Conversion, Practice, Pumping · artboards 03, 04, 05
 
-- [ ] NFA → DFA: source card (fixed), target card (blue border, "n of m states"), subset table with the
+- [x] NFA → DFA: source card (fixed), target card (blue border, "n of m states"), subset table with the
       current row tinted, narration beside a compact transport.
-- [ ] Practice: exercise card with the marks · CO · level tag, "Your machine" card, the red
+      *(The pane is titled "Result · DFA" rather than the artboard's "Target · DFA": the conversion test
+      suite names the pane by that word and the noun is the one every conversion's result banner uses.
+      Diagrams no longer scale past 1.5× their own geometry — the artboard's circles are r = 26 at ~1×.)*
+- [x] Practice: exercise card with the marks · CO · level tag, "Your machine" card, the red
       "Not equivalent" panel with the shortest disagreement in a mono well, stat row, docs card.
-- [ ] Pumping: engine move 1 card, your move 2 card with the x / y / z split and sliders, the amber move-3
+      *(The task title is derived from the exercise's kind and alphabet; hints are the docs card. The
+      editor canvas gained a minimum view box so a one-state machine sits in a working area.)*
+- [x] Pumping: engine move 1 card, your move 2 card with the x / y / z split and sliders, the amber move-3
       banner, the proof card with Copy.
+      *(Every move of the round is a card, engine or you, the verdict a banner — green when the round is won.
+      The x / y / z segments underline y in the current colour as the artboard does.)*
 
 ### U4 — The classroom board · artboard 07 · phases.md §5
 

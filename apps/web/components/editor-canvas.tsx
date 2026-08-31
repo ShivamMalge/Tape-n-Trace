@@ -142,6 +142,7 @@ export function EditorCanvas({
         machine={machine}
         svgRef={svgRef}
         instanceId="edit"
+        minView={{ width: 720, height: 400 }}
         selectedState={selected}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}

@@ -824,6 +824,8 @@ a.tnt-card:hover {
 .tnt-transport-compact { padding: 0; border: none; background: transparent; gap: var(--tnt-space-2); flex-direction: column; align-items: stretch; }
 .tnt-transport-compact .tnt-transport-buttons > .tnt-btn-icon { min-width: 34px; height: 34px; }
 .tnt-transport-compact .tnt-transport-play { flex: 1; height: 34px; min-width: 0; font-size: var(--tnt-text-sm); }
+/* In the compact column a flex-basis would become a height. */
+.tnt-transport-compact .tnt-transport-scrub-wrap { flex: none; width: 100%; }
 
 /* ---------------------------------------------------------------------------
  * The tape — design artboard 02

@@ -1,12 +1,10 @@
 'use client'
 
 /**
- * Choosing w = xyz by pointing at it.
- *
- * Two boundaries on the string — the end of x and the end of y — with the
- * lemma's constraints enforced live: |xy| ≤ n keeps the second boundary inside
- * the window, |y| ≥ 1 keeps the two apart. The segments are coloured so the
- * student sees the split as the proof will describe it.
+ * Choosing w = xyz by pointing at it — design artboard 05's "You · move 2"
+ * card: the string as three underlined segments labelled x, y, z, and two
+ * sliders for |x| and |y| with the lemma's constraints enforced live — |xy| ≤ n
+ * keeps the second boundary inside the window, |y| ≥ 1 keeps the two apart.
  */
 
 import { useState } from 'react'
@@ -30,77 +28,67 @@ export function SplitPicker({ w, n, onSubmit }: SplitPickerProps): React.JSX.Ele
   const z = w.slice(clampedYEnd)
 
   return (
-    <div className="tnt-card tnt-stack">
+    <div className="tnt-stack">
       <Segments x={x} y={y} z={z} />
 
-      <label className="tnt-field">
-        <span className="tnt-meta">End of x — currently |x| = {x.length}</span>
-        <input
-          type="range"
-          min={0}
-          max={xyMax - 1}
-          value={clampedXEnd}
-          onChange={(e) => setXEnd(Number(e.target.value))}
-          aria-label="End of x"
-          style={{ accentColor: 'var(--tnt-current)' }}
-        />
-      </label>
+      <div className="tnt-stack-sm">
+        <label className="tnt-slider-row">
+          <span className="tnt-slider-name">|x|</span>
+          <input
+            type="range"
+            min={0}
+            max={xyMax - 1}
+            value={clampedXEnd}
+            onChange={(e) => setXEnd(Number(e.target.value))}
+            aria-label="End of x"
+          />
+          <span className="tnt-slider-value">{x.length}</span>
+        </label>
 
-      <label className="tnt-field">
+        <label className="tnt-slider-row">
+          <span className="tnt-slider-name">|y|</span>
+          <input
+            type="range"
+            min={clampedXEnd + 1}
+            max={xyMax}
+            value={clampedYEnd}
+            onChange={(e) => setYEnd(Number(e.target.value))}
+            aria-label="End of y"
+          />
+          <span className="tnt-slider-value">{y.length}</span>
+        </label>
         <span className="tnt-meta">
-          End of y — currently |y| = {y.length}, and |xy| = {x.length + y.length} ≤ {n}
+          |xy| = {x.length + y.length} ≤ {n}, y ≠ ε
         </span>
-        <input
-          type="range"
-          min={clampedXEnd + 1}
-          max={xyMax}
-          value={clampedYEnd}
-          onChange={(e) => setYEnd(Number(e.target.value))}
-          aria-label="End of y"
-          style={{ accentColor: 'var(--tnt-marked)' }}
-        />
-      </label>
+      </div>
 
-      <button
-        type="button"
-        className="tnt-btn tnt-btn-primary"
-        onClick={() => onSubmit({ x, y, z })}
-        style={{ justifySelf: 'start' }}
-      >
-        Play this decomposition
-      </button>
+      <div>
+        <button type="button" className="tnt-btn tnt-btn-primary" onClick={() => onSubmit({ x, y, z })}>
+          Play this decomposition
+        </button>
+      </div>
     </div>
   )
 }
 
-/** The string with its three segments coloured; used by the game panel too. */
+/** The string with its three segments underlined and labelled; the game panel uses it too. */
 export function Segments({ x, y, z }: { x: string; y: string; z: string }): React.JSX.Element {
-  const piece = (text: string, label: string, color: string, background: string): React.JSX.Element => (
+  const piece = (text: string, label: string): React.JSX.Element => (
     <span
+      className="tnt-segment"
+      data-segment={label}
       aria-label={`${label} = ${text === '' ? 'the empty string' : text}`}
-      style={{
-        display: 'inline-grid',
-        gap: 1,
-        padding: 'var(--tnt-space-1) var(--tnt-space-2)',
-        borderRadius: 'var(--tnt-radius)',
-        border: `1px solid ${color}`,
-        background,
-        minWidth: 20,
-        textAlign: 'center',
-      }}
     >
-      <code className="tnt-lg">{text === '' ? 'ε' : text}</code>
-      <span className="tnt-xs" style={{ color }}>
-        {label}
-      </span>
+      <span className="tnt-segment-text">{text === '' ? 'ε' : text}</span>
+      <span className="tnt-segment-label">{label}</span>
     </span>
   )
 
   return (
-    <div className="tnt-row tnt-row-tight">
-      {piece(x, 'x', 'var(--tnt-text-muted)', 'var(--tnt-bg)')}
-      {piece(y, 'y', 'var(--tnt-marked)', 'var(--tnt-surface)')}
-      {piece(z, 'z', 'var(--tnt-text-muted)', 'var(--tnt-bg)')}
+    <div className="tnt-segments">
+      {piece(x, 'x')}
+      {piece(y, 'y')}
+      {piece(z, 'z')}
     </div>
   )
 }

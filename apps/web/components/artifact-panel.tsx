@@ -1,7 +1,8 @@
 'use client'
 
 /**
- * The "artifact table underneath" slot of the stepper shell.
+ * The "artifact table underneath" slot of the stepper shell — design artboard
+ * 03's subset table: a white card whose header row is the mono label.
  *
  * Draws whatever `artifactOf` decided this conversion produces. Deliberately
  * dumb: every choice about *what* an artifact is was made in `lib/artifact.ts`,
@@ -22,22 +23,22 @@ export function ArtifactPanel({
   if (artifact.kind === 'none') return null
 
   return (
-    <section className="tnt-stack-sm">
-      <h2 style={{ margin: 0 }}>{title(artifact)}</h2>
-      <div className="tnt-card tnt-card-plain">
+    <section className="tnt-card tnt-artifact">
+      <div className="tnt-card-head">
+        <h2 className="tnt-label">{title(artifact)}</h2>
         {artifact.kind === 'table' ? (
-          <DataTable
-            columns={artifact.columns}
-            rows={artifact.rows}
-            step={step}
-            caption={artifact.caption}
-          />
-        ) : artifact.kind === 'triangle' ? (
-          <TriangleTable states={artifact.states} marks={artifact.marks} step={step} />
-        ) : (
-          <ParseTree nodes={artifact.nodes} step={step} />
-        )}
+          <span className="tnt-meta">
+            {artifact.rows.length} {artifact.rows.length === 1 ? 'row' : 'rows'}
+          </span>
+        ) : null}
       </div>
+      {artifact.kind === 'table' ? (
+        <DataTable columns={artifact.columns} rows={artifact.rows} step={step} caption={artifact.caption} />
+      ) : artifact.kind === 'triangle' ? (
+        <TriangleTable states={artifact.states} marks={artifact.marks} step={step} />
+      ) : (
+        <ParseTree nodes={artifact.nodes} step={step} />
+      )}
     </section>
   )
 }

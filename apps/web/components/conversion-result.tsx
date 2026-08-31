@@ -1,13 +1,12 @@
 'use client'
 
 /**
- * What the conversion produced, once it has finished.
+ * What the conversion produced, once it has finished — as the design's verdict
+ * banner (artboard 00): green for a result, amber for a run a §9 guard stopped.
  *
  * Shown only at the last step, on purpose: a result panel that fills in halfway
  * through invites reading the answer instead of the working, which is the exact
  * habit this tool exists to interrupt.
- *
- * A run stopped by a §9 guard reports as stopped, never as a finished answer.
  */
 
 import { regexToString } from '@tape-n-trace/engine'
@@ -24,23 +23,21 @@ export function ConversionResult({
 }): React.JSX.Element | null {
   if (trace.result.type === 'incomplete') {
     return (
-      <div role="status" className="tnt-note tnt-note-warn tnt-stack-sm">
-        <strong style={{ color: 'var(--tnt-marked)' }}>Stopped without finishing</strong>
-        <p style={{ margin: 0 }}>{trace.result.reason}</p>
-        {trace.meta.truncated === undefined ? null : (
-          <p className="tnt-meta" style={{ margin: 0 }}>
-            {trace.meta.truncated.reason}
-          </p>
-        )}
+      <div role="status" className="tnt-banner tnt-banner-warn">
+        <span className="tnt-banner-headline">Stopped</span>
+        <span className="tnt-banner-detail">
+          {trace.result.reason}
+          {trace.meta.truncated === undefined ? null : <> {trace.meta.truncated.reason}</>}
+        </span>
       </div>
     )
   }
 
   if (!atEnd) {
     return (
-      <p className="tnt-muted tnt-sm" style={{ margin: 0 }}>
+      <p className="tnt-prose tnt-sm tnt-muted" style={{ margin: 0 }}>
         The answer appears at the last step.{' '}
-        <button type="button" onClick={onJumpToEnd} style={linkButton}>
+        <button type="button" onClick={onJumpToEnd} className="tnt-btn-bare tnt-link">
           Skip to it
         </button>{' '}
         if you would rather read it than watch it.
@@ -52,16 +49,10 @@ export function ConversionResult({
   if (summary === null) return null
 
   return (
-    <div role="status" className="tnt-note tnt-note-good tnt-stack-sm">
-      <strong style={{ color: 'var(--tnt-accepting)' }}>{summary.headline}</strong>
-      <p className="tnt-mono" style={{ margin: 0, wordBreak: 'break-word' }}>
-        {summary.body}
-      </p>
-      {summary.note === null ? null : (
-        <p className="tnt-meta" style={{ margin: 0 }}>
-          {summary.note}
-        </p>
-      )}
+    <div role="status" className="tnt-banner tnt-banner-good">
+      <span className="tnt-banner-headline">{summary.headline}</span>
+      <span className="tnt-banner-detail tnt-mono">{summary.body}</span>
+      {summary.note === null ? null : <span className="tnt-meta">{summary.note}</span>}
     </div>
   )
 }
@@ -102,15 +93,4 @@ function describe(trace: Trace): Summary | null {
     default:
       return null
   }
-}
-
-/** A button that has to read as a link; no primitive covers that shape. */
-const linkButton: React.CSSProperties = {
-  background: 'none',
-  border: 'none',
-  padding: 0,
-  font: 'inherit',
-  color: 'var(--tnt-current)',
-  cursor: 'pointer',
-  textDecoration: 'underline',
 }

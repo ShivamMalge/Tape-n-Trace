@@ -28,18 +28,22 @@ export default async function PumpingGamePage({ params, searchParams }: PageProp
   const playVariant = variant === 'cfl' && !language.contextFree ? 'cfl' : 'regular'
 
   return (
-    <div className="tnt-page" style={{ maxWidth: 880 }}>
-      <p className="tnt-sm" style={{ margin: 0 }}>
-        <a href="/prove/pumping">← All games</a>
-      </p>
-
-      <h1 style={{ marginTop: 'var(--tnt-space-2)' }}>{language.title}</h1>
-      <p style={{ marginTop: 0 }}>
-        <code className="tnt-lg">{language.notation}</code>
-        <span className="tnt-muted tnt-sm" style={{ marginLeft: 'var(--tnt-space-3)' }}>
-          {playMode === 'defend' ? 'reverse mode — you defend' : playVariant === 'cfl' ? 'CFL variant — you attack' : 'you attack'}
-        </span>
-      </p>
+    <div className="tnt-page">
+      <div className="tnt-page-head">
+        <div>
+          <p className="tnt-meta" style={{ margin: '0 0 6px' }}>
+            <a href="/prove/pumping">← All games</a>
+          </p>
+          <h1>{language.title}</h1>
+        </div>
+        <p className="tnt-page-links">
+          {playMode === 'defend'
+            ? 'Reverse mode — you defend.'
+            : playVariant === 'cfl'
+              ? 'The CFL variant — v and y pump together.'
+              : 'The adversary game, Hopcroft 2e §4.1.'}
+        </p>
+      </div>
 
       <PumpingGame key={`${game}-${playMode}-${playVariant}`} languageId={game} mode={playMode} variant={playVariant} />
     </div>

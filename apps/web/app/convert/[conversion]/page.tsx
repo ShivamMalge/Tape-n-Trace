@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { CONVERSIONS, conversionById } from '../../../lib/conversions'
 import { ConversionWorkbench } from '../../../components/conversion-workbench'
+import { DocsCard } from '../../../components/docs-card'
 
 interface PageProps {
   params: Promise<{ conversion: string }>
@@ -26,48 +27,40 @@ export default async function ConversionPage({ params }: PageProps): Promise<Rea
 
   return (
     <div className="tnt-page">
-      <p className="tnt-sm" style={{ margin: 0 }}>
-        <a href="/convert">← All conversions</a>
-      </p>
-
-      <h1 style={{ marginTop: 'var(--tnt-space-2)' }}>{found.title}</h1>
-      <p className="tnt-prose" style={{ marginTop: 0 }}>{found.summary}</p>
+      <div className="tnt-page-head">
+        <div>
+          <p className="tnt-meta" style={{ margin: '0 0 6px' }}>
+            <a href="/convert">← All conversions</a>
+          </p>
+          <h1>{found.title}</h1>
+          <p className="tnt-prose tnt-lead">{found.summary}</p>
+        </div>
+        <p className="tnt-page-links">{found.citation}</p>
+      </div>
 
       {found.enrichment === true ? (
-        <p className="tnt-card tnt-prose tnt-sm">
-          <strong>Beyond the syllabus.</strong> This topic is not in the prescribed text and is not
-          examined on this course. It is here because it is worth knowing, not because you need it.
-        </p>
+        <div className="tnt-banner tnt-banner-info" style={{ marginBottom: 22 }}>
+          <span className="tnt-banner-headline">Beyond the syllabus</span>
+          <span className="tnt-banner-detail">
+            This topic is not in the prescribed text and is not examined on this course. It is here because it is
+            worth knowing, not because you need it.
+          </span>
+        </div>
       ) : null}
 
-      <div
-        className="tnt-stack-lg"
-        style={{
-          gridTemplateColumns: 'minmax(0, 3fr) minmax(220px, 1fr)',
-          alignItems: 'start',
-          marginTop: 'var(--tnt-space-4)',
-        }}
-      >
-        <ConversionWorkbench key={found.id} conversionId={found.id} />
-
-        <aside className="tnt-stack" style={{ alignContent: 'start' }}>
-          <section className="tnt-card">
-            <h2>How to read it</h2>
-            <ul className="tnt-sm tnt-stack-sm" style={{ margin: 0, paddingLeft: 18 }}>
+      <ConversionWorkbench
+        key={found.id}
+        conversionId={found.id}
+        docs={
+          <DocsCard title="How to read it" cite={found.citation}>
+            <ul className="tnt-docs-list">
               {found.reading.map((line) => (
                 <li key={line}>{line}</li>
               ))}
             </ul>
-          </section>
-
-          <section className="tnt-card">
-            <h2>Reference</h2>
-            <p className="tnt-muted tnt-sm" style={{ margin: 0 }}>
-              {found.citation}
-            </p>
-          </section>
-        </aside>
-      </div>
+          </DocsCard>
+        }
+      />
     </div>
   )
 }

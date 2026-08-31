@@ -9,7 +9,7 @@
  * being deferred to a conversion that never starts.
  */
 
-import { useMemo, useState } from 'react'
+import { useMemo, useState, type ReactNode } from 'react'
 import { GALLERY, isErr, parseRegex } from '@tape-n-trace/engine'
 import type { FiniteAutomaton } from '@tape-n-trace/engine'
 import { ConversionStepper } from './conversion-stepper'
@@ -25,7 +25,14 @@ import { SAMPLE_GRAMMARS, SAMPLE_REGEXES, grammarToText } from '../lib/sample-in
  * plain module code importable from either side, so the client looks the entry
  * up itself and only the id travels as a prop.
  */
-export function ConversionWorkbench({ conversionId }: { conversionId: string }): React.JSX.Element {
+export function ConversionWorkbench({
+  conversionId,
+  docs,
+}: {
+  conversionId: string
+  /** Docs cards for the foot of the page. */
+  docs?: ReactNode
+}): React.JSX.Element {
   const conversion = conversionById(conversionId)
 
   /**
@@ -74,13 +81,13 @@ export function ConversionWorkbench({ conversionId }: { conversionId: string }):
   }, [conversion?.takes, regex])
 
   const picker = (
-    <section className="tnt-card tnt-stack">
+    <section className="tnt-card tnt-stack" aria-label="Source">
       {conversion?.takes === 'machine' ? (
         <Field label="Machine">
           <select
             value={machineId}
             onChange={(e) => setMachineId(e.target.value)}
-            className="tnt-input tnt-input-mono"
+            className="tnt-select tnt-input-mono"
           >
             {machines.map((entry) => (
               <option key={entry.id} value={entry.id}>
@@ -97,7 +104,7 @@ export function ConversionWorkbench({ conversionId }: { conversionId: string }):
             <select
               value={grammarId}
               onChange={(e) => setGrammarId(e.target.value)}
-              className="tnt-input tnt-input-mono"
+              className="tnt-select tnt-input-mono"
             >
               {SAMPLE_GRAMMARS.map((g) => (
                 <option key={g.id} value={g.id}>
@@ -123,18 +130,18 @@ export function ConversionWorkbench({ conversionId }: { conversionId: string }):
               spellCheck={false}
               autoComplete="off"
               aria-invalid={parseError !== null}
-              className="tnt-input tnt-input-mono"
-              style={{ minWidth: 240 }}
+              className="tnt-input tnt-input-mono tnt-input-lg"
             />
           </Field>
 
-          <div className="tnt-row tnt-row-tight">
-            <span className="tnt-muted tnt-sm">Try:</span>
+          <div className="tnt-try">
+            <span className="tnt-input-label">Try</span>
             {SAMPLE_REGEXES.map((sample) => (
               <button
                 key={sample.id}
                 type="button"
-                className="tnt-chip tnt-mono"
+                className="tnt-chip"
+                aria-pressed={regex === sample.source}
                 onClick={() => setRegex(sample.source)}
                 title={sample.note}
               >
@@ -150,8 +157,9 @@ export function ConversionWorkbench({ conversionId }: { conversionId: string }):
           </p>
 
           {parseError === null ? null : (
-            <p role="alert" className="tnt-sm" style={{ margin: 0, color: 'var(--tnt-marked)' }}>
-              {parseError}
+            <p role="alert" className="tnt-editor-error" style={{ margin: 0, borderTop: 0, borderRadius: 4 }}>
+              <span className="tnt-editor-where">regex</span>
+              <span>{parseError}</span>
             </p>
           )}
         </>
@@ -177,6 +185,7 @@ export function ConversionWorkbench({ conversionId }: { conversionId: string }):
       input={input}
       picker={picker}
       disabled={parseError !== null}
+      docs={docs}
     />
   )
 }
@@ -186,7 +195,7 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
     // A field row that wraps: `tnt-field-row` for the pairing and the type size,
     // `tnt-row` for the wrap once the control no longer fits beside its label.
     <label className="tnt-row tnt-field-row">
-      <span className="tnt-muted" style={{ minWidth: 130 }}>
+      <span className="tnt-label tnt-picker-label" style={{ minWidth: 130 }}>
         {label}
       </span>
       {children}

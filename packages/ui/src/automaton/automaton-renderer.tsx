@@ -14,6 +14,7 @@ import type { FiniteAutomaton, Step, StateId } from '@tape-n-trace/engine'
 import { groupTransitions, MINI_NODE_RADIUS, NODE_RADIUS, startMarkerGeometry } from './geometry.js'
 import type { EdgeGroup } from './geometry.js'
 import { boundsOf, resolveLayout } from './layout.js'
+import type { ViewBox } from './layout.js'
 import { edgeRole, indexHighlights } from './highlights.js'
 import { StateNode } from './state-node.js'
 import { TransitionEdge } from './transition-edge.js'
@@ -40,6 +41,12 @@ export interface AutomatonRendererProps {
    * the retrofit §10.1 exists to avoid.
    */
   svgRef?: React.Ref<SVGSVGElement>
+  /**
+   * The least area the view box covers, in machine units, centred on the
+   * machine. An editing canvas sets this so a one-state machine is drawn in a
+   * working area with room to add the next state, rather than filling the card.
+   */
+  minView?: { width: number; height: number } | undefined
   onPointerDown?: React.PointerEventHandler<SVGSVGElement> | undefined
   onPointerMove?: React.PointerEventHandler<SVGSVGElement> | undefined
   onPointerUp?: React.PointerEventHandler<SVGSVGElement> | undefined
@@ -48,6 +55,17 @@ export interface AutomatonRendererProps {
   /** Drawn last, above everything — the editor's in-progress edge, for instance. */
   overlay?: React.ReactNode
 }
+
+/** Grow a view box to at least `min`, keeping the machine centred in it. */
+function widen(view: ViewBox, min: { width: number; height: number } | undefined): ViewBox {
+  if (min === undefined) return view
+  const width = Math.max(view.width, min.width)
+  const height = Math.max(view.height, min.height)
+  return { x: view.x - (width - view.width) / 2, y: view.y - (height - view.height) / 2, width, height }
+}
+
+/** The most a diagram may be scaled up from its own coordinates (design artboard 02's 640-wide viewBox in a ~690px card is ~1.1×). */
+const MAX_SCALE = 1.5
 
 export function AutomatonRenderer({
   machine,
@@ -66,10 +84,11 @@ export function AutomatonRenderer({
   onDoubleClick,
   onContextMenu,
   overlay,
+  minView,
 }: AutomatonRendererProps): React.JSX.Element {
   const radius = mini ? MINI_NODE_RADIUS : NODE_RADIUS
   const layout = resolveLayout(machine, { radius })
-  const view = boundsOf(layout, radius)
+  const view = widen(boundsOf(layout, radius), minView)
   const groups = groupTransitions(machine)
   const highlights = indexHighlights(step?.highlight)
   const accepting = new Set(machine.accepting)
@@ -96,8 +115,15 @@ export function AutomatonRenderer({
       onContextMenu={onContextMenu}
       style={{
         fontFamily: 'var(--tnt-font)',
-        maxWidth: '100%',
+        /*
+         * A diagram fills its card but never scales past MAX_SCALE× its own
+         * geometry — a two-state machine in a wide card stays a diagram, not a
+         * poster. An editing canvas (one with pointer handlers) keeps the full
+         * width: the empty space is where the next state is drawn.
+         */
+        maxWidth: onPointerDown === undefined ? `min(100%, ${Math.round(view.width * MAX_SCALE)}px)` : '100%',
         display: 'block',
+        margin: '0 auto',
         touchAction: onPointerDown === undefined ? undefined : 'none',
       }}
     >

@@ -525,3 +525,259 @@ input[type='range'] { accent-color: var(--tnt-current); }
   .tnt-page-head { margin-bottom: 14px; }
   .tnt-picker-label { min-width: 0; width: 100%; }
 }
+
+/* ---------------------------------------------------------------------------
+ * Conversion — artboard 03
+ * ------------------------------------------------------------------------ */
+
+.tnt-conv-panes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--tnt-space-4);
+}
+
+@media (max-width: 860px) {
+  .tnt-conv-panes { grid-template-columns: minmax(0, 1fr); }
+}
+
+.tnt-pane { padding: 14px 16px; }
+.tnt-pane > .tnt-card-head { margin-bottom: 6px; }
+.tnt-pane-target { border-color: var(--tnt-current-border); }
+.tnt-pane-target > .tnt-card-head > .tnt-label,
+.tnt-pane-target > .tnt-card-head > .tnt-meta { color: var(--tnt-current); }
+
+/* Narration beside a compact transport, the transport on a left rule. */
+.tnt-conv-row {
+  display: flex;
+  gap: var(--tnt-space-4);
+  align-items: stretch;
+}
+
+.tnt-conv-row > .tnt-conv-narration {
+  flex: 1;
+  margin: 0;
+  font-family: var(--tnt-serif);
+  font-size: 16.5px;
+  line-height: 1.6;
+  color: var(--tnt-text);
+  text-wrap: pretty;
+}
+
+.tnt-conv-row > .tnt-conv-transport {
+  border-left: 1px solid var(--tnt-border);
+  padding-left: var(--tnt-space-4);
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+@media (max-width: 720px) {
+  .tnt-conv-row { flex-direction: column; }
+  .tnt-conv-row > .tnt-conv-transport { border-left: none; padding-left: 0; }
+}
+
+.tnt-artifact { padding: 0; overflow: hidden; }
+.tnt-artifact > .tnt-card-head { margin: 0; padding: 9px 16px; background: var(--tnt-bg); border-bottom: 1px solid var(--tnt-border); }
+.tnt-artifact .tnt-data-table th { background: var(--tnt-bg); }
+
+.tnt-link {
+  color: var(--tnt-current);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* ---------------------------------------------------------------------------
+ * Practice — artboard 04
+ * ------------------------------------------------------------------------ */
+
+.tnt-exercise {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 400px;
+  gap: var(--tnt-space-5);
+  align-items: start;
+}
+
+@media (max-width: 960px) {
+  .tnt-exercise { grid-template-columns: minmax(0, 1fr); }
+}
+
+.tnt-exercise-card { padding: 24px 26px; display: flex; flex-direction: column; gap: 14px; }
+
+.tnt-exercise-title {
+  margin: 0;
+  font-size: 26px;
+  letter-spacing: -0.015em;
+  line-height: 1.25;
+}
+
+.tnt-exercise-prompt {
+  margin: 0;
+  font-family: var(--tnt-serif);
+  font-size: 18px;
+  line-height: 1.7;
+  color: var(--tnt-text-secondary);
+  text-wrap: pretty;
+  white-space: pre-line;
+}
+
+/* A verdict banner that carries a paragraph or two rather than one line. */
+.tnt-verdict-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--tnt-space-3);
+  padding: 18px 20px;
+}
+
+.tnt-verdict-panel > p { margin: 0; font-size: 16px; line-height: 1.6; color: var(--tnt-text-secondary); }
+.tnt-verdict-panel > .tnt-banner-headline { font-size: 15px; }
+
+.tnt-verdict-panel-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--tnt-space-3);
+}
+
+/* The shortest disagreement, set large in mono in its own well. */
+.tnt-witness-well {
+  font-family: var(--tnt-mono);
+  font-size: 26px;
+  letter-spacing: 0.18em;
+  background: var(--tnt-surface);
+  border: 1px solid var(--tnt-dead-border);
+  border-radius: var(--tnt-radius-sm);
+  padding: 12px 16px;
+  text-align: center;
+  color: var(--tnt-text);
+}
+
+.tnt-card.tnt-stats { padding: 18px 20px; gap: 28px; }
+
+/* ---------------------------------------------------------------------------
+ * Pumping — artboard 05
+ * ------------------------------------------------------------------------ */
+
+.tnt-round {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--tnt-space-4);
+}
+
+@media (max-width: 860px) {
+  .tnt-round { grid-template-columns: minmax(0, 1fr); }
+}
+
+.tnt-move {
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tnt-move[data-by='you'] { border-color: var(--tnt-current-border); }
+.tnt-move[data-by='you'] > .tnt-card-head > .tnt-label { color: var(--tnt-current); }
+.tnt-move > .tnt-card-head { margin: 0; }
+
+.tnt-move-text {
+  margin: 0;
+  font-family: var(--tnt-serif);
+  font-size: 17px;
+  line-height: 1.65;
+  color: var(--tnt-text);
+  text-wrap: pretty;
+}
+
+.tnt-move[data-past='true'] > .tnt-move-text { color: var(--tnt-text-muted); }
+
+/* A string set in a mono well — the engine's w. */
+.tnt-word-well {
+  font-family: var(--tnt-mono);
+  font-size: 24px;
+  letter-spacing: 0.16em;
+  background: var(--tnt-bg);
+  border: 1px solid var(--tnt-border);
+  border-radius: var(--tnt-radius-sm);
+  padding: 10px 14px;
+  text-align: center;
+}
+
+.tnt-segments {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  font-family: var(--tnt-mono);
+  font-size: 22px;
+  letter-spacing: 0.14em;
+}
+
+.tnt-segment {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  border-bottom: 2px solid var(--tnt-border-strong);
+  min-width: 28px;
+}
+
+.tnt-segment[data-segment='y'] {
+  border-bottom-color: var(--tnt-current);
+  background: var(--tnt-current-soft);
+}
+
+.tnt-segment[data-segment='y'] > .tnt-segment-text { color: var(--tnt-current-deep); }
+
+.tnt-segment-label {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--tnt-text-faint);
+}
+
+.tnt-segment[data-segment='y'] > .tnt-segment-label { color: var(--tnt-current); }
+
+.tnt-slider-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tnt-slider-row > input[type='range'] { flex: 1; }
+
+.tnt-slider-name {
+  font-family: var(--tnt-mono);
+  font-size: 12.5px;
+  color: var(--tnt-text-muted);
+  width: 28px;
+}
+
+.tnt-slider-value {
+  font-family: var(--tnt-mono);
+  font-size: var(--tnt-text-sm);
+  width: 16px;
+  text-align: right;
+}
+
+.tnt-proof {
+  padding: 24px 28px;
+}
+
+.tnt-proof-text {
+  margin: 0;
+  font-family: var(--tnt-serif);
+  font-size: 18px;
+  line-height: 1.8;
+  color: var(--tnt-text);
+  max-width: 70ch;
+  text-wrap: pretty;
+}
+
+.tnt-round-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--tnt-space-4);
+  flex-wrap: wrap;
+}
+
+.tnt-round-head > h2 { margin: 0; font-size: 22px; }
+.tnt-round-head > h2 > .tnt-mono { font-size: 20px; font-weight: 400; }
