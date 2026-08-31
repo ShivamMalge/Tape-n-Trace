@@ -142,6 +142,41 @@ describe('the bridge widget', () => {
     expect(el.querySelectorAll('[data-node-id]').length).toBe(3)
   })
 
+  it('draws a Turing machine run — moves read arrays, and the widget converts them to arc labels', () => {
+    // As the engine shapes it: no `kind` field, a tape alphabet and a blank.
+    const tm = {
+      states: ['q0', 'q1'],
+      inputAlphabet: ['0'],
+      tapeAlphabet: ['0', 'B'],
+      blank: 'B',
+      tapes: 1,
+      transitions: [{ id: 't', from: 'q0', read: ['0'], write: ['B'], move: ['R'], to: 'q1' }],
+      start: 'q0',
+      accepting: ['q1'],
+    }
+    const trace = {
+      ...TRACE,
+      kind: 'simulate.tm',
+      steps: [
+        {
+          ...TRACE.steps[0],
+          snapshot: {
+            machine: tm,
+            current: { state: 'q0', tapes: [{ cells: ['0'], offset: 0, head: 0 }] },
+            moves: 0,
+            status: 'running',
+          },
+        },
+      ],
+      meta: { stepCount: 1, counters: {} },
+    } as unknown as Trace
+    const model = makeModel({ payload: null, trace, step: 0, options: {} })
+    const { el } = mount(model)
+    expect(el.querySelector('svg')).not.toBeNull()
+    expect(el.textContent).toContain('0/B →')
+    expect(el.querySelector('[data-position="0"]')).not.toBeNull()
+  })
+
   it('draws a bare machine payload with no trace at all', () => {
     const model = makeModel({ payload: MACHINE, trace: null, step: 0, options: {} })
     const { el } = mount(model)

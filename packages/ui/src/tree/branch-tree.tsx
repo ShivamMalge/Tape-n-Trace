@@ -21,6 +21,8 @@ export interface BranchTreeProps {
   /** Past this many nodes the tree is unreadable anyway; the rest are summarised. */
   maxNodes?: number
   className?: string
+  /** The most the tree may be scaled up from its own coordinates (a notebook cell asks for less). */
+  maxScale?: number | undefined
 }
 
 const COLUMN_GAP = 96
@@ -34,6 +36,7 @@ export function BranchTree({
   mini = false,
   maxNodes = 400,
   className,
+  maxScale = 1.5,
 }: BranchTreeProps): React.JSX.Element {
   const highlights = indexHighlights(step?.highlight)
   const shown = nodes.slice(0, maxNodes)
@@ -51,7 +54,7 @@ export function BranchTree({
         width="100%"
         role="group"
         aria-label={describeTree(nodes, input)}
-        style={{ display: 'block', maxWidth: '100%', fontFamily: 'var(--tnt-font)' }}
+        style={{ display: 'block', maxWidth: `min(100%, ${Math.round(width * maxScale)}px)`, fontFamily: 'var(--tnt-font)' }}
       >
         <g className="tnt-branch-links">
           {placed.map((node) => {

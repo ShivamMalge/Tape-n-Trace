@@ -2,7 +2,7 @@
  * Build the bridge into vyakarana/static/ — phases-vyakarana.md V1.
  *
  *   widget.js            the anywidget ESM bundle: viewer + renderers + React
- *   widget.css           bridge base styles + shared tokens, scoped
+ *   widget.css           bridge base styles + shared tokens + primitives, scoped
  *   engine-manifest.json every export the bundled engine carries, for the
  *                        V3 parity test — generated, so it cannot drift
  */
@@ -74,7 +74,15 @@ await writeFile(path.join(outDir, 'engine-manifest.json'), JSON.stringify(manife
 // 3. The stylesheet: bridge base first so the shared tokens win, then scope.
 const base = await readFile(path.join(here, 'src', 'styles.css'), 'utf8')
 const tokens = await readFile(path.join(repo, 'packages', 'ui', 'src', 'tokens.css'), 'utf8')
-const css = scopeCss(`${base}\n\n${tokens}`)
+// The primitives are the shapes the renderers' class names mean — the tape
+// strip's cells, the transport's buttons; without them a cell shows the tape
+// as a list of letters. Scoped like everything else (architecture.md §10.2).
+const primitives = await readFile(path.join(repo, 'packages', 'ui', 'src', 'primitives.css'), 'utf8')
+const css = scopeCss(`${base}
+
+${tokens}
+
+${primitives}`)
 await writeFile(path.join(outDir, 'widget.css'), css)
 
 // 4. The trace schema, generated from the engine's own types so it cannot

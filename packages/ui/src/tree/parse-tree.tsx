@@ -26,13 +26,15 @@ export interface ParseTreeProps {
   nodes: readonly ParseTreeNode[]
   step?: Step | null | undefined
   className?: string
+  /** The most the tree may be scaled up from its own coordinates (a notebook cell asks for less). */
+  maxScale?: number | undefined
 }
 
 const LEVEL_GAP = 56
 const LEAF_GAP = 62
 const RADIUS = 15
 
-export function ParseTree({ nodes, step = null, className }: ParseTreeProps): React.JSX.Element {
+export function ParseTree({ nodes, step = null, className, maxScale = 1.5 }: ParseTreeProps): React.JSX.Element {
   const highlights = indexHighlights(step?.highlight)
   const placed = layout(nodes)
   const byId = new Map(placed.map((n) => [n.id, n]))
@@ -47,7 +49,7 @@ export function ParseTree({ nodes, step = null, className }: ParseTreeProps): Re
       width="100%"
       role="group"
       aria-label={`Parse tree with ${nodes.length} nodes`}
-      style={{ display: 'block', maxWidth: '100%', fontFamily: 'var(--tnt-font)' }}
+      style={{ display: 'block', maxWidth: `min(100%, ${Math.round(width * maxScale)}px)`, fontFamily: 'var(--tnt-font)' }}
     >
       <g>
         {placed.map((node) => {

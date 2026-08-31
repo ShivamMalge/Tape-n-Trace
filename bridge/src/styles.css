@@ -20,11 +20,9 @@
   max-width: 640px;
 }
 
-/* The renderers ship width="100%" for the web app's layout; in a notebook
-   cell that blows a two-state machine up to the full output width. Size the
-   diagram by its own viewBox instead, capped to the cell. */
+/* Every renderer caps its own width at maxScale x its geometry (the viewer
+   passes 0.75 for a cell); the stylesheet only keeps the height honest. */
 .vyk-stack svg {
-  width: auto;
   height: auto;
   max-width: 100%;
 }

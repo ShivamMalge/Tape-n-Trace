@@ -31,7 +31,10 @@ export function NodesPanel({
 }): React.JSX.Element | null {
   if (nodes === undefined || nodes.length === 0) return null
   if (isBranchNodes(nodes)) {
-    return <BranchTree nodes={nodes} input={input ?? []} step={step} />
+    // A deterministic run's tree is one node per step — a path, not a tree; the
+    // web app draws it only when the machine can branch, and so does the cell.
+    if (nodes.length < 2) return null
+    return <BranchTree nodes={nodes} input={input ?? []} step={step} maxScale={1} />
   }
   if (isCfgNodes(nodes)) {
     const converted: ParseTreeNode[] = nodes.map((n) => ({
@@ -41,7 +44,7 @@ export function NodesPanel({
       children: n.children,
       parent: n.parent,
     }))
-    return <ParseTree nodes={converted} step={step} />
+    return <ParseTree nodes={converted} step={step} maxScale={1} />
   }
   return null
 }

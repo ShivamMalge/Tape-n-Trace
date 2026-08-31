@@ -41,6 +41,8 @@ export type {
 
 export { eventPoint, stateAt, svgPoint, transitionsAt } from './automaton/coords.js'
 
+export { drawableOf, pdaEdgeLabel, pdaToDrawable, tmEdgeLabel, tmToDrawable } from './automaton/drawables.js'
+
 export { AutomatonRenderer } from './automaton/automaton-renderer.js'
 export type { AutomatonRendererProps } from './automaton/automaton-renderer.js'
 

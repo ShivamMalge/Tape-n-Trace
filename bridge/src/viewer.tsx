@@ -8,7 +8,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import type { FiniteAutomaton, Step, Sym, Trace, TraceResult } from '@tape-n-trace/engine'
-import { AutomatonRenderer, InputStrip, TransportBar } from '@tape-n-trace/ui'
+import { AutomatonRenderer, InputStrip, TransportBar, drawableOf } from '@tape-n-trace/ui'
 
 import { NodesPanel, TapesPanel } from './panels.js'
 
@@ -20,19 +20,19 @@ export interface ViewerProps {
   onStepChange: (step: number) => void
 }
 
-const isMachine = (value: unknown): value is FiniteAutomaton =>
-  typeof value === 'object' &&
-  value !== null &&
-  Array.isArray((value as FiniteAutomaton).states) &&
-  Array.isArray((value as FiniteAutomaton).transitions)
-
-/** The machine this step is about: the snapshot's, else the payload itself. */
+/**
+ * The machine this step is about: the snapshot's, else the payload itself —
+ * a PDA or TM converted to the renderer's shape on the way (`drawableOf`), so
+ * a Turing-machine run in a cell draws its diagram rather than throwing on
+ * the array-valued `read` of its moves.
+ */
 function machineOf(step: Step | null, payload: ViewerProps['payload']): FiniteAutomaton | null {
   const snapshot = step?.snapshot as Record<string, unknown> | undefined
   for (const key of ['machine', 'target', 'source']) {
-    if (snapshot !== undefined && isMachine(snapshot[key])) return snapshot[key] as FiniteAutomaton
+    const drawable = snapshot === undefined ? null : drawableOf(snapshot[key])
+    if (drawable !== null) return drawable
   }
-  return isMachine(payload) ? payload : null
+  return drawableOf(payload)
 }
 
 function resultText(result: TraceResult): string {
