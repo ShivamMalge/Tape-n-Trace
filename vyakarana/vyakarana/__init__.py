@@ -33,7 +33,7 @@ from .results import (
 from .tm import TM
 from .widget import TntWidget
 
-__version__ = "0.1.0rc1"
+__version__ = "0.1.0rc2"
 
 __all__ = [
     "DFA",

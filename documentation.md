@@ -1,6 +1,6 @@
 # Vyakarana — Python Library Documentation
 
-> ## ⚠ Status: 0.1.0rc1 — a wheel, not yet on PyPI
+> ## ⚠ Status: 0.1.0rc2 — a wheel, not yet on PyPI
 >
 > **§5.1–§5.6 work today** (`DFA`, `NFA`, `ENFA`, `RegularExpression`, `CFG`, `PDA`, `TM` and the
 > gallery), from a development checkout: `pnpm -F @tape-n-trace/bridge build`, then

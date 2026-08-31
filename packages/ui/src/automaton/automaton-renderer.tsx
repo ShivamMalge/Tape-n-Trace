@@ -47,6 +47,12 @@ export interface AutomatonRendererProps {
    * working area with room to add the next state, rather than filling the card.
    */
   minView?: { width: number; height: number } | undefined
+  /**
+   * The most the diagram may be scaled up from its own coordinates. The web
+   * app's cards take the default; a notebook cell asks for less, because a
+   * diagram there sits among prose rather than being the page.
+   */
+  maxScale?: number | undefined
   onPointerDown?: React.PointerEventHandler<SVGSVGElement> | undefined
   onPointerMove?: React.PointerEventHandler<SVGSVGElement> | undefined
   onPointerUp?: React.PointerEventHandler<SVGSVGElement> | undefined
@@ -85,6 +91,7 @@ export function AutomatonRenderer({
   onContextMenu,
   overlay,
   minView,
+  maxScale = MAX_SCALE,
 }: AutomatonRendererProps): React.JSX.Element {
   const radius = mini ? MINI_NODE_RADIUS : NODE_RADIUS
   const layout = resolveLayout(machine, { radius })
@@ -121,7 +128,7 @@ export function AutomatonRenderer({
          * poster. An editing canvas (one with pointer handlers) keeps the full
          * width: the empty space is where the next state is drawn.
          */
-        maxWidth: onPointerDown === undefined ? `min(100%, ${Math.round(view.width * MAX_SCALE)}px)` : '100%',
+        maxWidth: onPointerDown === undefined ? `min(100%, ${Math.round(view.width * maxScale)}px)` : '100%',
         display: 'block',
         margin: '0 auto',
         touchAction: onPointerDown === undefined ? undefined : 'none',

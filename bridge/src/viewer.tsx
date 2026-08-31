@@ -83,7 +83,8 @@ export function Viewer({ payload, trace, step, options, onStepChange }: ViewerPr
 
   return (
     <div className="vyk-stack">
-      {machine === null ? null : <AutomatonRenderer machine={machine} step={current} instanceId="vyk" />}
+      {/* Half the web app's scale: in a cell the diagram sits among prose (author feedback, Colab, 2026-08-31). */}
+      {machine === null ? null : <AutomatonRenderer machine={machine} step={current} instanceId="vyk" maxScale={0.75} />}
       {snapshot?.input !== undefined && typeof snapshot.position === 'number' ? (
         <InputStrip input={snapshot.input} position={snapshot.position} step={current} />
       ) : null}
