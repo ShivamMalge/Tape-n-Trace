@@ -440,3 +440,17 @@ resolved.
 | 3 | **Python version floor.** Set by what Colab ships, checked and dated rather than assumed. | Author | V4 |
 | 4 | ~~The name on PyPI~~ — **checked 2026-08-24: `vyakarana` is free** (PyPI returns 404). | Author | ✅ |
 | 5 | **Whether `docs/engine-contract.md` is written** (architecture.md §3 lists it, `docs/` does not contain it) or the layout is corrected to match reality. The V1 manifest covers what the parity test needs either way. | Author | V1 |
+
+---
+
+## 10. After 0.1 — candidates for 0.2
+
+Recorded as they arise; none is promised, and none is documented as existing until it ships.
+
+- **User-settable diagram size** (author, 2026-08-31, after the Colab run). 0.1 draws machines at 0.75×
+  and trees at 1× of their own geometry, chosen for a Colab cell. Let the reader choose:
+  `vyakarana.options(scale=0.5)` globally and `d.run("011", scale=0.5)` per call. The path exists —
+  the `options` trait already carries `convention` and `theme` to the viewer, and every renderer already
+  takes `maxScale` — so this is a traitlet key plus one prop, and a line in documentation §6.
+- **The pumping-lemma game as a notebook object** (from `_engine_map.py`'s UNBOUND reasons).
+- **CFL closure constructions** (`cflUnion`, `cflConcat`, … — surfaced in the web app, not yet in Python).
