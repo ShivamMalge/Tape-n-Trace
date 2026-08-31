@@ -9,6 +9,11 @@ not — an unchecked box here is honest; a guessed ✅ is not.
 `static/` files inside — `widget.js`, `engine.js`, `widget.css`,
 `engine-manifest.json`).
 
+**Where the wheel is:** GitHub pre-release
+[`v0.1.0rc1`](https://github.com/ShivamMalge/Tape-n-Trace/releases/tag/v0.1.0rc1) (created 2026-08-31),
+wheel and sdist attached. The Colab gate installs it by URL; open the notebook straight from GitHub:
+<https://colab.research.google.com/github/ShivamMalge/Tape-n-Trace/blob/main/docs/colab-gate.ipynb>.
+
 **Python floor:** `requires-python = ">=3.10"`. Colab ships Python **3.12.13 on
 Ubuntu 22.04** (checked 2026-08-30 against Colab's runtime documentation), so
 the floor keeps two versions of headroom below the one environment the release
@@ -24,7 +29,7 @@ criterion names.
 | JupyterLab 4+ | 2026-08-24 (V1) | dev install, 0.0.x bridge | ☑ rendering verified by the author at V1; **re-check with the 0.1.0rc1 wheel pending** | run `vyakarana/notebooks/quickstart.ipynb` in JupyterLab from a venv with the wheel installed; record the JupyterLab version here |
 | Jupyter Notebook 7+ | — | — | ⬜ pending | same notebook, `jupyter notebook`; record the version here |
 | VS Code notebooks | — | — | ⬜ pending | same notebook in VS Code; record the extension version here |
-| **Colab (the release criterion)** | — | — | ⬜ **pending — blocks V4 closure** | run [colab-gate.ipynb](colab-gate.ipynb) in a fresh runtime, save it **with outputs** over itself, commit; it installs the rc wheel from the GitHub release, proves Node absent, and renders a DFA |
+| **Colab (the release criterion)** | — | — | ⬜ **pending — blocks V4 closure** | open [colab-gate.ipynb in Colab](https://colab.research.google.com/github/ShivamMalge/Tape-n-Trace/blob/main/docs/colab-gate.ipynb), Runtime → Run all, save **with outputs** back to `docs/colab-gate.ipynb`, commit. The wheel it installs is on the pre-release; the same URL install was verified from a clean Windows venv on 2026-08-31 |
 
 ## Reproducing the local rows
 

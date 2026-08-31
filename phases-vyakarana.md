@@ -300,8 +300,9 @@ trace contract pinned down on both sides of the boundary.
 - [ ] **Colab, from a clean runtime: `!pip install vyakarana` and a DFA renders, with no Node present.**
       This is a release criterion, not a nice-to-have — it is what students use.
       *(Prepared 2026-08-30: [docs/colab-gate.ipynb](docs/colab-gate.ipynb) installs the rc wheel
-      from the GitHub release, proves Node absent, renders. Blocked on a human running it in Colab and
-      committing the outputs.)*
+      from the GitHub release, proves Node absent, renders. Pre-release `v0.1.0rc1` created 2026-08-31 with
+      the wheel attached; the URL install verified from a clean venv. Blocked on a human running the notebook
+      in Colab and committing the outputs.)*
 - [ ] JupyterLab 4+, Jupyter Notebook 7+, and VS Code notebooks each render.
       *(JupyterLab rendering was author-verified at V1 with the dev install; the rc wheel re-check and
       the other two hosts are pending — [docs/environments.md](docs/environments.md) has the steps.)*
