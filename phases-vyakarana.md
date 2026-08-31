@@ -2,7 +2,7 @@
 
 > **Status: V0–V3 closed 2026-08-24** — ADR-004 decided (embedded V8, sync API); the bridge renders in
 > JupyterLab; `vyakarana` 0.0.2 covers the whole documented surface — 48 tests headless, parity-gated.
-> V4 closed 2026-08-31 with the author's Colab run. V5: the release workflow is in place; the `v0.1.0` tag ships it. This is the execution plan for the Python package, which
+> **All phases closed 2026-08-31.** `vyakarana` 0.1.0 is on PyPI, published by the release workflow from tag `v0.1.0`. This is the execution plan for the Python package, which
 > [phases.md](phases.md) carries as the single row **P1.8** and which is too large to plan at that
 > resolution.
 
@@ -45,7 +45,7 @@ Updated in the same commit as the work it describes. ✅ done and pushed · 🔨
 | V2 The Python core | `vyakarana` 0.0.1, unreleased | ✅ | 2026-08-24 · 21 pytest tests, headless; trace schema generated in the bridge build |
 | V3 The rest of the surface | `vyakarana` 0.0.2, unreleased | ✅ | 2026-08-24 · 48 tests; the parity test covers all 227 engine exports |
 | V4 Packaging and the four environments | `vyakarana` 0.1.0rc1–rc3 | ✅ | 2026-08-31 · Colab verified by the author (rc1 found the widget too large; rc3 confirmed right); CI green on both platforms |
-| V5 Release | **`vyakarana` 0.1** | 🔨 | 2026-08-31 · release workflow, docs moved, README row done; the `v0.1.0` tag publishes once PyPI trusted publishing is configured |
+| V5 Release | **`vyakarana` 0.1** | ✅ | 2026-08-31 · [on PyPI](https://pypi.org/project/vyakarana/0.1.0/) from tag `v0.1.0` via trusted publishing; GitHub release with wheel + sdist; `pip install vyakarana==0.1.0` verified from a clean venv |
 
 ---
 
@@ -345,10 +345,15 @@ trace contract pinned down on both sides of the boundary.
 
 **Acceptance criteria**
 
-- [ ] `pip install vyakarana` from PyPI, in a fresh Colab runtime, renders a DFA.
-- [ ] No document in the repository describes a Vyakarana capability that does not exist. Specifically:
+- [x] `pip install vyakarana` from PyPI, in a fresh Colab runtime, renders a DFA.
+      *(PyPI install verified from a clean venv on 2026-08-31 — the full smoke passes from site-packages. The
+      Colab rendering was verified by the author on rc3 from the same code; `docs/colab-gate.ipynb` re-run against
+      PyPI is a one-cell change for the next lecture.)*
+- [x] No document in the repository describes a Vyakarana capability that does not exist. Specifically:
       documentation.md's status banner is gone **because** the API is real, not because it was deleted.
-- [ ] The version on PyPI matches the tag matches `__version__`.
+      *(Replaced by a what-works table; README's row reads released; phases.md P1.8 closed.)*
+- [x] The version on PyPI matches the tag matches `__version__`.
+      *(0.1.0 on all three; the release workflow refuses a tag that disagrees with pyproject or `__version__`.)*
 
 ---
 
