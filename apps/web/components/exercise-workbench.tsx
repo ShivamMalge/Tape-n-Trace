@@ -18,6 +18,7 @@ import { useMemo, useState, type ReactNode } from 'react'
 import { emptyMachine, isOk } from '@tape-n-trace/engine'
 import type { FiniteAutomaton, LanguageGrade, Result, ValidationError } from '@tape-n-trace/engine'
 import { MachineEditor } from './machine-editor'
+import { Board } from './board/board'
 import { CompareView } from './compare-view'
 import { DocsCard } from './docs-card'
 import { ValidationErrors } from './validation-errors'
@@ -163,23 +164,43 @@ function MachineAttempt({
   const alphabet = exerciseAlphabet(exercise)
   const kind = exercise.kind === 'construct-nfa' ? 'NFA' : 'DFA'
   const [machine, setMachine] = useState<FiniteAutomaton>(() => emptyMachine(kind, alphabet))
+  // Two ways to draw the same machine: click by click, or freehand on the
+  // classroom board. Each keeps its own drawing; grading takes whichever is showing.
+  const [mode, setMode] = useState<'clicks' | 'board'>('clicks')
+  const [boardMachine, setBoardMachine] = useState<FiniteAutomaton>(() => emptyMachine(kind, alphabet))
+  const drawn = mode === 'board' ? boardMachine : machine
 
   return (
     <section className="tnt-card" aria-label="Your machine">
       <div className="tnt-card-head">
-        <h2 className="tnt-label">Your machine</h2>
-        <span className="tnt-meta">
-          over {`{${alphabet.join(', ')}}`}
-          {exercise.kind === 'construct-nfa' ? ' · an NFA is fine, it is determinised before comparison' : ''}
-        </span>
+        <h2 className="tnt-label">
+          Your machine
+          <span className="tnt-normal"> · over {`{${alphabet.join(', ')}}`}</span>
+        </h2>
+        <div className="tnt-seg tnt-seg-sm" role="radiogroup" aria-label="How to draw">
+          {(['clicks', 'board'] as const).map((m) => (
+            <button key={m} type="button" role="radio" aria-checked={mode === m} className="tnt-seg-btn" onClick={() => setMode(m)}>
+              {m === 'clicks' ? 'Click to draw' : 'Freehand board'}
+            </button>
+          ))}
+        </div>
       </div>
+      {exercise.kind === 'construct-nfa' ? (
+        <p className="tnt-meta" style={{ margin: '0 0 var(--tnt-space-3)' }}>
+          An NFA is fine — it is determinised before comparison.
+        </p>
+      ) : null}
       <div className="tnt-stack">
-        <MachineEditor initial={machine} onMachineChange={setMachine} />
+        {mode === 'board' ? (
+          <Board initial={boardMachine} onChange={setBoardMachine} embedded />
+        ) : (
+          <MachineEditor initial={machine} onMachineChange={setMachine} />
+        )}
         <div>
           <button
             type="button"
             className="tnt-btn tnt-btn-primary"
-            onClick={() => onGraded(gradeMachine(exercise, machine), machine)}
+            onClick={() => onGraded(gradeMachine(exercise, drawn), drawn)}
           >
             Grade my machine
           </button>

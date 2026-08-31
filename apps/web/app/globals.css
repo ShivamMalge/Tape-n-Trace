@@ -109,6 +109,8 @@ input[type='range'] { accent-color: var(--tnt-current); }
 
 .tnt-brand:hover { color: var(--tnt-text); text-decoration: none; }
 
+.tnt-brand > .tnt-logo { display: block; color: var(--tnt-text); }
+
 .tnt-brand-glyph {
   display: inline-flex;
   gap: 2px;
@@ -159,12 +161,26 @@ input[type='range'] { accent-color: var(--tnt-current); }
 
 .tnt-modnav-btn:hover { color: var(--tnt-text); }
 
-.tnt-modnav-btn[aria-expanded='true'],
-.tnt-modnav-btn[aria-current='true'] {
+/* Two different facts, two different marks: the OPEN module (its panel is
+   showing) sits on a card; the module the CURRENT PAGE belongs to carries a
+   blue underline. Before, both used the card and read as two selections. */
+.tnt-modnav-btn[aria-expanded='true'] {
   border-color: var(--tnt-border);
   background: var(--tnt-surface);
   color: var(--tnt-text);
 }
+
+.tnt-modnav-btn[aria-current='true'] { color: var(--tnt-text); }
+
+.tnt-modnav-btn[aria-current='true'] > span:last-child {
+  text-decoration: underline;
+  text-decoration-color: var(--tnt-current);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 5px;
+}
+
+/* The pointer never draws the focus ring; the keyboard does. */
+.tnt-modnav-btn:focus:not(:focus-visible) { outline: none; }
 
 .tnt-topbar-link {
   font-family: var(--tnt-font);
@@ -925,8 +941,8 @@ input[type='range'] { accent-color: var(--tnt-current); }
   pointer-events: none;
 }
 
-.tnt-board-brand .tnt-brand-glyph > span { width: 11px; height: 16px; border-color: oklch(0.9 0.005 250); }
-.tnt-board-brand .tnt-brand-glyph > span[data-lit='true'] { border-color: var(--board-blue-fill); background: var(--board-blue-fill); }
+.tnt-board-brand > .tnt-logo { color: oklch(0.9 0.005 250); }
+.tnt-board-brand > .tnt-logo > .tnt-logo-lit { fill: var(--board-blue-fill); }
 
 .tnt-board-title {
   font-family: var(--tnt-serif);

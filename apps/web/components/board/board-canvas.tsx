@@ -58,7 +58,10 @@ export function BoardCanvas({
   onPointerUp,
   onPointerCancel,
 }: BoardCanvasProps): React.JSX.Element {
-  const start = machine.states.length === 0 ? undefined : machine.layout?.[machine.start]
+  // Every position comes from `placed`, which fills in a spot for a state that
+  // arrived without one; reading machine.layout here would drop its arrows.
+  const at = new Map(placed.map((s) => [s.id, s.at]))
+  const start = machine.states.length === 0 ? undefined : at.get(machine.start)
   const startMarker = start === undefined ? null : startMarkerGeometry(start, STATE_RADIUS)
   const tip = drawing?.[drawing.length - 1]
 
@@ -88,8 +91,8 @@ export function BoardCanvas({
       {startMarker === null ? null : <path d={startMarker.path} className="tnt-board-edge" markerEnd="url(#board-arrow)" />}
 
       {groups.map((group) => {
-        const from = machine.layout?.[group.from]
-        const to = machine.layout?.[group.to]
+        const from = at.get(group.from)
+        const to = at.get(group.to)
         if (from === undefined || to === undefined) return null
         const g = group.isSelfLoop ? selfLoopGeometry(from, STATE_RADIUS) : edgeGeometry(from, to, STATE_RADIUS, group.bowed)
         const isLit = group.ids.some((id) => lit.edges.has(id))

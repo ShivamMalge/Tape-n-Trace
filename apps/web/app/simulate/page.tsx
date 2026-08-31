@@ -18,7 +18,7 @@ export default function SimulateIndexPage(): React.JSX.Element {
           </p>
         </div>
         <p className="tnt-page-links">
-          Or <a href="/edit">draw your own</a> and run it there.
+          Or draw your own on <a href="/board">the classroom board</a> and run it there.
         </p>
       </div>
 

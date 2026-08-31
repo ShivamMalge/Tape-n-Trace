@@ -8,6 +8,7 @@ did not become the second."""
 from __future__ import annotations
 
 import json
+import atexit
 import threading
 from pathlib import Path
 from typing import Any
@@ -73,6 +74,27 @@ class _Runtime:
 
 _instance: _Runtime | None = None
 _lock = threading.Lock()
+
+
+def _shutdown() -> None:
+    """Close the embedded V8 at interpreter exit.
+
+    Left to garbage collection, the isolate's teardown can race the interpreter's
+    own shutdown and hold the process open for minutes after the last line of
+    output — seen on Linux CI, where pytest reported its result in under a
+    second and the step ran on. Closing it explicitly ends the process promptly.
+    """
+    global _instance
+    racer = None if _instance is None else _instance._racer
+    _instance = None
+    if racer is not None:
+        try:
+            racer.close()
+        except Exception:  # noqa: BLE001 — nothing useful can be done at exit
+            pass
+
+
+atexit.register(_shutdown)
 
 
 def engine() -> _Runtime:

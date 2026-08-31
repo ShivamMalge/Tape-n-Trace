@@ -59,6 +59,7 @@ jobs:
           python -m build vyakarana
 
       - name: Install the wheel, not the checkout, and test it
+        timeout-minutes: 8
         run: |
           python -m pip install --quiet pytest jsonschema
           python -m pip install --find-links vyakarana/dist "vyakarana==${GITHUB_REF_NAME#v}"

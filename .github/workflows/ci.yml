@@ -109,12 +109,16 @@ jobs:
       - name: Install the wheel, not the checkout
         run: |
           python -m pip install --quiet pytest jsonschema
-          python -m pip install --find-links vyakarana/dist vyakarana==0.1.0
+          python -m pip install --find-links vyakarana/dist vyakarana==0.1.1
 
       # From the repo root, not vyakarana/ — with the project directory as the
       # cwd, `python -m pytest` would put the source tree ahead of the wheel on
       # sys.path and quietly test the checkout instead.
+      # Capped: on Python 3.13 / Linux the interpreter once hung for 20+ minutes
+      # after "48 passed", tearing down the embedded V8 at exit (the runtime now
+      # closes it explicitly). A hang is a failure, not a six-hour wait.
       - name: pytest against the installed wheel
+        timeout-minutes: 5
         run: python -m pytest -q vyakarana/tests
 
       - name: Keep the wheel CI built

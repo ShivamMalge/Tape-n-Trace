@@ -36,7 +36,7 @@ export default function HierarchyPage(): React.JSX.Element {
         <ol className="tnt-prose tnt-sm tnt-stack-sm" style={{ paddingLeft: 20 }}>
           <li>
             Try to build a finite automaton or a regular expression. If one works, it is regular and you are finished —{' '}
-            <a href="/edit">draw it</a>.
+            <a href="/board">draw it</a>.
           </li>
           <li>
             If it will not, try the pumping lemma for regular languages: pick the adversary&rsquo;s side and see whether

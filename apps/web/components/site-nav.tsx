@@ -18,6 +18,7 @@
 import { usePathname } from 'next/navigation'
 import { useEffect, useId, useState } from 'react'
 import { NAV, NAV_EXTRAS, liveTools } from '../lib/catalog'
+import { LogoMark } from './logo-mark'
 import { ThemeToggle } from './theme-toggle'
 
 export function SiteNav(): React.JSX.Element {
@@ -49,11 +50,7 @@ export function SiteNav(): React.JSX.Element {
     <header className="tnt-topbar">
       <div className="tnt-topbar-row">
         <a href="/" className="tnt-brand">
-          <span className="tnt-brand-glyph" aria-hidden="true">
-            <span />
-            <span data-lit="true" />
-            <span />
-          </span>
+          <LogoMark size={22} />
           Tape&#8209;n&#8209;Trace
         </a>
 

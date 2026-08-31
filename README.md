@@ -1,5 +1,8 @@
 <p align="center">
-  <img src="apps/web/public/logo.svg" alt="Tape-n-Trace" width="140">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="apps/web/public/logo-dark.svg">
+    <img src="apps/web/public/logo.svg" alt="Tape-n-Trace" width="140">
+  </picture>
 </p>
 
 <h1 align="center">Tape-n-Trace</h1>

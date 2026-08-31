@@ -1,6 +1,14 @@
 import type { NextConfig } from 'next'
 
 const config: NextConfig = {
+  // The standalone editor folded into the classroom board and the exercises
+  // (2026-08-31); its old addresses still resolve.
+  async redirects() {
+    return [
+      { source: '/edit', destination: '/board', permanent: true },
+      { source: '/edit/:machine((?!pda$|tm$).*)', destination: '/simulate/:machine', permanent: true },
+    ]
+  },
   // The engine and the UI package ship as TypeScript source and are compiled by
   // the app. One toolchain, no build step between editing a renderer and seeing it.
   transpilePackages: ['@tape-n-trace/engine', '@tape-n-trace/ui'],

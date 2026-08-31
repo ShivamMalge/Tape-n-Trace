@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 278 224" width="278" height="224" role="img" aria-label="Tape-n-Trace">
+  <!-- The dark-surface mark from docs/brand/logo-selection-dark.png: rule #EDE7DB, lit cell oklch(.72 .12 255). -->
+  <g fill="none" stroke="#EDE7DB" stroke-width="14" stroke-linejoin="miter" stroke-linecap="butt">
+    <rect x="7" y="7" width="264" height="136" />
+    <line x1="95" y1="7" x2="95" y2="143" />
+    <line x1="183" y1="7" x2="183" y2="143" />
+    <polyline points="143,143 143,210 7,210" />
+  </g>
+  <rect x="102" y="14" width="74" height="122" fill="#6FA6F0" />
+</svg>

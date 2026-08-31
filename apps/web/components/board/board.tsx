@@ -39,6 +39,7 @@ import { usePlayback } from '../../lib/use-playback'
 import { BoardCanvas, type Ink, type Lit } from './board-canvas'
 import { BoardPicker, BoardTools } from './board-chrome'
 import { BoardPanel } from './board-panel'
+import { LogoMark } from '../logo-mark'
 import { hintFor, pretty } from './board-text'
 
 export { pretty } from './board-text'
@@ -65,11 +66,25 @@ export interface BoardProps {
   initial?: FiniteAutomaton
   /** Start with the panel out — a page opened on a worked example. */
   openInitially?: boolean
+  /** Told of every machine the board holds — an exercise grades what it is told. */
+  onChange?: ((machine: FiniteAutomaton) => void) | undefined
+  /** Hide the corner brand and tag when the board sits inside another card. */
+  embedded?: boolean
 }
 
-export function Board({ tag = 'BTOCH503 · L2', initial = EMPTY, openInitially = false }: BoardProps): React.JSX.Element {
+export function Board({
+  tag = 'BTOCH503 · L2',
+  initial = EMPTY,
+  openInitially = false,
+  onChange,
+  embedded = false,
+}: BoardProps): React.JSX.Element {
   const history = useMachineHistory(initial)
   const machine = history.machine
+
+  useEffect(() => {
+    onChange?.(machine)
+  }, [machine, onChange])
 
   const svgRef = useRef<SVGSVGElement>(null)
   const [size, setSize] = useState({ width: 1118, height: 660 })
@@ -103,9 +118,15 @@ export function Board({ tag = 'BTOCH503 · L2', initial = EMPTY, openInitially =
     return () => observer.disconnect()
   }, [])
 
+  // A state that arrives without coordinates — an exercise's empty machine, a
+  // machine typed elsewhere — is set on the board's centre line, spaced out.
   const placed = useMemo<PlacedState[]>(
-    () => machine.states.map((id) => ({ id, at: machine.layout?.[id] ?? { x: 0, y: 0 } })),
-    [machine],
+    () =>
+      machine.states.map((id, i) => ({
+        id,
+        at: machine.layout?.[id] ?? { x: 170 + i * 240, y: size.height / 2 },
+      })),
+    [machine, size.height],
   )
   const groups = useMemo(() => groupTransitions(machine), [machine])
   const problems = useMemo(() => {
@@ -197,7 +218,8 @@ export function Board({ tag = 'BTOCH503 · L2', initial = EMPTY, openInitially =
   }
 
   // The chip picker: each symbol toggles that transition on the pending arc.
-  const symbols: Read[] = [...machine.alphabet, null]
+  // ε is offered only where the machine may take it.
+  const symbols: Read[] = machine.kind === 'ENFA' ? [...machine.alphabet, null] : [...machine.alphabet]
   const arcHas = (read: Read): boolean =>
     pending !== null && machine.transitions.some((t) => t.id === faTransitionId(pending.from, read, pending.to))
   const toggleSymbol = (read: Read): void => {
@@ -257,15 +279,13 @@ export function Board({ tag = 'BTOCH503 · L2', initial = EMPTY, openInitially =
           onPointerCancel={() => setDrawing(null)}
         />
 
-        <div className="tnt-board-brand">
-          <span className="tnt-brand-glyph" aria-hidden="true">
-            <span />
-            <span data-lit="true" />
-            <span />
-          </span>
-          <span className="tnt-board-title">Board</span>
-          <span className="tnt-board-tag">{tag}</span>
-        </div>
+        {embedded ? null : (
+          <div className="tnt-board-brand">
+            <LogoMark size={20} />
+            <span className="tnt-board-title">Board</span>
+            <span className="tnt-board-tag">{tag}</span>
+          </div>
+        )}
 
         <BoardTools
           canUndo={history.canUndo}

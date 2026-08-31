@@ -44,7 +44,7 @@ export default async function BoardPage({
         </div>
         <p className="tnt-page-links">
           The same engine as <a href="/simulate">the simulator</a> runs what you draw; nothing is guessed from
-          handwriting. Prefer clicks? <a href="/edit">The editor</a> builds the same machines.
+          handwriting. In <a href="/practice">Practice</a> the same board answers an exercise.
         </p>
       </div>
       {demo === undefined ? <Board /> : <Board initial={DEMO} openInitially />}

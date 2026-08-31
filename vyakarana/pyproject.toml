@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "vyakarana"
-version = "0.1.0"
+version = "0.1.1"
 description = "The Python face of the Tape-n-Trace engine: build a machine in a notebook cell, watch the trace inline."
 readme = "README.md"
 # Floor per phases-vyakarana.md §9.3: set by what Colab ships, not assumed.
