@@ -4,7 +4,8 @@
  * Everything reusable — scales, buttons, chips, cards, tables — lives in
  * `@tape-n-trace/ui`, because the Vyakarana widget ships those too. What is
  * left here is the part a notebook must never see: the document reset, the
- * shell grid, and the navigation rail.
+ * shell, and the navigation — the design's top bar (artboard 01) with its
+ * five-module segmented nav and the module panel strip beneath it.
  */
 
 @import '@tape-n-trace/ui/tokens.css';
@@ -34,15 +35,19 @@ a {
 }
 
 a:hover {
+  color: var(--tnt-current-deep);
   text-decoration-thickness: 2px;
 }
 
+/* Headings are set in the display face — Spectral 600, tightened. */
 h1,
 h2,
 h3 {
+  font-family: var(--tnt-serif);
+  font-weight: 600;
   line-height: 1.2;
   margin: 0 0 0.4em;
-  letter-spacing: -0.011em;
+  letter-spacing: -0.015em;
 }
 
 h1 { font-size: var(--tnt-text-2xl); }
@@ -56,6 +61,8 @@ kbd {
   font-size: 0.92em;
 }
 
+input[type='range'] { accent-color: var(--tnt-current); }
+
 :focus-visible {
   outline: 2px solid var(--tnt-focus);
   outline-offset: 2px;
@@ -66,136 +73,292 @@ kbd {
 }
 
 /* ---------------------------------------------------------------------------
- * The shell — a sticky rail beside the content
+ * The top bar — artboard 01
+ * ------------------------------------------------------------------------ */
+
+.tnt-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--tnt-surface);
+  border-bottom: 1px solid var(--tnt-border);
+}
+
+.tnt-topbar-row {
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 14px var(--tnt-space-6);
+  display: flex;
+  align-items: center;
+  gap: var(--tnt-space-5);
+}
+
+/* The wordmark: three tape cells with the middle one lit, then the name. */
+.tnt-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--tnt-text);
+  text-decoration: none;
+  font-family: var(--tnt-serif);
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+.tnt-brand:hover { color: var(--tnt-text); text-decoration: none; }
+
+.tnt-brand-glyph {
+  display: inline-flex;
+  gap: 2px;
+}
+
+.tnt-brand-glyph > span {
+  width: 9px;
+  height: 13px;
+  border: 1.2px solid var(--tnt-text);
+  border-radius: 1.5px;
+}
+
+.tnt-brand-glyph > span[data-lit='true'] {
+  border-color: var(--tnt-current);
+  background: var(--tnt-current);
+}
+
+/* The module switcher: a dim trough of five buttons, the open one on a card. */
+.tnt-modnav {
+  display: flex;
+  gap: 2px;
+  background: var(--tnt-bg);
+  border-radius: 5px;
+  padding: 3px;
+}
+
+.tnt-modnav-btn {
+  font: inherit;
+  font-family: var(--tnt-font);
+  font-size: 14px;
+  padding: 8px 14px;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--tnt-text-secondary);
+  cursor: pointer;
+  display: flex;
+  gap: 7px;
+  align-items: baseline;
+  white-space: nowrap;
+}
+
+.tnt-modnav-btn > .tnt-modnav-n {
+  font-family: var(--tnt-mono);
+  font-size: var(--tnt-text-xs);
+  color: var(--tnt-text-faint);
+}
+
+.tnt-modnav-btn:hover { color: var(--tnt-text); }
+
+.tnt-modnav-btn[aria-expanded='true'],
+.tnt-modnav-btn[aria-current='true'] {
+  border-color: var(--tnt-border);
+  background: var(--tnt-surface);
+  color: var(--tnt-text);
+}
+
+.tnt-topbar-link {
+  font-family: var(--tnt-font);
+  font-size: 14px;
+  color: var(--tnt-text-secondary);
+  text-decoration: none;
+}
+
+.tnt-topbar-link:hover { color: var(--tnt-text); text-decoration: none; }
+
+.tnt-topbar-link[aria-current='page'] { color: var(--tnt-text); font-weight: 500; }
+
+/* The ⌘K pill. */
+.tnt-search-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--tnt-space-2);
+  border: 1px solid var(--tnt-border);
+  border-radius: var(--tnt-radius-full);
+  padding: 7px 14px;
+  min-width: 170px;
+  color: var(--tnt-text-faint);
+  font-family: var(--tnt-font);
+  font-size: var(--tnt-text-sm);
+  text-decoration: none;
+  background: var(--tnt-surface);
+}
+
+.tnt-search-pill:hover { border-color: var(--tnt-text); color: var(--tnt-text-faint); text-decoration: none; }
+
+.tnt-search-pill > kbd {
+  font-family: var(--tnt-mono);
+  font-size: 12px;
+  color: var(--tnt-text-ghost);
+}
+
+/* The theme switch: a dot in the current ink beside a one-word label. */
+.tnt-theme-btn {
+  font: inherit;
+  font-family: var(--tnt-font);
+  font-size: var(--tnt-text-sm);
+  color: var(--tnt-text-secondary);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--tnt-radius-full);
+  padding: 7px 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--tnt-space-2);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.tnt-theme-btn:hover { border-color: var(--tnt-border); color: var(--tnt-text); }
+
+.tnt-theme-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--tnt-text);
+  box-shadow: inset 0 0 0 2px var(--tnt-surface), 0 0 0 1px var(--tnt-text);
+}
+
+/* The module panel strip that opens under the bar. */
+.tnt-modpanel {
+  background: var(--tnt-surface);
+  border-bottom: 1px solid var(--tnt-border);
+}
+
+.tnt-modpanel-row {
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 22px var(--tnt-space-6) 26px;
+  display: flex;
+  gap: 56px;
+  align-items: flex-start;
+}
+
+.tnt-modpanel-title {
+  display: block;
+  font-family: var(--tnt-serif);
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.tnt-modpanel-blurb {
+  display: block;
+  font-family: var(--tnt-serif);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--tnt-text-muted);
+}
+
+.tnt-modpanel-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-top: 2px;
+}
+
+.tnt-modpanel-links > a {
+  font-family: var(--tnt-font);
+  font-size: 14px;
+  color: var(--tnt-text);
+  border: 1px solid var(--tnt-border);
+  border-radius: var(--tnt-radius-full);
+  padding: 7px 16px;
+  text-decoration: none;
+  background: var(--tnt-surface);
+}
+
+.tnt-modpanel-links > a:hover {
+  border-color: var(--tnt-text);
+  background: var(--tnt-bg);
+  color: var(--tnt-text);
+  text-decoration: none;
+}
+
+.tnt-modpanel-links > a[aria-current='page'] {
+  border-color: var(--tnt-current-border);
+  background: var(--tnt-current-soft);
+  color: var(--tnt-current-deep);
+}
+
+/* ---------------------------------------------------------------------------
+ * The shell and the page
  * ------------------------------------------------------------------------ */
 
 .tnt-shell {
-  display: grid;
-  grid-template-columns: 208px minmax(0, 1fr);
-  gap: var(--tnt-space-6);
   max-width: 1360px;
   margin: 0 auto;
-  padding: 0 var(--tnt-space-5);
-  align-items: start;
-}
-
-.tnt-rail {
-  position: sticky;
-  top: 0;
-  align-self: start;
-  max-height: 100vh;
-  overflow-y: auto;
-  padding: var(--tnt-space-5) 0 var(--tnt-space-6);
-  border-right: 1px solid var(--tnt-border);
-  padding-right: var(--tnt-space-4);
-}
-
-.tnt-brand {
-  display: block;
-  font-weight: 700;
-  font-size: var(--tnt-text-lg);
-  color: var(--tnt-text);
-  text-decoration: none;
-  letter-spacing: -0.02em;
-  margin-bottom: var(--tnt-space-1);
-}
-
-.tnt-brand-sub {
-  display: block;
-  font-size: var(--tnt-text-xs);
-  color: var(--tnt-text-muted);
-  margin-bottom: var(--tnt-space-5);
-}
-
-.tnt-rail-group { margin-bottom: var(--tnt-space-4); }
-
-.tnt-rail-group > .tnt-label {
-  display: block;
-  margin-bottom: var(--tnt-space-1);
-}
-
-.tnt-rail-link {
-  display: block;
-  padding: 3px var(--tnt-space-2);
-  margin-left: calc(var(--tnt-space-2) * -1);
-  border-radius: var(--tnt-radius-sm);
-  font-size: var(--tnt-text-sm);
-  color: var(--tnt-text);
-  text-decoration: none;
-  border-left: 2px solid transparent;
-}
-
-.tnt-rail-link:hover {
-  background: var(--tnt-hover);
-}
-
-.tnt-rail-link[aria-current='page'] {
-  border-left-color: var(--tnt-current);
-  color: var(--tnt-current);
-  font-weight: 600;
-  background: var(--tnt-current-soft);
-}
-
-.tnt-rail-rule {
-  border: 0;
-  border-top: 1px solid var(--tnt-border);
-  margin: var(--tnt-space-4) 0;
+  padding: 0 var(--tnt-space-6);
 }
 
 /* The content column. `.tnt-page` is what every route wraps itself in. */
 .tnt-page {
   min-width: 0;
-  padding: var(--tnt-space-5) 0 var(--tnt-space-7);
+  padding: 26px 0 var(--tnt-space-7);
 }
 
 .tnt-page > h1 { margin-bottom: var(--tnt-space-2); }
 
-/**
- * Narrow: the rail becomes a disclosure above the content. `<details>` rather
- * than a scripted menu, so it works before hydration and with the keyboard.
- */
-@media (max-width: 860px) {
-  .tnt-shell {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 0;
-    padding: 0 var(--tnt-space-4);
-  }
-
-  .tnt-rail {
-    position: static;
-    max-height: none;
-    overflow: visible;
-    border-right: 0;
-    border-bottom: 1px solid var(--tnt-border);
-    padding: var(--tnt-space-3) 0;
-  }
-
-  .tnt-rail-nav {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+@media (max-width: 960px) {
+  .tnt-topbar-row {
+    flex-wrap: wrap;
     gap: var(--tnt-space-3);
+    padding: 12px var(--tnt-space-4);
   }
 
-  .tnt-brand-sub { margin-bottom: var(--tnt-space-2); }
+  .tnt-modnav {
+    order: 3;
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .tnt-search-pill { min-width: 0; }
+  .tnt-search-pill > span { display: none; }
+
+  .tnt-modpanel-row {
+    flex-direction: column;
+    gap: var(--tnt-space-3);
+    padding: var(--tnt-space-4);
+  }
+
+  .tnt-shell { padding: 0 var(--tnt-space-4); }
 }
 
 /* ---------------------------------------------------------------------------
- * The syllabus breadcrumb, above the page heading
+ * The syllabus breadcrumb — the bar above the page (artboard 02's header row)
  * ------------------------------------------------------------------------ */
 
 .tnt-crumb {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--tnt-space-2);
+  gap: var(--tnt-space-3);
   align-items: baseline;
-  font-size: var(--tnt-text-xs);
-  color: var(--tnt-text-muted);
-  padding: var(--tnt-space-5) 0 var(--tnt-space-3);
+  font-family: var(--tnt-font);
+  font-size: 14px;
+  color: var(--tnt-text-secondary);
+  padding: 13px 0;
   border-bottom: 1px solid var(--tnt-border);
 }
 
+.tnt-crumb a { color: var(--tnt-text-secondary); text-decoration: none; }
+.tnt-crumb a:hover { color: var(--tnt-text); }
+
+.tnt-crumb-sep {
+  font-family: var(--tnt-mono);
+  font-size: 12px;
+  color: var(--tnt-text-ghost);
+}
+
 /* The crumb owns the top of the column when it is present. */
-.tnt-crumb + .tnt-page { padding-top: var(--tnt-space-5); }
+.tnt-crumb + .tnt-page { padding-top: 26px; }
 
 /* Skip link — the first tab stop on every page. */
 .tnt-skip {
@@ -206,9 +369,101 @@ kbd {
 .tnt-skip:focus {
   left: 8px;
   top: 8px;
-  z-index: 10;
+  z-index: 30;
   padding: 8px 12px;
-  background: var(--tnt-bg);
+  background: var(--tnt-surface);
   border: 1px solid var(--tnt-border);
   border-radius: var(--tnt-radius);
+}
+
+/* ---------------------------------------------------------------------------
+ * Home — artboard 01
+ * ------------------------------------------------------------------------ */
+
+.tnt-hero {
+  padding: 44px 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: var(--tnt-space-6);
+  flex-wrap: wrap;
+}
+
+.tnt-hero-copy {
+  max-width: 620px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.tnt-hero h1 {
+  margin: 0;
+  font-size: var(--tnt-text-3xl);
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.tnt-hero-lead {
+  margin: 0;
+  font-family: var(--tnt-serif);
+  font-size: 18px;
+  line-height: 1.65;
+  color: var(--tnt-text-secondary);
+}
+
+.tnt-hero-stats {
+  display: flex;
+  gap: var(--tnt-space-6);
+  padding-bottom: 6px;
+}
+
+.tnt-catalog {
+  padding: 20px 0 40px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--tnt-space-4);
+}
+
+@media (max-width: 960px) {
+  .tnt-catalog { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 620px) {
+  .tnt-catalog { grid-template-columns: minmax(0, 1fr); }
+}
+
+.tnt-tool-card {
+  padding: 20px 20px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tnt-tool-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.tnt-tool-card-mod {
+  font-family: var(--tnt-mono);
+  font-size: var(--tnt-text-xs);
+  color: var(--tnt-text-ghost);
+}
+
+.tnt-tool-card-title {
+  font-family: var(--tnt-serif);
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+}
+
+.tnt-tool-card-sum {
+  font-family: var(--tnt-serif);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--tnt-text-muted);
+  text-wrap: pretty;
 }

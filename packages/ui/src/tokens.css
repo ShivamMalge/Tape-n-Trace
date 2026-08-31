@@ -6,57 +6,83 @@
  * not ours to control, and the highlight roles the engine emits (`current`,
  * `dead`, `taken`, ...) must map to exactly one colour each, everywhere they are
  * drawn, or the same trace reads differently in two places.
+ *
+ * The values are the UI-overhaul design system (Tape-n-Trace.dc.html, artboard
+ * 00 for light and 06 for dark): warm paper surfaces, ink text, and five colour
+ * roles stated in oklch — blue `current`, green `accepting`, red `dead`,
+ * amber `marked`, purple `new`/written. Type is Spectral for prose and
+ * headings, IBM Plex Sans for interface labels, IBM Plex Mono for every
+ * mathematical object. The web app self-hosts the faces via `next/font` and
+ * publishes them as `--font-*`; in a notebook the named families apply when the
+ * host has them and the stacks degrade quietly when it does not.
  */
 
 :root {
-  --tnt-bg: #ffffff;
-  --tnt-surface: #f6f7f9;
-  --tnt-border: #d5d9e0;
-  --tnt-text: #10131a;
-  --tnt-text-muted: #5b6472;
+  --tnt-bg: #faf7f1;
+  --tnt-surface: #ffffff;
+  --tnt-surface-dim: #f3eee5;
+  --tnt-border: #e2dacc;
+  --tnt-border-strong: #cfc5b3;
+  --tnt-hairline: #efe9de;
+  --tnt-text: #211e1a;
+  --tnt-text-secondary: #5c554b;
+  --tnt-text-muted: #6b6357;
+  --tnt-text-faint: #8a8175;
+  --tnt-text-ghost: #b4ab9b;
 
   /* Machine parts at rest. */
   --tnt-state-fill: #ffffff;
-  --tnt-state-stroke: #3d4451;
-  --tnt-edge: #6b7280;
-  --tnt-label: #374151;
+  --tnt-state-stroke: #211e1a;
+  --tnt-edge: #8a8175;
+  --tnt-label: #6b6357;
 
   /* Highlight roles. One colour per role, defined once. */
-  --tnt-current: #1d4ed8;
-  --tnt-current-soft: #dbeafe;
-  --tnt-accepting: #15803d;
-  --tnt-accepting-soft: #dcfce7;
-  --tnt-dead: #9ca3af;
-  --tnt-dead-soft: #f3f4f6;
-  --tnt-new: #7c3aed;
-  --tnt-taken: #1d4ed8;
-  --tnt-candidate: #a5b4fc;
-  --tnt-marked: #b45309;
+  --tnt-current: oklch(0.5 0.12 255);
+  --tnt-current-soft: oklch(0.955 0.022 255);
+  --tnt-current-border: oklch(0.86 0.05 255);
+  --tnt-current-deep: oklch(0.4 0.1 255);
+  --tnt-accepting: oklch(0.48 0.12 150);
+  --tnt-accepting-soft: oklch(0.955 0.03 150);
+  --tnt-accepting-border: oklch(0.88 0.05 150);
+  --tnt-accepting-deep: oklch(0.4 0.1 150);
+  --tnt-dead: oklch(0.52 0.1 25);
+  --tnt-dead-soft: oklch(0.955 0.022 25);
+  --tnt-dead-border: oklch(0.88 0.04 25);
+  --tnt-dead-deep: oklch(0.44 0.1 25);
+  --tnt-new: oklch(0.5 0.12 300);
+  --tnt-new-soft: oklch(0.955 0.022 300);
+  --tnt-taken: oklch(0.5 0.12 255);
+  --tnt-candidate: oklch(0.86 0.05 255);
+  --tnt-marked: oklch(0.6 0.12 75);
+  --tnt-marked-soft: oklch(0.97 0.035 75);
+  --tnt-marked-border: oklch(0.89 0.06 75);
+  --tnt-marked-deep: oklch(0.46 0.1 75);
 
   /* Input tape. */
-  --tnt-consumed: #9ca3af;
-  --tnt-read: #1d4ed8;
-  --tnt-lookahead: #4b5563;
+  --tnt-consumed: #b4ab9b;
+  --tnt-read: oklch(0.5 0.12 255);
+  --tnt-lookahead: #5c554b;
 
-  --tnt-radius: 6px;
-  --tnt-focus: #2563eb;
-  --tnt-font: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --tnt-mono: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, monospace;
+  --tnt-radius: 5px;
+  --tnt-focus: oklch(0.5 0.12 255);
+
+  /* Type — three families, each with one job (design artboard 00). */
+  --tnt-font: var(--font-plex-sans, 'IBM Plex Sans'), 'IBM Plex Sans', ui-sans-serif, system-ui,
+    -apple-system, 'Segoe UI', sans-serif;
+  --tnt-serif: var(--font-spectral, Spectral), Spectral, Georgia, 'Times New Roman', serif;
+  --tnt-mono: var(--font-plex-mono, 'IBM Plex Mono'), 'IBM Plex Mono', ui-monospace,
+    'Cascadia Code', 'Source Code Pro', Menlo, monospace;
 
   /*
-   * Type scale — six steps, ratio ≈ 1.22, anchored on 15px body.
-   *
-   * There were fifteen distinct font sizes in the app before this existed:
-   * every integer from 10 to 20, plus 22, 24, 26 and 30. That is not a scale,
-   * it is per-component guesswork, and it is why two cards that should have
-   * matched never quite did.
+   * Type scale — anchored on 15px body, with the design's two display steps.
    */
-  --tnt-text-xs: 11px;   /* captions, metadata, citation lines */
+  --tnt-text-xs: 11px;   /* captions, metadata, citation lines, mono labels */
   --tnt-text-sm: 13px;   /* controls, table cells, secondary prose */
   --tnt-text-base: 15px; /* body */
   --tnt-text-lg: 18px;   /* lead paragraph, section headings */
   --tnt-text-xl: 22px;   /* h2 */
   --tnt-text-2xl: 28px;  /* h1 */
+  --tnt-text-3xl: 40px;  /* the home hero, stat counters */
 
   /* Spacing — a 4px grid. Everything that was '7px 9px' becomes one of these. */
   --tnt-space-1: 4px;
@@ -74,70 +100,114 @@
   --tnt-measure: 68ch;
 
   /* Chrome that reacts to the pointer. Kept separate from the highlight roles. */
-  --tnt-hover: #eef1f6;
-  --tnt-active: #e3e8f0;
+  --tnt-hover: #f6f1e8;
+  --tnt-active: #f1ece3;
+
+  /* The card shadow the catalog uses on hover — warm ink, never grey. */
+  --tnt-shadow-hover: 0 2px 10px rgba(33, 30, 26, 0.05);
 }
 
+/*
+ * Dark — design artboard 06, "same page after midnight": a warm near-black
+ * (hue 70) rather than a blue one, with the five roles brightened to keep
+ * their contrast against it.
+ */
 @media (prefers-color-scheme: dark) {
   :root:not([data-tnt-theme='light']) {
-    --tnt-bg: #0f1117;
-    --tnt-surface: #171a21;
-    --tnt-border: #2c313c;
-    --tnt-text: #e8eaed;
-    --tnt-text-muted: #9aa3b2;
+    --tnt-bg: oklch(0.19 0.006 70);
+    --tnt-surface: oklch(0.235 0.007 70);
+    --tnt-surface-dim: oklch(0.215 0.007 70);
+    --tnt-border: oklch(0.3 0.008 70);
+    --tnt-border-strong: oklch(0.38 0.008 70);
+    --tnt-hairline: oklch(0.27 0.008 70);
+    --tnt-text: oklch(0.93 0.01 80);
+    --tnt-text-secondary: oklch(0.78 0.01 80);
+    --tnt-text-muted: oklch(0.68 0.01 80);
+    --tnt-text-faint: oklch(0.62 0.01 80);
+    --tnt-text-ghost: oklch(0.45 0.01 80);
 
-    --tnt-state-fill: #1c2029;
-    --tnt-state-stroke: #9aa3b2;
-    --tnt-edge: #8b93a1;
-    --tnt-label: #c8cede;
+    --tnt-state-fill: oklch(0.235 0.007 70);
+    --tnt-state-stroke: oklch(0.88 0.01 80);
+    --tnt-edge: oklch(0.55 0.01 80);
+    --tnt-label: oklch(0.68 0.01 80);
 
-    --tnt-current: #60a5fa;
-    --tnt-current-soft: #1e3a5f;
-    --tnt-accepting: #4ade80;
-    --tnt-accepting-soft: #14532d;
-    --tnt-dead: #4b5563;
-    --tnt-dead-soft: #1f2430;
-    --tnt-new: #c084fc;
-    --tnt-taken: #60a5fa;
-    --tnt-candidate: #4c5b91;
-    --tnt-marked: #fbbf24;
+    --tnt-current: oklch(0.72 0.12 255);
+    --tnt-current-soft: oklch(0.3 0.045 255);
+    --tnt-current-border: oklch(0.44 0.06 255);
+    --tnt-current-deep: oklch(0.8 0.12 255);
+    --tnt-accepting: oklch(0.74 0.12 150);
+    --tnt-accepting-soft: oklch(0.26 0.05 150);
+    --tnt-accepting-border: oklch(0.36 0.06 150);
+    --tnt-accepting-deep: oklch(0.84 0.12 150);
+    --tnt-dead: oklch(0.68 0.12 25);
+    --tnt-dead-soft: oklch(0.26 0.04 25);
+    --tnt-dead-border: oklch(0.36 0.05 25);
+    --tnt-dead-deep: oklch(0.82 0.1 25);
+    --tnt-new: oklch(0.78 0.11 300);
+    --tnt-new-soft: oklch(0.28 0.045 300);
+    --tnt-taken: oklch(0.72 0.12 255);
+    --tnt-candidate: oklch(0.44 0.06 255);
+    --tnt-marked: oklch(0.78 0.11 75);
+    --tnt-marked-soft: oklch(0.27 0.05 75);
+    --tnt-marked-border: oklch(0.38 0.06 75);
+    --tnt-marked-deep: oklch(0.88 0.1 75);
 
-    --tnt-consumed: #4b5563;
-    --tnt-read: #60a5fa;
-    --tnt-lookahead: #9aa3b2;
-    --tnt-hover: #1e2430;
-    --tnt-active: #262d3b;
+    --tnt-consumed: oklch(0.45 0.01 80);
+    --tnt-read: oklch(0.72 0.12 255);
+    --tnt-lookahead: oklch(0.78 0.01 80);
+    --tnt-hover: oklch(0.26 0.008 70);
+    --tnt-active: oklch(0.29 0.008 70);
+    --tnt-focus: oklch(0.72 0.12 255);
+    --tnt-shadow-hover: 0 2px 10px rgba(0, 0, 0, 0.35);
   }
 }
 
 [data-tnt-theme='dark'] {
-  --tnt-bg: #0f1117;
-  --tnt-surface: #171a21;
-  --tnt-border: #2c313c;
-  --tnt-text: #e8eaed;
-  --tnt-text-muted: #9aa3b2;
+  --tnt-bg: oklch(0.19 0.006 70);
+  --tnt-surface: oklch(0.235 0.007 70);
+  --tnt-surface-dim: oklch(0.215 0.007 70);
+  --tnt-border: oklch(0.3 0.008 70);
+  --tnt-border-strong: oklch(0.38 0.008 70);
+  --tnt-hairline: oklch(0.27 0.008 70);
+  --tnt-text: oklch(0.93 0.01 80);
+  --tnt-text-secondary: oklch(0.78 0.01 80);
+  --tnt-text-muted: oklch(0.68 0.01 80);
+  --tnt-text-faint: oklch(0.62 0.01 80);
+  --tnt-text-ghost: oklch(0.45 0.01 80);
 
-  --tnt-state-fill: #1c2029;
-  --tnt-state-stroke: #9aa3b2;
-  --tnt-edge: #8b93a1;
-  --tnt-label: #c8cede;
+  --tnt-state-fill: oklch(0.235 0.007 70);
+  --tnt-state-stroke: oklch(0.88 0.01 80);
+  --tnt-edge: oklch(0.55 0.01 80);
+  --tnt-label: oklch(0.68 0.01 80);
 
-  --tnt-current: #60a5fa;
-  --tnt-current-soft: #1e3a5f;
-  --tnt-accepting: #4ade80;
-  --tnt-accepting-soft: #14532d;
-  --tnt-dead: #4b5563;
-  --tnt-dead-soft: #1f2430;
-  --tnt-new: #c084fc;
-  --tnt-taken: #60a5fa;
-  --tnt-candidate: #4c5b91;
-  --tnt-marked: #fbbf24;
+  --tnt-current: oklch(0.72 0.12 255);
+  --tnt-current-soft: oklch(0.3 0.045 255);
+  --tnt-current-border: oklch(0.44 0.06 255);
+  --tnt-current-deep: oklch(0.8 0.12 255);
+  --tnt-accepting: oklch(0.74 0.12 150);
+  --tnt-accepting-soft: oklch(0.26 0.05 150);
+  --tnt-accepting-border: oklch(0.36 0.06 150);
+  --tnt-accepting-deep: oklch(0.84 0.12 150);
+  --tnt-dead: oklch(0.68 0.12 25);
+  --tnt-dead-soft: oklch(0.26 0.04 25);
+  --tnt-dead-border: oklch(0.36 0.05 25);
+  --tnt-dead-deep: oklch(0.82 0.1 25);
+  --tnt-new: oklch(0.78 0.11 300);
+  --tnt-new-soft: oklch(0.28 0.045 300);
+  --tnt-taken: oklch(0.72 0.12 255);
+  --tnt-candidate: oklch(0.44 0.06 255);
+  --tnt-marked: oklch(0.78 0.11 75);
+  --tnt-marked-soft: oklch(0.27 0.05 75);
+  --tnt-marked-border: oklch(0.38 0.06 75);
+  --tnt-marked-deep: oklch(0.88 0.1 75);
 
-  --tnt-consumed: #4b5563;
-  --tnt-read: #60a5fa;
-  --tnt-lookahead: #9aa3b2;
-  --tnt-hover: #1e2430;
-  --tnt-active: #262d3b;
+  --tnt-consumed: oklch(0.45 0.01 80);
+  --tnt-read: oklch(0.72 0.12 255);
+  --tnt-lookahead: oklch(0.78 0.01 80);
+  --tnt-hover: oklch(0.26 0.008 70);
+  --tnt-active: oklch(0.29 0.008 70);
+  --tnt-focus: oklch(0.72 0.12 255);
+  --tnt-shadow-hover: 0 2px 10px rgba(0, 0, 0, 0.35);
 }
 
 /* Respect a reader who has asked the OS to stop things moving. */

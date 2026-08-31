@@ -304,82 +304,105 @@ export interface NavLink {
 
 export interface NavGroup {
   id: string
+  /** The module number as the bar shows it. */
+  n: number
+  /** The short name on the bar button. */
   label: string
+  /** The full name the panel strip opens with. */
+  title: string
+  /** One sentence under the title, in the panel strip. */
+  blurb: string
   links: NavLink[]
 }
 
 /**
- * The navigation rail.
+ * The top bar's modules — design artboard 01, "the 13-link nav folded into five
+ * modules".
  *
  * Here rather than in the layout so that adding a tool is a change to this file
  * and `topics.ts`, and to nothing else — `test/syllabus.test.tsx` reads
  * `app/layout.tsx` and fails if a link is hard-coded back into it.
  *
- * **Grouped by verb, because the product is.** The README's "Three verbs"
- * section says everything here is one of simulate, transform or decide, and
- * `Tool.verb` records which. Seventeen links in a flat wrapping row said none of
- * that; five named groups say it on every page. Hubs and the syllabus index sit
- * among the tools because they are navigation rather than tools, and so have no
- * place in `CATALOG`.
- *
- * Not every live tool is here. The rail is for the twenty or so a student
- * reaches for; the rest are found from the home page, which renders `CATALOG`
- * directly, and from the hub each one belongs to. A test asserts every live
- * tool is reachable from one or the other.
+ * **Grouped by module, because the course is.** The five buttons are the five
+ * modules of BTOCH503; the verb a tool belongs to (simulate, convert, decide,
+ * prove, learn) is the tag on its catalog card, one per tool, never two. Not
+ * every live tool is here — the panel is for the ones a student reaches for;
+ * the home page renders `CATALOG` in full, and a test asserts every live tool
+ * is reachable from one or the other.
  */
 export const NAV: NavGroup[] = [
   {
-    id: 'simulate',
-    label: 'Simulate',
+    id: 'm1',
+    n: 1,
+    label: 'Automata',
+    title: 'Finite automata',
+    blurb: 'Build a machine and watch it read.',
     links: [
-      { href: '/simulate', label: 'Finite automata' },
-      { href: '/edit', label: 'Draw a machine' },
-      { href: '/simulate/pda', label: 'Pushdown automata' },
-      { href: '/simulate/tm', label: 'Turing machines' },
+      { href: '/simulate', label: 'Simulate' },
+      { href: '/edit', label: 'Draw' },
       { href: '/search', label: 'Text search' },
-    ],
-  },
-  {
-    id: 'convert',
-    label: 'Convert',
-    links: [
-      { href: '/convert', label: 'All conversions' },
-      { href: '/regex', label: 'Regex playground' },
-      { href: '/closure', label: 'Closure lab' },
-      { href: '/grammar', label: 'Grammars' },
-      { href: '/grammar/simplify', label: 'Simplify & CNF' },
-    ],
-  },
-  {
-    id: 'prove',
-    label: 'Prove',
-    links: [
-      { href: '/prove/pumping', label: 'Pumping lemma' },
-      { href: '/closure/cfl', label: 'CFL closure' },
-      { href: '/undecidable', label: 'Undecidability' },
-      { href: '/undecidable/diagonalization', label: 'Diagonalization' },
-      { href: '/undecidable/reduction', label: 'Reductions' },
-    ],
-  },
-  {
-    id: 'practice',
-    label: 'Practice',
-    links: [
-      { href: '/practice', label: 'Question bank' },
-      { href: '/applied', label: 'Case studies' },
-    ],
-  },
-  {
-    id: 'learn',
-    label: 'Learn',
-    links: [
-      { href: '/hierarchy', label: 'The hierarchy' },
       { href: '/learn/strings', label: 'Strings & languages' },
+    ],
+  },
+  {
+    id: 'm2',
+    n: 2,
+    label: 'Equivalence',
+    title: 'Equivalence & conversion',
+    blurb: 'Move between the four representations of a regular language.',
+    links: [
+      { href: '/convert', label: 'Convert' },
+      { href: '/convert/nfa-to-dfa', label: 'NFA → DFA' },
+      { href: '/convert/minimize', label: 'Minimise' },
+      { href: '/regex', label: 'Regex' },
       { href: '/learn/unix-regex', label: 'UNIX regexes' },
+    ],
+  },
+  {
+    id: 'm3',
+    n: 3,
+    label: 'Properties',
+    title: 'Properties & proofs',
+    blurb: 'Decide what a language is, and write down why.',
+    links: [
+      { href: '/closure', label: 'Closure' },
+      { href: '/prove/pumping', label: 'Pumping' },
+      { href: '/practice', label: 'Question bank' },
+      { href: '/hierarchy', label: 'The hierarchy' },
+    ],
+  },
+  {
+    id: 'm4',
+    n: 4,
+    label: 'Grammars',
+    title: 'Grammars & pushdown automata',
+    blurb: 'Context-free languages, their grammars and their machines.',
+    links: [
+      { href: '/grammar', label: 'Grammars' },
+      { href: '/simulate/pda', label: 'PDA' },
+      { href: '/edit/pda', label: 'Build a PDA' },
+      { href: '/grammar/simplify', label: 'CNF' },
+      { href: '/closure/cfl', label: 'CFL closure' },
+    ],
+  },
+  {
+    id: 'm5',
+    n: 5,
+    label: 'Machines',
+    title: 'Turing machines',
+    blurb: 'The full model, worked examples and graded practice.',
+    links: [
+      { href: '/simulate/tm', label: 'TM' },
+      { href: '/edit/tm', label: 'Build a TM' },
+      { href: '/undecidable', label: 'Undecidability' },
+      { href: '/applied', label: 'Case studies' },
       { href: '/syllabus', label: 'Syllabus' },
     ],
   },
 ]
+
+/** The bar's standalone links, to the right of the modules. */
+export const NAV_EXTRAS: NavLink[] = [{ href: '/practice', label: 'Practice' }]
 
 /** Every rail link, flattened. */
 export function navLinks(): NavLink[] {

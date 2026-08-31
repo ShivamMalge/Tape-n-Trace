@@ -7,6 +7,11 @@
  * style objects against 344 classNames, fifteen distinct font sizes, and the
  * same pill button written out twenty-two times in twenty-one files.
  *
+ * The shapes are the UI-overhaul design system (Tape-n-Trace.dc.html, artboard
+ * 00): ink-filled primary buttons, bordered secondaries, mono pill chips, verb
+ * tags in five tints, a segmented control, three verdict banners, docs cards
+ * with the citation set right, stat counters, and the mono editor frame.
+ *
  * **Notebook safety is the binding constraint.** These rules ship inside the
  * Vyakarana widget, and `anywidget` injects CSS into the host notebook's own
  * document (architecture.md §10.2). So every selector here begins with a
@@ -28,30 +33,42 @@
 /* The single-property utilities are defined at the very bottom of this file —
    see "Utilities" there for why their position matters. */
 
-/** Metadata under a heading: citations, "Module 5 · §8.2", counts. */
+/** Metadata under a heading: citations, "Module 5 · §8.2", counts. Mono. */
 .tnt-meta {
+  font-family: var(--tnt-mono);
   font-size: var(--tnt-text-xs);
-  color: var(--tnt-text-muted);
+  color: var(--tnt-text-faint);
   letter-spacing: 0.02em;
 }
 
-/** A small all-caps label above a group. */
+/** A small all-caps mono label above a group — "NARRATION", "ID SEQUENCE". */
 .tnt-label {
+  font-family: var(--tnt-mono);
   font-size: var(--tnt-text-xs);
-  font-weight: 600;
+  font-weight: 400;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--tnt-text-muted);
+  letter-spacing: 0.14em;
+  color: var(--tnt-text-faint);
 }
 
-/** Running prose, held to a readable measure. Diagrams and tables opt out. */
+/** Running prose, held to a readable measure. Set in Spectral. */
 .tnt-prose {
   max-width: var(--tnt-measure);
+  font-family: var(--tnt-serif);
+  line-height: 1.65;
+  text-wrap: pretty;
 }
 
 .tnt-prose p { margin: 0 0 var(--tnt-space-3); }
 .tnt-prose > :last-child { margin-bottom: 0; }
 
+/** A heading in the display face, any level. */
+.tnt-display {
+  font-family: var(--tnt-serif);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.2;
+}
 
 /* ---------------------------------------------------------------------------
  * Layout helpers
@@ -64,9 +81,8 @@
 /*
  * A stack spaces its children with `gap`, so their own block margins have
  * nothing left to do — and margins do not collapse in a grid, so a paragraph's
- * default margin would *add* to the gap rather than merge with it. That is the
- * bug every `style={{ margin: 0 }}` in this codebase was written to avoid, one
- * element at a time. Stated once, in the place that owns the spacing.
+ * default margin would *add* to the gap rather than merge with it. Stated once,
+ * in the place that owns the spacing.
  */
 .tnt-stack > *,
 .tnt-stack-sm > *,
@@ -98,7 +114,7 @@
 /** The two-or-more-panel layout used by every workbench in the app. */
 .tnt-panels {
   display: grid;
-  gap: var(--tnt-space-3);
+  gap: var(--tnt-space-4);
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 }
 
@@ -117,22 +133,18 @@
 }
 
 /**
- * A wide working area with a narrow aside — a machine beside its docs, a
- * stepper beside its artifact table. `tnt-panels` would equalise the two, which
- * is wrong when one column holds a diagram and the other holds notes.
- *
- * It collapses at the same breakpoint as the shell. The fixed two-column
- * versions this replaces had no breakpoint at all and overflowed sideways on a
- * phone rather than stacking.
+ * A wide working area with a narrow aside — the simulator's 1fr / 344px grid
+ * of artboard 02: the diagram, tape and transport on the left, narration, ID
+ * sequence, verdict and docs on the right.
  */
 .tnt-panels-aside {
   display: grid;
-  gap: var(--tnt-space-4);
-  grid-template-columns: minmax(0, 2.4fr) minmax(220px, 1fr);
+  gap: var(--tnt-space-5);
+  grid-template-columns: minmax(0, 1fr) 344px;
   align-items: start;
 }
 
-@media (max-width: 860px) {
+@media (max-width: 960px) {
   .tnt-panels-aside { grid-template-columns: minmax(0, 1fr); }
 }
 
@@ -153,28 +165,25 @@
   border: 1px solid var(--tnt-border);
   border-radius: var(--tnt-radius);
   background: var(--tnt-surface);
-  padding: var(--tnt-space-4);
+  padding: var(--tnt-space-5);
 }
 
 /** A card that is a link. Only the hover differs. */
 a.tnt-card {
   color: inherit;
   text-decoration: none;
-  transition: border-color 120ms ease, background-color 120ms ease;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
 }
 
 /*
- * An anchor is inline by default, so a link card needs a block display — but
- * `a.tnt-card` would score (0,1,1) and silently outrank a layout class like
- * `.tnt-stack-sm` at (0,1,0), leaving the card's own gap unapplied. `:where()`
- * contributes nothing to specificity, so this scores (0,0,1) and any layout
- * class the caller adds wins, which is what a caller expects.
+ * `:where()` contributes nothing to specificity, so any layout class the caller
+ * adds wins, which is what a caller expects.
  */
 a:where(.tnt-card) { display: block; }
 
 a.tnt-card:hover {
-  border-color: var(--tnt-current);
-  background: var(--tnt-hover);
+  border-color: var(--tnt-border-strong);
+  box-shadow: var(--tnt-shadow-hover);
 }
 
 /** An aside that comments on what is beside it, without boxing it. */
@@ -188,27 +197,19 @@ a.tnt-card:hover {
 .tnt-note-bad { border-left-color: var(--tnt-dead); }
 .tnt-note-good { border-left-color: var(--tnt-accepting); }
 
-/**
- * A card with no tint. Two uses, both common:
- * a card nested inside another card, and any surface a diagram, tape or tree is
- * drawn on — those want the page background behind them, not the grey.
- */
+/** A card on the page tint rather than white — a nested card, a docs card. */
 .tnt-card-plain { background: var(--tnt-bg); }
 
-/**
- * A card carrying a verdict, as a left rule.
- *
- * `.tnt-note` has the same rule but also its own padding and type size, which
- * fight a card's. These are the border alone, so a card keeps being a card.
- */
+/** A card carrying a verdict, as a left rule. */
 .tnt-card-good { border-left: 3px solid var(--tnt-accepting); }
 .tnt-card-warn { border-left: 3px solid var(--tnt-marked); }
 .tnt-card-bad { border-left: 3px solid var(--tnt-dead); }
 
 /** The small label above a list or a block of notation inside a card. */
 .tnt-caption {
+  font-family: var(--tnt-mono);
   font-size: var(--tnt-text-xs);
-  color: var(--tnt-text-muted);
+  color: var(--tnt-text-faint);
   letter-spacing: 0.02em;
   margin: 0 0 var(--tnt-space-2);
 }
@@ -225,15 +226,143 @@ a.tnt-card:hover {
   margin: var(--tnt-space-2) 0;
 }
 
-/**
- * A heading sized down without changing its level.
- *
- * An aside's heading is still an `<h2>` in the document outline; it just should
- * not be set at 22px inside a 220px column. Reaching for a smaller element to
- * get a smaller size is how heading levels end up describing the layout instead
- * of the structure.
- */
+/** A heading sized down without changing its level. */
 .tnt-heading-sm { font-size: var(--tnt-text-base); }
+
+/**
+ * The verdict banner — artboard 00, "three states, never two".
+ * A tinted field, a matching border, a 3px rule of the role colour, the
+ * headline in Plex Sans 600 of the deep role colour, the detail in Spectral.
+ */
+.tnt-banner {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--tnt-space-3) 14px;
+  padding: 14px 18px;
+  border: 1px solid var(--tnt-border);
+  border-left-width: 3px;
+  border-radius: var(--tnt-radius-sm);
+  background: var(--tnt-surface);
+  font-family: var(--tnt-serif);
+  font-size: var(--tnt-text-base);
+  color: var(--tnt-text);
+}
+
+.tnt-banner-headline {
+  font-family: var(--tnt-font);
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.tnt-banner-good {
+  background: var(--tnt-accepting-soft);
+  border-color: var(--tnt-accepting-border);
+  border-left-color: var(--tnt-accepting);
+}
+.tnt-banner-good .tnt-banner-headline { color: var(--tnt-accepting-deep); }
+
+.tnt-banner-bad {
+  background: var(--tnt-dead-soft);
+  border-color: var(--tnt-dead-border);
+  border-left-color: var(--tnt-dead);
+}
+.tnt-banner-bad .tnt-banner-headline { color: var(--tnt-dead-deep); }
+
+.tnt-banner-warn {
+  background: var(--tnt-marked-soft);
+  border-color: var(--tnt-marked-border);
+  border-left-color: var(--tnt-marked);
+}
+.tnt-banner-warn .tnt-banner-headline { color: var(--tnt-marked-deep); }
+
+.tnt-banner-info {
+  background: var(--tnt-current-soft);
+  border-color: var(--tnt-current-border);
+  border-left-color: var(--tnt-current);
+}
+.tnt-banner-info .tnt-banner-headline { color: var(--tnt-current-deep); }
+
+/** The banner's detail text stretches; a trailing action stays put. */
+.tnt-banner-detail { flex: 1 1 16ch; min-width: 0; }
+
+/**
+ * The docs card — a `<details>` with a Plex Sans summary and the Hopcroft
+ * citation set to the right in mono; the body in Spectral.
+ */
+.tnt-docs {
+  border: 1px solid var(--tnt-border);
+  border-radius: var(--tnt-radius);
+  background: var(--tnt-bg);
+  padding: 14px 18px;
+}
+
+.tnt-docs > summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--tnt-space-3);
+  font-family: var(--tnt-font);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--tnt-text);
+}
+
+.tnt-docs > summary::-webkit-details-marker { display: none; }
+
+.tnt-docs > summary:focus-visible {
+  outline: 2px solid var(--tnt-focus);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.tnt-docs-cite {
+  font-family: var(--tnt-mono);
+  font-size: var(--tnt-text-xs);
+  color: var(--tnt-text-faint);
+  white-space: nowrap;
+}
+
+.tnt-docs > :not(summary) {
+  margin: 10px 0 0;
+  font-family: var(--tnt-serif);
+  font-size: var(--tnt-text-base);
+  line-height: 1.7;
+  color: var(--tnt-text-secondary);
+}
+
+/** A stat counter: a big mono figure over a small sans caption. */
+.tnt-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tnt-stat-value {
+  font-family: var(--tnt-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 30px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.tnt-stat-lg .tnt-stat-value { font-size: 38px; }
+
+.tnt-stat-caption {
+  font-family: var(--tnt-font);
+  font-size: 12px;
+  color: var(--tnt-text-faint);
+}
+
+.tnt-stats {
+  display: flex;
+  gap: var(--tnt-space-6);
+  flex-wrap: wrap;
+}
 
 /* ---------------------------------------------------------------------------
  * Controls
@@ -243,34 +372,40 @@ a.tnt-card:hover {
 .tnt-chip {
   font: inherit;
   color: var(--tnt-text);
-  background: var(--tnt-bg);
-  border: 1px solid var(--tnt-border);
+  background: var(--tnt-surface);
+  border: 1px solid var(--tnt-border-strong);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: var(--tnt-space-2);
   text-decoration: none;
-  transition: background-color 120ms ease, border-color 120ms ease;
+  transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
 }
 
+/** The bordered secondary button — "Reset". */
 .tnt-btn {
-  font-size: var(--tnt-text-sm);
-  padding: var(--tnt-space-2) var(--tnt-space-3);
+  font-family: var(--tnt-font);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.2;
+  padding: 10px 18px;
   border-radius: var(--tnt-radius-sm);
 }
 
-/** The pill. Twenty-two hand-rolled copies collapsed into this. */
+/** The pill, in mono — a Try string, an alphabet symbol. */
 .tnt-chip {
+  font-family: var(--tnt-mono);
+  font-variant-numeric: tabular-nums;
   font-size: var(--tnt-text-sm);
-  padding: var(--tnt-space-1) var(--tnt-space-3);
+  padding: 6px 14px;
+  border-color: var(--tnt-border);
   border-radius: var(--tnt-radius-full);
   line-height: 1.4;
 }
 
 .tnt-btn:hover,
 .tnt-chip:hover {
-  background: var(--tnt-hover);
-  border-color: var(--tnt-text-muted);
+  border-color: var(--tnt-text);
 }
 
 .tnt-btn:active,
@@ -282,8 +417,8 @@ a.tnt-card:hover {
 .tnt-btn[aria-pressed='true'],
 .tnt-chip[aria-pressed='true'] {
   background: var(--tnt-current-soft);
-  border-color: var(--tnt-current);
-  color: var(--tnt-text);
+  border-color: var(--tnt-current-border);
+  color: var(--tnt-current-deep);
 }
 
 .tnt-btn[disabled],
@@ -294,29 +429,45 @@ a.tnt-card:hover {
 
 .tnt-btn[disabled]:hover,
 .tnt-chip[disabled]:hover {
-  background: var(--tnt-bg);
+  background: var(--tnt-surface);
   border-color: var(--tnt-border);
 }
 
+/** The ink-filled primary — "Run machine", "Play". Inverts with the theme. */
 .tnt-btn-primary {
-  background: var(--tnt-current);
-  border-color: var(--tnt-current);
+  background: var(--tnt-text);
+  border-color: var(--tnt-text);
   color: var(--tnt-bg);
 }
 
 .tnt-btn-primary:hover {
-  background: var(--tnt-current);
+  background: color-mix(in oklab, var(--tnt-text), var(--tnt-bg) 14%);
+  border-color: color-mix(in oklab, var(--tnt-text), var(--tnt-bg) 14%);
+}
+
+.tnt-btn-primary[aria-pressed='true'] {
+  background: var(--tnt-text);
   border-color: var(--tnt-text);
-  filter: brightness(1.08);
+  color: var(--tnt-bg);
+}
+
+/** The ghost — "Load example": text that happens to be a control. */
+.tnt-btn-ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--tnt-text-muted);
+  font-weight: 400;
+  padding-inline: var(--tnt-space-2);
+}
+
+.tnt-btn-ghost:hover {
+  border-color: transparent;
+  color: var(--tnt-text);
 }
 
 /**
- * A button with no chrome: styled text that happens to be a control.
- *
- * Disclosure headings and grid cells need this, and undoing `.tnt-btn` property
- * by property at each call site is how six components end up with six slightly
- * different bare buttons. The focus ring stays — that is the one piece of chrome
- * a bare button must not lose.
+ * A button with no chrome. Disclosure headings and grid cells need this. The
+ * focus ring stays — that is the one piece of chrome a bare button must not lose.
  */
 .tnt-btn-bare {
   font: inherit;
@@ -336,23 +487,23 @@ a.tnt-card:hover {
 
 .tnt-btn-bare[disabled] { cursor: not-allowed; opacity: 0.5; }
 
-/** A square icon button — the transport controls. */
+/** A square icon button — the transport's ◀ and ▶ at 38px. */
 .tnt-btn-icon {
-  min-width: 32px;
-  height: 30px;
+  min-width: 38px;
+  height: 38px;
   padding: 0;
   justify-content: center;
-  font-size: var(--tnt-text-sm);
+  font-size: 14px;
   line-height: 1;
 }
 
-/** The transport bar, which sits under nearly every diagram in the product. */
+/** The transport card, which sits under nearly every diagram in the product. */
 .tnt-transport {
   display: flex;
   align-items: center;
-  gap: var(--tnt-space-3);
+  gap: 18px;
   flex-wrap: wrap;
-  padding: var(--tnt-space-2) var(--tnt-space-3);
+  padding: 14px 20px;
   border: 1px solid var(--tnt-border);
   border-radius: var(--tnt-radius);
   background: var(--tnt-surface);
@@ -368,7 +519,7 @@ a.tnt-card:hover {
 .tnt-transport-count {
   font-family: var(--tnt-mono);
   font-variant-numeric: tabular-nums;
-  font-size: var(--tnt-text-sm);
+  font-size: 12px;
   color: var(--tnt-text-muted);
   white-space: nowrap;
 }
@@ -376,15 +527,15 @@ a.tnt-card:hover {
 .tnt-select {
   font-family: var(--tnt-font);
   font-size: var(--tnt-text-sm);
-  padding: 2px var(--tnt-space-1);
+  padding: 4px var(--tnt-space-2);
   border-radius: var(--tnt-radius-sm);
-  border: 1px solid var(--tnt-border);
-  background: var(--tnt-bg);
+  border: 1px solid var(--tnt-border-strong);
+  background: var(--tnt-surface);
   color: var(--tnt-text);
   cursor: pointer;
 }
 
-.tnt-select:hover { border-color: var(--tnt-text-muted); }
+.tnt-select:hover { border-color: var(--tnt-text); }
 .tnt-select:focus-visible { outline: 2px solid var(--tnt-focus); outline-offset: 2px; }
 .tnt-select[disabled] { cursor: not-allowed; opacity: 0.5; }
 
@@ -396,10 +547,79 @@ a.tnt-card:hover {
   padding: 2px var(--tnt-space-2);
   border-radius: var(--tnt-radius-full);
   border: 1px solid var(--tnt-border);
-  background: var(--tnt-bg);
+  background: var(--tnt-surface);
+  font-family: var(--tnt-mono);
   font-size: var(--tnt-text-xs);
   color: var(--tnt-text-muted);
   white-space: nowrap;
+}
+
+/**
+ * The verb tag — one per tool, never two. Mono small caps in the verb's tint:
+ * simulate blue, convert purple, decide amber, prove green, learn ink.
+ */
+.tnt-verb {
+  display: inline-block;
+  font-family: var(--tnt-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  line-height: 1.3;
+  padding: 4px 9px;
+  border-radius: 3px;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  color: var(--tnt-text-muted);
+  background: var(--tnt-surface-dim);
+}
+
+.tnt-verb[data-verb='simulate'] { color: var(--tnt-current); background: var(--tnt-current-soft); }
+.tnt-verb[data-verb='convert'] { color: var(--tnt-new); background: var(--tnt-new-soft); }
+.tnt-verb[data-verb='decide'] { color: var(--tnt-marked-deep); background: var(--tnt-marked-soft); }
+.tnt-verb[data-verb='prove'] { color: var(--tnt-accepting); background: var(--tnt-accepting-soft); }
+.tnt-verb[data-verb='learn'] { color: var(--tnt-text-muted); background: var(--tnt-surface-dim); }
+
+/**
+ * The segmented control — "head fixed | tape fixed". A dim trough holding
+ * bare buttons; the pressed one lifts onto a white card.
+ */
+.tnt-seg {
+  display: inline-flex;
+  align-self: flex-start;
+  gap: 0;
+  background: var(--tnt-surface-dim);
+  border: 1px solid var(--tnt-border);
+  border-radius: 5px;
+  padding: 3px;
+}
+
+.tnt-seg > .tnt-seg-btn {
+  font: inherit;
+  font-family: var(--tnt-font);
+  font-size: var(--tnt-text-sm);
+  padding: 7px 16px;
+  border: none;
+  border-radius: 3px;
+  background: transparent;
+  color: var(--tnt-text-muted);
+  cursor: pointer;
+  line-height: 1.2;
+}
+
+.tnt-seg > .tnt-seg-btn[aria-pressed='true'] {
+  background: var(--tnt-surface);
+  color: var(--tnt-text);
+  box-shadow: 0 1px 2px rgba(33, 30, 26, 0.07);
+}
+
+.tnt-seg > .tnt-seg-btn:focus-visible {
+  outline: 2px solid var(--tnt-focus);
+  outline-offset: 1px;
+}
+
+.tnt-seg-sm > .tnt-seg-btn {
+  font-size: 12px;
+  padding: 5px 12px;
 }
 
 /* ---------------------------------------------------------------------------
@@ -423,27 +643,90 @@ a.tnt-card:hover {
   font: inherit;
   font-size: var(--tnt-text-sm);
   color: var(--tnt-text);
-  background: var(--tnt-bg);
-  border: 1px solid var(--tnt-border);
+  background: var(--tnt-surface);
+  border: 1px solid var(--tnt-border-strong);
   border-radius: var(--tnt-radius-sm);
-  padding: var(--tnt-space-1) var(--tnt-space-2);
+  padding: var(--tnt-space-2) var(--tnt-space-3);
 }
 
-.tnt-input:hover { border-color: var(--tnt-text-muted); }
+.tnt-input:hover { border-color: var(--tnt-text); }
 
 /**
- * The primary notation field of a page — the regular expression, the pumping
- * game's w, the lexer's snippet. These are what the page is about, and setting
- * them at control size buries them.
+ * The primary notation field of a page — the input string, the regular
+ * expression, the pumping game's w. Mono, tracked wide, set large.
  */
 .tnt-input-lg {
   font-size: var(--tnt-text-lg);
-  padding: var(--tnt-space-2) var(--tnt-space-3);
+  letter-spacing: 0.16em;
+  padding: 10px 16px;
+  min-width: 220px;
 }
 
 .tnt-input-mono {
   font-family: var(--tnt-mono);
   font-variant-numeric: tabular-nums;
+}
+
+/**
+ * The mono editor frame — a grammar, a δ listing — with a gutter of line
+ * numbers, an error line tinted with a red inset rule, and the error row
+ * beneath naming the line in mono and the fault in Spectral.
+ */
+.tnt-editor {
+  border: 1px solid var(--tnt-border-strong);
+  border-radius: var(--tnt-radius);
+  overflow: hidden;
+  background: var(--tnt-surface);
+}
+
+.tnt-editor-body {
+  display: flex;
+  font-family: var(--tnt-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 14px;
+  line-height: 1.9;
+}
+
+.tnt-editor-gutter {
+  padding: 12px 10px;
+  color: var(--tnt-text-ghost);
+  background: var(--tnt-bg);
+  border-right: 1px solid var(--tnt-hairline);
+  text-align: right;
+  min-width: 34px;
+  user-select: none;
+}
+
+.tnt-editor-text {
+  flex: 1;
+  padding: 12px 14px;
+  min-width: 0;
+}
+
+.tnt-editor-line-bad {
+  background: var(--tnt-dead-soft);
+  box-shadow: inset 2px 0 0 var(--tnt-dead);
+  margin: 0 -14px;
+  padding: 0 14px;
+}
+
+.tnt-editor-error {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  padding: 9px 14px;
+  border-top: 1px solid var(--tnt-hairline);
+  background: var(--tnt-dead-soft);
+  font-family: var(--tnt-serif);
+  font-size: 14px;
+  color: var(--tnt-text-secondary);
+}
+
+.tnt-editor-error > .tnt-editor-where {
+  font-family: var(--tnt-mono);
+  font-size: var(--tnt-text-xs);
+  color: var(--tnt-dead);
+  white-space: nowrap;
 }
 
 /* ---------------------------------------------------------------------------
@@ -464,9 +747,13 @@ a.tnt-card:hover {
 }
 
 .tnt-table th {
-  background: var(--tnt-surface);
-  font-weight: 600;
+  background: var(--tnt-bg);
+  font-family: var(--tnt-mono);
+  font-weight: 400;
   font-size: var(--tnt-text-xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--tnt-text-faint);
 }
 
 .tnt-table caption {
@@ -482,35 +769,34 @@ a.tnt-card:hover {
 .tnt-table-grid th { text-align: center; }
 
 /**
- * The scrolling artifact table under every conversion stepper.
- *
- * The highlight state is read off the data attributes the renderer already
- * emits — `data-lit` on a cell the engine's `tableCell` highlight named, and
- * `data-role` on a row the construction is acting upon. Those attributes exist
- * so tests and the engine can address a cell; making them the styling contract
- * too means the colour cannot disagree with what the trace said.
+ * The scrolling artifact table under every conversion stepper (artboard 03).
+ * Headers are mono small caps on the page tint; rows hairline-separated; the
+ * row the construction is acting upon tinted with the current role.
  */
 .tnt-data-table {
   border-collapse: collapse;
   width: 100%;
-  font-size: var(--tnt-text-sm);
+  font-size: 13.5px;
 }
 
 .tnt-data-table th {
   position: sticky;
   top: 0;
   text-align: left;
-  padding: var(--tnt-space-1) var(--tnt-space-2);
+  padding: 9px 16px;
+  font-family: var(--tnt-mono);
   font-size: var(--tnt-text-xs);
-  font-weight: 600;
-  color: var(--tnt-text-muted);
-  background: var(--tnt-surface);
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--tnt-text-faint);
+  background: var(--tnt-bg);
   border-bottom: 1px solid var(--tnt-border);
   white-space: nowrap;
 }
 
 .tnt-data-table td {
-  padding: var(--tnt-space-1) var(--tnt-space-2);
+  padding: 10px 16px;
   white-space: nowrap;
   font-family: var(--tnt-mono);
   font-variant-numeric: tabular-nums;
@@ -519,7 +805,7 @@ a.tnt-card:hover {
 
 .tnt-data-table td[data-mono='false'] { font-family: inherit; }
 
-.tnt-data-table tbody tr { border-bottom: 1px solid var(--tnt-border); }
+.tnt-data-table tbody tr { border-bottom: 1px solid var(--tnt-hairline); }
 .tnt-data-table tbody tr[data-role='current'] { background: var(--tnt-current-soft); }
 .tnt-data-table tbody tr[data-role='new'] { background: var(--tnt-accepting-soft); }
 .tnt-data-table tbody tr[data-role='dead'] { background: var(--tnt-dead-soft); }
@@ -527,7 +813,7 @@ a.tnt-card:hover {
 .tnt-data-table td[data-lit='true'] {
   background: var(--tnt-current-soft);
   color: var(--tnt-current);
-  font-weight: 600;
+  font-weight: 500;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -558,7 +844,7 @@ a.tnt-card:hover {
   font-family: var(--tnt-mono);
   font-variant-numeric: tabular-nums;
   font-size: 0.92em;
-  background: var(--tnt-surface);
+  background: var(--tnt-surface-dim);
   border-radius: var(--tnt-radius-sm);
   padding: 1px 5px;
 }
@@ -567,12 +853,12 @@ a.tnt-card:hover {
 .tnt-code-block {
   font-family: var(--tnt-mono);
   font-variant-numeric: tabular-nums;
-  font-size: var(--tnt-text-sm);
-  line-height: 1.7;
+  font-size: 14.5px;
+  line-height: 2;
   background: var(--tnt-surface);
   border: 1px solid var(--tnt-border);
   border-radius: var(--tnt-radius);
-  padding: var(--tnt-space-3);
+  padding: var(--tnt-space-3) var(--tnt-space-4);
   overflow-x: auto;
   white-space: pre-wrap;
   word-break: break-word;
@@ -601,17 +887,10 @@ a.tnt-card:focus-visible {
 /* ---------------------------------------------------------------------------
  * Utilities — deliberately last
  *
- * These are single-property overrides, and every one of them scores (0,1,0) —
- * exactly the same as the component classes above. At equal specificity the
- * later rule wins, so their position in this file is what makes
- * `className="tnt-input tnt-lg"` and `className="tnt-chip tnt-mono"` do what a
- * caller plainly means.
- *
- * Defined at the top, they silently lost: a control sets its font with the
- * `font` shorthand — the right way to escape the browser's default button
- * font, but it also clears `font-family` — so the monospace never applied, and
- * `.tnt-input`'s own `font-size` beat `.tnt-lg`. Neither failed loudly. Keep
- * this block at the bottom, and keep each rule to one property.
+ * Single-property overrides at (0,1,0): at equal specificity the later rule
+ * wins, so their position is what makes `className="tnt-input tnt-lg"` do
+ * what a caller plainly means. Keep this block at the bottom, and keep each
+ * rule to one property.
  * ------------------------------------------------------------------------ */
 
 .tnt-xs { font-size: var(--tnt-text-xs); }
@@ -629,13 +908,14 @@ a.tnt-card:focus-visible {
   font-variant-numeric: tabular-nums;
 }
 
+/** Prose face on an element that is not a `.tnt-prose` block. */
+.tnt-serif { font-family: var(--tnt-serif); }
+
+/** Interface face — for a control inside a serif block. */
+.tnt-sans { font-family: var(--tnt-font); }
+
 /**
  * Undo the casing a `.tnt-label` ancestor imposes.
- *
- * `text-transform`, `letter-spacing` and `font-weight` all inherit, so a
- * subtitle or a verdict tag sitting inside a label heading arrives uppercase
- * and tracked. This is the escape hatch, rather than every such child
- * respelling the three resets.
  */
 .tnt-normal {
   text-transform: none;

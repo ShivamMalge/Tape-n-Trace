@@ -1,62 +1,51 @@
-import { CATALOG } from '../lib/catalog'
+/**
+ * Home — design artboard 01: the hero, a stat pair, and the catalog as a
+ * three-column grid of verb-tagged cards. Every card is `CATALOG`, THE ONE
+ * LIST (architecture.md §3); the counts are computed from it rather than typed.
+ */
+
+import { CATALOG, NAV, liveTools } from '../lib/catalog'
 import type { Tool } from '../lib/catalog'
 
-const GROUPS: { verb: Tool['verb']; title: string; blurb: string }[] = [
-  {
-    verb: 'simulate',
-    title: 'Simulate',
-    blurb: 'Run a machine on an input and watch every configuration. Nondeterminism is drawn as a tree, not a path.',
-  },
-  {
-    verb: 'convert',
-    title: 'Convert',
-    blurb: 'Turn one representation into another, one intermediate artifact at a time — the steps you would write on paper.',
-  },
-  {
-    verb: 'prove',
-    title: 'Prove',
-    blurb: 'The arguments that cannot be simulated: pumping lemmas, closure results, diagonalization, reductions.',
-  },
-  {
-    verb: 'decide',
-    title: 'Practice',
-    blurb: 'Construction exercises graded exactly, with the shortest disagreeing string as feedback.',
-  },
-  { verb: 'learn', title: 'Learn', blurb: 'The groundwork, the case studies, and the map of where every language sits.' },
+const WORDS = [
+  'Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten',
+  'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen',
+  'Nineteen', 'Twenty', 'Twenty-one', 'Twenty-two', 'Twenty-three', 'Twenty-four', 'Twenty-five',
+  'Twenty-six', 'Twenty-seven', 'Twenty-eight', 'Twenty-nine', 'Thirty',
 ]
 
 export default function HomePage(): React.JSX.Element {
+  const live = liveTools()
   const planned = CATALOG.filter((t) => t.status === 'planned')
+  const count = live.length
 
   return (
     <div className="tnt-page">
-      <h1>Tape&rsquo;n&rsquo;Trace</h1>
-      <p className="tnt-prose tnt-lg">
-        An interactive Theory of Computation workbench. Draw a machine, run it, watch it move — and see the{' '}
-        <em>construction</em> happen, not just its answer.
-      </p>
-      <p className="tnt-prose tnt-muted tnt-sm">
-        Every algorithm here returns a trace: an ordered list of steps, each carrying one sentence of exam-language
-        narration and the full state of the artifact being built. The screen is a pure function of that trace.
-      </p>
+      <section className="tnt-hero">
+        <div className="tnt-hero-copy">
+          <h1>{WORDS[count] ?? String(count)} instruments for one course.</h1>
+          <p className="tnt-hero-lead">
+            Every tool runs step by step and writes down what it did in the language your exam expects. Nothing
+            here hides its working.
+          </p>
+        </div>
+        <div className="tnt-hero-stats">
+          <div className="tnt-stat">
+            <span className="tnt-stat-value">{count}</span>
+            <span className="tnt-stat-caption">tools</span>
+          </div>
+          <div className="tnt-stat">
+            <span className="tnt-stat-value">{NAV.length}</span>
+            <span className="tnt-stat-caption">modules</span>
+          </div>
+        </div>
+      </section>
 
-      {GROUPS.map((group) => {
-        const tools = CATALOG.filter((t) => t.status === 'live' && t.verb === group.verb)
-        if (tools.length === 0) return null
-        return (
-          <section key={group.verb} className="tnt-section">
-            <h2>{group.title}</h2>
-            <p className="tnt-prose tnt-muted tnt-sm" style={{ marginTop: 0 }}>
-              {group.blurb}
-            </p>
-            <div className="tnt-panels" style={{ marginTop: 'var(--tnt-space-3)' }}>
-              {tools.map((tool) => (
-                <ToolCard key={tool.id} tool={tool} />
-              ))}
-            </div>
-          </section>
-        )
-      })}
+      <section id="catalog" aria-label="All tools" className="tnt-catalog">
+        {live.map((tool) => (
+          <ToolCard key={tool.id} tool={tool} />
+        ))}
+      </section>
 
       {planned.length === 0 ? null : (
         <section className="tnt-section">
@@ -81,10 +70,15 @@ export default function HomePage(): React.JSX.Element {
 
 function ToolCard({ tool }: { tool: Tool }): React.JSX.Element {
   return (
-    <a href={tool.href} className="tnt-card tnt-stack-sm">
-      <strong>{tool.title}</strong>
-      <span className="tnt-sm tnt-muted">{tool.summary}</span>
-      <span className="tnt-meta">Module {tool.modules.join(', ')}</span>
+    <a href={tool.href} className="tnt-card tnt-tool-card">
+      <span className="tnt-tool-card-head">
+        <span className="tnt-verb" data-verb={tool.verb}>
+          {tool.verb}
+        </span>
+        <span className="tnt-tool-card-mod">{tool.modules.map((m) => `M${m}`).join(' ')}</span>
+      </span>
+      <span className="tnt-tool-card-title">{tool.title}</span>
+      <span className="tnt-tool-card-sum">{tool.summary}</span>
     </a>
   )
 }

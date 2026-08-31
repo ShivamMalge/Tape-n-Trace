@@ -152,11 +152,19 @@ describe('the catalog is the only list of tools', () => {
     expect(new Set(NAV.map((g) => g.id)).size).toBe(NAV.length)
   })
 
-  it('groups the rail by the verbs the product is built on', () => {
-    expect(NAV.map((g) => g.id)).toEqual(['simulate', 'convert', 'prove', 'practice', 'learn'])
+  /**
+   * The UI overhaul (phases-ui.md U1, design artboard 01) folds the nav into
+   * the course's five modules; the verb a tool belongs to is the tag on its
+   * catalog card rather than a navigation group.
+   */
+  it('groups the bar by the five modules of the course', () => {
+    expect(NAV.map((g) => g.id)).toEqual(['m1', 'm2', 'm3', 'm4', 'm5'])
+    expect(NAV.map((g) => g.n)).toEqual([1, 2, 3, 4, 5])
     for (const group of NAV) {
       expect(group.links.length, `${group.id} is empty`).toBeGreaterThan(0)
       expect(group.label, group.id).toBeTruthy()
+      expect(group.title, group.id).toBeTruthy()
+      expect(group.blurb, group.id).toBeTruthy()
     }
   })
 
