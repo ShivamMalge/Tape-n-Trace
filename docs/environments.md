@@ -4,7 +4,7 @@ The dated evidence phases-vyakarana.md V4 requires: each environment, the versio
 tested, and how the result was obtained. A row is either evidenced or says it is
 not — an unchecked box here is honest; a guessed ✅ is not.
 
-**Package under test:** `vyakarana 0.1.0rc3`, the wheel built by
+**Package under test:** `vyakarana 0.1.0` (verified through rc1–rc3), the wheel built by
 `python -m build --wheel vyakarana` (pure `py3-none-any`, ~0.2 MB, all four
 `static/` files inside — `widget.js`, `engine.js`, `widget.css`,
 `engine-manifest.json`).
@@ -14,10 +14,9 @@ not — an unchecked box here is honest; a guessed ✅ is not.
 widget too large — diagrams now draw at half the web scale), wheel and sdist attached. The Colab gate installs it by URL; open the notebook straight from GitHub:
 <https://colab.research.google.com/github/ShivamMalge/Tape-n-Trace/blob/main/docs/colab-gate.ipynb>.
 
-**Python floor:** `requires-python = ">=3.10"`. Colab ships Python **3.12.13 on
-Ubuntu 22.04** (checked 2026-08-30 against Colab's runtime documentation), so
-the floor keeps two versions of headroom below the one environment the release
-criterion names.
+**Python floor:** `requires-python = ">=3.10"`. Colab's documentation said Python 3.12.13
+(checked 2026-08-30); the author's run on 2026-08-31 reported **Python 3.13.15 on Ubuntu 22.04**
+(glibc 2.35), so 3.13 is now in the CI matrix and the floor keeps three versions of headroom.
 
 ## The record
 
@@ -29,7 +28,7 @@ criterion names.
 | JupyterLab 4+ | 2026-08-24 (V1) | dev install, 0.0.x bridge | ☑ rendering verified by the author at V1; **re-check with the 0.1.0rc3 wheel pending** | run `vyakarana/notebooks/quickstart.ipynb` in JupyterLab from a venv with the wheel installed; record the JupyterLab version here |
 | Jupyter Notebook 7+ | — | — | ⬜ pending | same notebook, `jupyter notebook`; record the version here |
 | VS Code notebooks | — | — | ⬜ pending | same notebook in VS Code; record the extension version here |
-| **Colab (the release criterion)** | — | — | ⬜ **pending — blocks V4 closure** | open [colab-gate.ipynb in Colab](https://colab.research.google.com/github/ShivamMalge/Tape-n-Trace/blob/main/docs/colab-gate.ipynb), Runtime → Run all, save **with outputs** back to `docs/colab-gate.ipynb`, commit. The wheel it installs is on the pre-release; the same URL install was verified from a clean Windows venv on 2026-08-31 |
+| **Colab (the release criterion)** | 2026-08-31 | Python 3.13.15, Ubuntu 22.04; rc1 (committed run), then rc3 | ✅ **verified by the author** | [colab-gate.ipynb](colab-gate.ipynb) is the rc1 run with its outputs: `pip install <wheel URL>` from a fresh runtime, `accepts("011") → True`, the DFA widget rendered (the widget MIME is in the output), the Fig 8.9 log verbatim. That run found the widget about twice a cell's size and a one-state result machine filling the cell — fixed in rc2/rc3, which the author re-ran and confirmed. One correction to the criterion's wording: Colab's image *does* ship a `node` binary (`/tools/node/bin/node`); the package never invokes it — the engine runs in embedded V8 via `mini-racer` — which is what the criterion was protecting |
 
 ## Reproducing the local rows
 
@@ -45,3 +44,13 @@ The wheel-not-checkout trap: running `python -m pytest` with `vyakarana/` as the
 working directory puts the source tree ahead of the wheel on `sys.path` and
 quietly tests the checkout. Run from anywhere else and check
 `vyakarana.__file__` points into `site-packages` when in doubt.
+
+## Releasing
+
+`.github/workflows/release.yml` runs on a `v*` tag: it builds the bridge and the wheel, tests the
+wheel, refuses a tag that does not match `pyproject.toml` and `__version__`, publishes to PyPI by
+**trusted publishing**, and creates the GitHub release with the wheel and sdist attached.
+
+One-time setup on PyPI (a human, once): <https://pypi.org/manage/account/publishing/> → *Add a new
+pending publisher* — PyPI project name `vyakarana`, owner `ShivamMalge`, repository `Tape-n-Trace`,
+workflow `release.yml`, environment `pypi`. Then `git tag v0.1.0 && git push origin v0.1.0`.

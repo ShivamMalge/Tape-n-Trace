@@ -3,7 +3,7 @@
 > **Status: pre-implementation.** This document specifies the system to be built. No code exists yet.
 > It is authoritative over the PRD where the two disagree; divergences are recorded in §12 (ADRs).
 
-Companion documents: [phases.md](phases.md) · [documentation.md](documentation.md) · [README.md](README.md)
+Companion documents: [phases.md](phases.md) · [vyakarana/docs/documentation.md](vyakarana/docs/documentation.md) · [README.md](README.md)
 
 ---
 

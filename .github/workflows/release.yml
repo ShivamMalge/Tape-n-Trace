@@ -1,0 +1,109 @@
+name: Release
+
+# phases-vyakarana.md V5: a PyPI release comes from a tag, with the wheel CI
+# built rather than one built locally. Pushing `v0.1.0` builds the bridge,
+# builds the wheel through the jupyter-builder hook, tests the wheel, refuses
+# a tag that does not match pyproject's version, publishes to PyPI through
+# trusted publishing (no token stored anywhere), and creates the GitHub
+# release with the same files attached. An `rc` tag does all of that too and
+# is marked a pre-release on both sides.
+
+on:
+  push:
+    tags: ['v*']
+
+jobs:
+  build:
+    name: Build and test the wheel
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Build the bridge into vyakarana/static
+        run: pnpm --filter @tape-n-trace/bridge build
+
+      - name: Bundle freshness
+        run: pnpm --filter @tape-n-trace/bridge check-fresh
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # The version on PyPI must match the tag must match __version__
+      # (V5's third criterion), checked before anything is built.
+      - name: The tag names the version
+        run: |
+          python - <<'EOF'
+          import os, re, tomllib
+          version = tomllib.load(open('vyakarana/pyproject.toml', 'rb'))['project']['version']
+          init = open('vyakarana/vyakarana/__init__.py', encoding='utf-8').read()
+          dunder = re.search(r'__version__ = "([^"]+)"', init).group(1)
+          tag = os.environ['GITHUB_REF_NAME']
+          assert tag == f'v{version}' == f'v{dunder}', f'tag {tag} vs pyproject {version} vs __version__ {dunder}'
+          print('releasing', version)
+          EOF
+
+      - name: Build the wheel and sdist
+        run: |
+          python -m pip install --quiet build
+          python -m build vyakarana
+
+      - name: Install the wheel, not the checkout, and test it
+        run: |
+          python -m pip install --quiet pytest jsonschema
+          python -m pip install --find-links vyakarana/dist "vyakarana==${GITHUB_REF_NAME#v}"
+          python -m pytest -q vyakarana/tests
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: vyakarana/dist/*
+
+  publish-pypi:
+    name: Publish to PyPI
+    needs: build
+    runs-on: ubuntu-latest
+    # Trusted publishing: PyPI trusts this repository + workflow + environment
+    # via OIDC. Configured once on pypi.org (docs/environments.md, "Releasing").
+    environment:
+      name: pypi
+      url: https://pypi.org/project/vyakarana/
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: dist
+
+  github-release:
+    name: GitHub release
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          prerelease: ${{ contains(github.ref_name, 'rc') }}
+          generate_release_notes: true

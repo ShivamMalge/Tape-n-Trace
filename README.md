@@ -34,7 +34,7 @@ the hierarchy of language classes, and a syllabus index whose every link CI chec
 | Turing machines — simulator, editor, gallery, multitape reduction, NTM | ✅ P1.6 | IDs in §8.2.3 notation, head-fixed or tape-fixed, the 4n + 2k cost counted |
 | Undecidability — diagonalization table, reduction builder | ✅ P1.7 | every cell a real machine run under a stated budget; the wrong-direction reduction refused |
 | Hierarchy map and syllabus index | ✅ P1.7 | six nested rings, two schemes, and a CI test that walks every topic to its page |
-| Vyakarana (Python package) | ❌ Not started | P1.8 |
+| Vyakarana (Python package) | ✅ P1.8 | `pip install vyakarana` — DFA/NFA/ε-NFA, RE, CFG, PDA, TM and the gallery from a notebook cell; the engine runs in embedded V8, so Colab needs no Node |
 
 P0.3’s exit gate is the **grand round-trip**: 200 random NFAs pushed through
 `subset → minimise → state elimination → Thompson → ε-elimination → subset → minimise`, with the DFA that
@@ -146,7 +146,7 @@ Full tree and rationale in [architecture.md](architecture.md) §3.
 | [architecture.md](architecture.md) | Boundaries, the trace protocol, core types, ADRs, prohibitions |
 | [phases.md](phases.md) | Build order, per-phase acceptance criteria, schedule, open decisions |
 | [phases-vyakarana.md](phases-vyakarana.md) | The Python package's own plan — V0–V5, and why it needed one |
-| [documentation.md](documentation.md) | The Vyakarana Python API (specification — not yet released) |
+| [vyakarana/docs/documentation.md](vyakarana/docs/documentation.md) | The Vyakarana Python API — released as 0.1 |
 | [docs/citations.md](docs/citations.md) | Every Hopcroft 2e citation, verified against the printed edition |
 | `prd (2).md` | The original product requirements document |
 

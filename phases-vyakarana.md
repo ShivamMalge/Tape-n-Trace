@@ -2,11 +2,11 @@
 
 > **Status: V0–V3 closed 2026-08-24** — ADR-004 decided (embedded V8, sync API); the bridge renders in
 > JupyterLab; `vyakarana` 0.0.2 covers the whole documented surface — 48 tests headless, parity-gated.
-> V4 is in progress 2026-08-30 (wheel built and evidenced; the Colab gate is the human check that remains). V5 (release) follows. This is the execution plan for the Python package, which
+> V4 closed 2026-08-31 with the author's Colab run. V5: the release workflow is in place; the `v0.1.0` tag ships it. This is the execution plan for the Python package, which
 > [phases.md](phases.md) carries as the single row **P1.8** and which is too large to plan at that
 > resolution.
 
-Companion documents: [documentation.md](documentation.md) — the target API · [architecture.md](architecture.md) §10.2 and ADR-004 · [phases.md](phases.md) · [README.md](README.md)
+Companion documents: [documentation.md](vyakarana/docs/documentation.md) — the target API · [architecture.md](architecture.md) §10.2 and ADR-004 · [phases.md](phases.md) · [README.md](README.md)
 
 ---
 
@@ -23,7 +23,7 @@ not a detail that can be retrofitted across a published API.
 1. Do not start phase *N+1* while any acceptance criterion of phase *N* is unmet. The gate is binary.
 2. Every criterion below is testable, and names how it is tested. "Renders correctly" is not a criterion;
    "renders in Colab from a clean `pip install`, evidenced by a dated notebook committed to `docs/`" is.
-3. The README status table and [documentation.md](documentation.md)'s status banner are updated in the
+3. The README status table and [documentation.md](vyakarana/docs/documentation.md)'s status banner are updated in the
    same commit as the feature. This package's documentation currently describes an API that does not
    exist — that is honest only while the banner at its top says so.
 4. Estimates assume one developer working with a coding agent, and are held in §8 against the evidence
@@ -44,8 +44,8 @@ Updated in the same commit as the work it describes. ✅ done and pushed · 🔨
 | V1 The bridge | `bridge/` + `vyakarana/static/` | ✅ | 2026-08-24 · 6 tests, typecheck, lint, freshness, 205 KB bundle; **verified in JupyterLab by the author** (sizing then capped to the diagram's own viewBox) |
 | V2 The Python core | `vyakarana` 0.0.1, unreleased | ✅ | 2026-08-24 · 21 pytest tests, headless; trace schema generated in the bridge build |
 | V3 The rest of the surface | `vyakarana` 0.0.2, unreleased | ✅ | 2026-08-24 · 48 tests; the parity test covers all 227 engine exports |
-| V4 Packaging and the four environments | `vyakarana` 0.1.0rc1 | 🔨 | 2026-08-30 · wheel + hook + CI + nbconvert + Windows venv done; awaiting first CI run and the human Colab/JupyterLab/VS Code checks |
-| V5 Release | **`vyakarana` 0.1** | ⬜ | PyPI, docs move, README table |
+| V4 Packaging and the four environments | `vyakarana` 0.1.0rc1–rc3 | ✅ | 2026-08-31 · Colab verified by the author (rc1 found the widget too large; rc3 confirmed right); CI green on both platforms |
+| V5 Release | **`vyakarana` 0.1** | 🔨 | 2026-08-31 · release workflow, docs moved, README row done; the `v0.1.0` tag publishes once PyPI trusted publishing is configured |
 
 ---
 
@@ -54,7 +54,7 @@ Updated in the same commit as the work it describes. ✅ done and pushed · 🔨
 One sentence: **a `pip install`-able Python package that builds a machine in a notebook cell and renders
 the Tape-n-Trace engine's trace of it, inline, in Colab.**
 
-The design contract, from [documentation.md](documentation.md) §1.1, is the thing every phase below is
+The design contract, from [documentation.md](vyakarana/docs/documentation.md) §1.1, is the thing every phase below is
 arranged to protect:
 
 > **The engine stays in TypeScript. Python never reimplements an algorithm.**
@@ -142,7 +142,7 @@ is attached**, which is the case under `pytest`, under `nbconvert`, and in a pla
 - [x] ADR-004 in [architecture.md](architecture.md) is rewritten from `[OPEN]` to a decision, with the
       measurements above recorded — including the numbers for the options **not** chosen, so the next
       person can see the trade rather than the conclusion.
-- [x] [documentation.md](documentation.md) §3.1 is replaced by the outcome, and every value-returning
+- [x] [documentation.md](vyakarana/docs/documentation.md) §3.1 is replaced by the outcome, and every value-returning
       signature in §5 is corrected to match if the answer is `await`. *(The answer is sync; §5 stood.)*
 - [x] A committed spike script reproduces the decisive measurement in one command:
       `python spikes/adr-004/spike.py`, plus the same measurements as `pytest` and under `nbconvert`
@@ -169,7 +169,7 @@ the spike stalls, build this.
 
 - `bridge/` — the `anywidget` React entry, importing renderers from `packages/ui` and *nothing* from
   `apps/web`. Bundled by `tsup` into `vyakarana/static/`.
-- The four synced traitlets of [documentation.md](documentation.md) §4: `payload`, `trace`, `step`,
+- The four synced traitlets of [documentation.md](vyakarana/docs/documentation.md) §4: `payload`, `trace`, `step`,
   `options`. `step` is writable from Python, which is what makes `run.step = 3` work.
 - **Scoped, Preflight-disabled Tailwind** on a `.vyakarana-container` class. `anywidget` injects CSS into
   the host notebook document, and this bug has already been paid for once in Pratyaksha.
@@ -207,7 +207,7 @@ the spike stalls, build this.
 
 ### V2 — The Python core · 3 days · ships `vyakarana` 0.0.1, unreleased
 
-**Goal.** The regular-language half of [documentation.md](documentation.md) §5, end to end, with the
+**Goal.** The regular-language half of [documentation.md](vyakarana/docs/documentation.md) §5, end to end, with the
 trace contract pinned down on both sides of the boundary.
 
 **Deliverables**
@@ -266,7 +266,7 @@ trace contract pinned down on both sides of the boundary.
 
 **Acceptance criteria**
 
-- [x] Every method in [documentation.md](documentation.md) §5.4–5.6 exists and does what the table says,
+- [x] Every method in [documentation.md](vyakarana/docs/documentation.md) §5.4–5.6 exists and does what the table says,
       or the table is corrected in the same commit.
       *(All present; four table cells corrected in this commit where the notebook rendering is thinner than the web app, and the gallery example fixed to Exercise 8.2.3’s $N input.)*
 - [x] The parity test passes, and is demonstrated to fail by deleting one entry from `_ENGINE_MAP`.
@@ -297,8 +297,13 @@ trace contract pinned down on both sides of the boundary.
 
 **Acceptance criteria**
 
-- [ ] **Colab, from a clean runtime: `!pip install vyakarana` and a DFA renders, with no Node present.**
+- [x] **Colab, from a clean runtime: `!pip install vyakarana` and a DFA renders, with no Node present.**
       This is a release criterion, not a nice-to-have — it is what students use.
+      *(Run by the author in Colab on 2026-08-31: rc1 rendered but too large — which led to rc2 and rc3, the
+      widget drawing at a cell's scale, TM and PDA runs drawing their diagrams, the tape styled — and rc3
+      confirmed right. The rc1 run is committed with its outputs as `docs/colab-gate.ipynb`: Python 3.13.15,
+      the DFA widget rendered, the Fig 8.9 log verbatim. Colab's image ships a `node` binary the package never
+      invokes — the criterion's wording was imprecise; its intent, no Node needed, holds.)*
       *(Prepared 2026-08-30: [docs/colab-gate.ipynb](docs/colab-gate.ipynb) installs the rc wheel
       from the GitHub release, proves Node absent, renders. Pre-release `v0.1.0rc1` created 2026-08-31 with
       the wheel attached; the URL install verified from a clean venv. Blocked on a human running the notebook
@@ -333,7 +338,7 @@ trace contract pinned down on both sides of the boundary.
 **Deliverables**
 
 - PyPI release, from a tag, with the wheel CI built rather than one built locally.
-- [documentation.md](documentation.md) moves to `vyakarana/docs/`, loses its "specification, not
+- [documentation.md](vyakarana/docs/documentation.md) moves to `vyakarana/docs/`, loses its "specification, not
   released" banner, and gains a "what actually works today" table matching the README's.
 - README status table: the Python package row goes from ❌ to ✅, with what it covers.
 - [phases.md](phases.md)'s P1.8 row closed, pointing here.
@@ -370,7 +375,7 @@ lint on `bridge/`.
 
 ## 7. Prohibitions
 
-From [architecture.md](architecture.md) §14 and [documentation.md](documentation.md) §10. These are
+From [architecture.md](architecture.md) §14 and [documentation.md](vyakarana/docs/documentation.md) §10. These are
 defects regardless of whether tests pass.
 
 - **No algorithm is reimplemented in Python.** The one narrow exception path is gated in ADR-004 and, if

@@ -1,9 +1,9 @@
 # Build Phases — Tape-n-Trace
 
 > **Status: v1.0, 2026-08-24.** P0.1 through P1.7 are built and gated; the status tracker below is
-> updated in the same commit as the work it describes. P1.8 — the Python package — is what remains.
+> updated in the same commit as the work it describes. P1.8 — the Python package — closed 2026-08-31 (phases-vyakarana.md).
 
-Companion documents: [architecture.md](architecture.md) · [documentation.md](documentation.md) · [phases-vyakarana.md](phases-vyakarana.md) — P1.8 in detail · [README.md](README.md)
+Companion documents: [architecture.md](architecture.md) · [vyakarana/docs/documentation.md](vyakarana/docs/documentation.md) · [phases-vyakarana.md](phases-vyakarana.md) — P1.8 in detail · [README.md](README.md)
 
 ---
 
@@ -43,7 +43,7 @@ Updated in the same commit as the work it describes. ✅ done and pushed · 🔨
 | P1.5 CFL properties, CNF | v0.8 | ✅ | 2026-08-22 · 735 tests → 776; pipeline runs the book’s safe order (Thm 7.14) |
 | P1.6 Turing machines | v0.9 | ✅ | 2026-08-23 · 776 tests → 838; every gallery machine is the book’s own |
 | P1.7 Undecidability, hierarchy | **v1.0** | ✅ | 2026-08-24 · 838 tests → 956; **full syllabus coverage** |
-| P1.8 Vyakarana (Python) | pkg 0.1 | ⬜ | planned separately in [phases-vyakarana.md](phases-vyakarana.md) — V0–V5, ADR-004 spike first |
+| P1.8 Vyakarana (Python) | pkg 0.1 | ✅ | 2026-08-31 · built and released per [phases-vyakarana.md](phases-vyakarana.md) — V0–V5 |
 
 **Deadline note (added 2026-08-21): 10 days remain.** The outstanding plan is ~11 estimated weeks,
 so v1.0 as specified does not fit. The cut that preserves the most value: P1.1 → P1.2 → P1.3 → P1.4
@@ -741,7 +741,7 @@ That is not one row's worth of plan.
   decides whether every value-returning call is `d.accepts(w)` or `await d.accepts(w)`, so it closes
   before any signature is frozen.
 - `bridge/`: the anywidget React entry, bundled by `tsup` into `vyakarana/static/`.
-- `vyakarana/`: the Python package per [documentation.md](documentation.md).
+- `vyakarana/`: the Python package per [vyakarana/docs/documentation.md](vyakarana/docs/documentation.md).
 - Scoped, Preflight-disabled Tailwind build for the widget container.
 - `_repr_mimebundle_` for automatic rendering on bare display.
 - Bundle-freshness check script wired into CI.

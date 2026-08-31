@@ -4,12 +4,12 @@ build-backend = "hatchling.build"
 
 [project]
 name = "vyakarana"
-version = "0.1.0rc3"
+version = "0.1.0"
 description = "The Python face of the Tape-n-Trace engine: build a machine in a notebook cell, watch the trace inline."
-readme = { text = "Release-candidate build. See documentation.md in the repository.", content-type = "text/markdown" }
+readme = "README.md"
 # Floor per phases-vyakarana.md §9.3: set by what Colab ships, not assumed.
-# Checked 2026-08-30: Colab runs Python 3.12.13 on Ubuntu 22.04. 3.10 keeps
-# two versions of headroom below that without costing any syntax we use.
+# Observed 2026-08-31: Colab runs Python 3.13.15 on Ubuntu 22.04 (its docs said
+# 3.12). 3.10 keeps three versions of headroom without costing any syntax we use.
 requires-python = ">=3.10"
 license = { text = "MIT" }
 dependencies = [

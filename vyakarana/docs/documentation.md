@@ -1,22 +1,20 @@
 # Vyakarana — Python Library Documentation
 
-> ## ⚠ Status: 0.1.0rc3 — a wheel, not yet on PyPI
+> **Status: released as `vyakarana` 0.1** — `pip install vyakarana`. Everything below is real and tested:
 >
-> **§5.1–§5.6 work today** (`DFA`, `NFA`, `ENFA`, `RegularExpression`, `CFG`, `PDA`, `TM` and the
-> gallery), from a development checkout: `pnpm -F @tape-n-trace/bridge build`, then
-> `pip install -e ./vyakarana` — 48 tests, headless, including the API parity test. The same
-> suite passes against the built wheel (`python -m build --wheel vyakarana`, pure `py3-none-any`)
-> in a clean no-compiler venv; the dated per-environment record is
-> [docs/environments.md](docs/environments.md). Nothing is on PyPI yet — release is phase V5 of
-> [phases-vyakarana.md](phases-vyakarana.md), behind the Colab gate.
+> | Works today | Since |
+> |---|---|
+> | `DFA`, `NFA`, `ENFA` — construct, validate, simulate, convert, minimise, compare | 0.0.1 |
+> | `RegularExpression` — parse tree, Thompson, minimal DFA, matching | 0.0.1 |
+> | `CFG` — derivations, ambiguity (bounded, and says so), the CNF pipeline, → PDA | 0.0.2 |
+> | `PDA` — simulation with the ID log, acceptance conversions, determinism | 0.0.2 |
+> | `TM` — simulation with the step guard, multitape → single tape, the gallery | 0.0.2 |
+> | The notebook widget in Colab, JupyterLab, Notebook, VS Code, `nbconvert` | 0.1.0 |
 >
-> When the package ships, this file moves to `vyakarana/docs/` and gains a "what actually works today"
-> table matching [README.md](README.md).
->
-> The signature-level question that was open here is **closed**: every value-returning call is
-> synchronous — see [§3.1](#31-where-the-engine-executes-decided).
+> The per-environment evidence is [docs/environments.md](../../docs/environments.md); the plan that
+> built it is [phases-vyakarana.md](../../phases-vyakarana.md).
 
-Companion documents: [README.md](README.md) · [architecture.md](architecture.md) · [phases.md](phases.md) · [phases-vyakarana.md](phases-vyakarana.md) — how this gets built
+Companion documents: [README.md](../../README.md) · [architecture.md](../../architecture.md) · [phases.md](../../phases.md) · [phases-vyakarana.md](../../phases-vyakarana.md) — how this gets built
 
 ---
 

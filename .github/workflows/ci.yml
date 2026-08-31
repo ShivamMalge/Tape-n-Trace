@@ -61,8 +61,8 @@ jobs:
   # The vyakarana gates (phases-vyakarana.md V4, §6): build the JS bundle,
   # prove it fresh, build the wheel through the jupyter-builder hook, install
   # that wheel — not the checkout — into a bare interpreter, and run pytest
-  # against it. The matrix floor is 3.10 (pyproject); 3.12 is what Colab ships
-  # (checked 2026-08-30). windows-latest is the no-compiler install check on
+  # against it. The matrix floor is 3.10 (pyproject); 3.13 is what Colab ships
+  # (observed 2026-08-31). windows-latest is the no-compiler install check on
   # the second platform; the wheel is pure py3-none-any, so a compiler being
   # needed anywhere is a failing run.
   vyakarana:
@@ -72,7 +72,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
-        python: ['3.10', '3.12']
+        python: ['3.10', '3.12', '3.13']
 
     steps:
       - uses: actions/checkout@v4
@@ -109,7 +109,7 @@ jobs:
       - name: Install the wheel, not the checkout
         run: |
           python -m pip install --quiet pytest jsonschema
-          python -m pip install --find-links vyakarana/dist vyakarana==0.1.0rc3
+          python -m pip install --find-links vyakarana/dist vyakarana==0.1.0
 
       # From the repo root, not vyakarana/ — with the project directory as the
       # cwd, `python -m pytest` would put the source tree ahead of the wheel on
