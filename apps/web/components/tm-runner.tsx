@@ -179,7 +179,6 @@ export function TmRunner({
                       type="button"
                       role="radio"
                       aria-checked={mode === m}
-                      aria-pressed={mode === m}
                       className="tnt-seg-btn"
                       onClick={() => setMode(m)}
                     >

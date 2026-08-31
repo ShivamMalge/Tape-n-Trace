@@ -198,7 +198,7 @@ input[type='range'] { accent-color: var(--tnt-current); }
 .tnt-search-pill > kbd {
   font-family: var(--tnt-mono);
   font-size: 12px;
-  color: var(--tnt-text-ghost);
+  color: var(--tnt-text-faint);
 }
 
 /* The theme switch: a dot in the current ink beside a one-word label. */
@@ -305,6 +305,19 @@ input[type='range'] { accent-color: var(--tnt-current); }
   padding: 26px 0 var(--tnt-space-7);
 }
 
+/*
+ * A reading surface first (design artboard 00): a paragraph that carries no
+ * class is running prose and is set in Spectral. Classed paragraphs — meta
+ * lines, captions, control hints — keep the face their class gives them.
+ */
+.tnt-page p:not([class]) {
+  font-family: var(--tnt-serif);
+  font-size: 16px;
+  line-height: 1.65;
+  max-width: var(--tnt-measure);
+  text-wrap: pretty;
+}
+
 .tnt-page > h1 { margin-bottom: var(--tnt-space-2); }
 
 @media (max-width: 960px) {
@@ -354,7 +367,7 @@ input[type='range'] { accent-color: var(--tnt-current); }
 .tnt-crumb-sep {
   font-family: var(--tnt-mono);
   font-size: 12px;
-  color: var(--tnt-text-ghost);
+  color: var(--tnt-text-faint);
 }
 
 /* The crumb owns the top of the column when it is present. */
@@ -452,7 +465,7 @@ input[type='range'] { accent-color: var(--tnt-current); }
 .tnt-tool-card-mod {
   font-family: var(--tnt-mono);
   font-size: var(--tnt-text-xs);
-  color: var(--tnt-text-ghost);
+  color: var(--tnt-text-faint);
 }
 
 .tnt-tool-card-title {

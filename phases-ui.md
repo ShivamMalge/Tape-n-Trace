@@ -1,6 +1,7 @@
 # Build Phases — UI Overhaul and the Classroom Board
 
-> **Status: U1–U4 closed 2026-08-31; U5 (the sweep) next.** The design is `Tape-n-Trace UIoverhaul/Tape-n-Trace.dc.html`
+> **Status: all five phases closed 2026-08-31.** The web app is on the design system end to end and the
+> classroom board is live at `/board`. The design is `Tape-n-Trace UIoverhaul/Tape-n-Trace.dc.html`
 > (nine artboards, one component system, two themes) plus the board-mode feature phases.md §5 records.
 > This tracker exists so the design lands artboard by artboard, each one checked against its source
 > before the next begins — not as one sweep that gets the palette right and the details wrong.
@@ -35,7 +36,7 @@ Companion documents: [phases.md](phases.md) §5 (board mode) · [architecture.md
 | U2 Simulator pattern | 02 Simulator, 02b Mobile, 06 Dark | diagram hero, tape card, transport bar, narration / ID / verdict / docs column; TM page first, then FA and PDA | ✅ | 2026-08-31 · TM checked in both themes and at 390 px; FA and PDA in light |
 | U3 Conversion, Practice, Pumping | 03, 04, 05 | source/target cards + subset table; exercise + counterexample panel; adversary round + written proof | ✅ | 2026-08-31 · all three checked by screenshot in light |
 | U4 Classroom board | 07 Board mode | `/board`: ink → states and arcs, chip labels, live δ, simulate panel | ✅ | 2026-08-31 · 10 tests; `?demo` opens a worked example; screenshot checked against artboard 07 |
-| U5 Sweep | all | every remaining route on the system; inline-style count down; a11y pass; screenshots beside artboards | ⬜ | |
+| U5 Sweep | all | every remaining route on the system; inline-style count down; a11y pass; screenshots beside artboards | ✅ | 2026-08-31 · 14 routes reviewed; 310 inline styles (from 951); axe clean on 7 routes in both themes |
 
 ---
 
@@ -128,6 +129,15 @@ Companion documents: [phases.md](phases.md) §5 (board mode) · [architecture.md
 
 ### U5 — Sweep
 
-- [ ] Every route reviewed against the system; no route keeps the old grey palette or system font.
-- [ ] Inline style count below the pre-overhaul figure (951), measured by the same grep.
-- [ ] Keyboard and screen-reader checks (§11.5) pass on the new chrome and the board.
+- [x] Every route reviewed against the system; no route keeps the old grey palette or system font.
+      *(Fourteen further routes screenshotted — grammar, closure, regex, editor, applied, undecidable, hierarchy,
+      conversions, search, syllabus, TM editor, CNF, practice, strings. Unclassed prose is now Spectral everywhere;
+      classed captions and controls keep their faces.)*
+- [x] Inline style count below the pre-overhaul figure (951), measured by the same grep.
+      *(310 `style={{` occurrences across app/ and components/ on 2026-08-31.)*
+- [x] Keyboard and screen-reader checks (§11.5) pass on the new chrome and the board.
+      *(axe-core, WCAG 2.1 AA + best practice, zero violations on Home, TM, board, conversion, practice and pumping
+      in light and Home in dark, after four fixes: faint text darkened to 4.8:1 — the artboard's #8a8175 was 3.9:1 —
+      the segmented control's radios styled off `aria-checked`, the tape a `div[role=group]` rather than a figure,
+      the exercise's task title the page's h1. Escape closes the module panel. Mobile verified at a true 390 px
+      viewport with Playwright against the installed Edge; `scrollWidth` equals the viewport.)*

@@ -648,7 +648,8 @@ a.tnt-card:hover {
   line-height: 1.2;
 }
 
-.tnt-seg > .tnt-seg-btn[aria-pressed='true'] {
+.tnt-seg > .tnt-seg-btn[aria-pressed='true'],
+.tnt-seg > .tnt-seg-btn[aria-checked='true'] {
   background: var(--tnt-surface);
   color: var(--tnt-text);
   box-shadow: 0 1px 2px rgba(33, 30, 26, 0.07);
@@ -978,7 +979,7 @@ a.tnt-card:hover {
 
 .tnt-editor-gutter {
   padding: 12px 10px;
-  color: var(--tnt-text-ghost);
+  color: var(--tnt-text-faint);
   background: var(--tnt-bg);
   border-right: 1px solid var(--tnt-hairline);
   text-align: right;

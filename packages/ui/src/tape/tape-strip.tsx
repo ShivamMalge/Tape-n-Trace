@@ -72,7 +72,7 @@ export function TapeStrip({
   const scanned = cellAt(tape.head)
 
   return (
-    <figure
+    <div
       className={className === undefined ? 'tnt-tape' : `tnt-tape ${className}`}
       role="group"
       aria-label={`${label}: head on cell ${tape.head} reading ${scanned}${state === undefined ? '' : `, in state ${state}`}`}
@@ -109,13 +109,13 @@ export function TapeStrip({
         })}
       </div>
 
-      <figcaption className="tnt-tape-under">
+      <div className="tnt-tape-under">
         {positions.map((position) => (
           <span key={position} className="tnt-tape-state" data-on={position === tape.head ? 'true' : undefined}>
             {position === tape.head ? (state ?? '') : ''}
           </span>
         ))}
-      </figcaption>
-    </figure>
+      </div>
+    </div>
   )
 }

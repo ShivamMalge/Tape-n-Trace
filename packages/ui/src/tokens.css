@@ -27,7 +27,9 @@
   --tnt-text: #211e1a;
   --tnt-text-secondary: #5c554b;
   --tnt-text-muted: #6b6357;
-  --tnt-text-faint: #8a8175;
+  /* #756d62 rather than the artboard's #8a8175: the artboard value is 3.9:1 on paper, under AA. */
+  --tnt-text-faint: #756d62;
+  /* For borders, placeholders and decoration — never for text that must be read. */
   --tnt-text-ghost: #b4ab9b;
 
   /* Machine parts at rest. */

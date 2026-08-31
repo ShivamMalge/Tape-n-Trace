@@ -75,7 +75,7 @@ export default async function ExercisePage({ params }: PageProps): Promise<React
                 {topic === undefined ? '' : ` · Module ${moduleOf(topic.id) ?? '?'} · ${topic.title}`}
               </span>
             </div>
-            <h2 className="tnt-exercise-title">{taskTitle(exercise)}</h2>
+            <h1 className="tnt-exercise-title">{taskTitle(exercise)}</h1>
             <p className="tnt-exercise-prompt">{first}</p>
             {rest.length === 0 ? null : <p className="tnt-exercise-prompt">{rest.join('\n')}</p>}
           </section>

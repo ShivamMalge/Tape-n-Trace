@@ -32,6 +32,16 @@ export function SiteNav(): React.JSX.Element {
     setOpen(pathname === '/' ? 'm1' : null)
   }, [pathname])
 
+  // Escape closes the panel, as a menu would.
+  useEffect(() => {
+    if (open === null) return
+    const onKey = (event: KeyboardEvent): void => {
+      if (event.key === 'Escape') setOpen(null)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [open])
+
   const group = NAV.find((g) => g.id === open) ?? null
   const toolCount = liveTools().length
 
