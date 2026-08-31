@@ -313,6 +313,8 @@ a.tnt-card:hover {
 
 .tnt-docs > summary::-webkit-details-marker { display: none; }
 
+.tnt-docs > summary > :first-child { flex: 1 1 auto; min-width: 0; }
+
 .tnt-docs > summary:focus-visible {
   outline: 2px solid var(--tnt-focus);
   outline-offset: 2px;
@@ -332,6 +334,28 @@ a.tnt-card:hover {
   font-size: var(--tnt-text-base);
   line-height: 1.7;
   color: var(--tnt-text-secondary);
+}
+
+/** A machine's tuple inside a docs card: term beside definition, mono. */
+.tnt-docs .tnt-tuple {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--tnt-space-1) var(--tnt-space-3);
+  margin: 10px 0 0;
+  font-family: var(--tnt-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--tnt-text-sm);
+  line-height: 1.6;
+}
+
+.tnt-docs .tnt-tuple > dt { color: var(--tnt-text-faint); }
+.tnt-docs .tnt-tuple > dd { margin: 0; overflow-wrap: anywhere; color: var(--tnt-text); }
+
+/** A list inside a docs card. */
+.tnt-docs .tnt-docs-list {
+  padding-left: 18px;
+  display: grid;
+  gap: var(--tnt-space-2);
 }
 
 /** A stat counter: a big mono figure over a small sans caption. */
@@ -431,6 +455,21 @@ a.tnt-card:hover {
 .tnt-chip[disabled]:hover {
   background: var(--tnt-surface);
   border-color: var(--tnt-border);
+}
+
+/** A chip whose text is a name rather than notation — a machine picker. */
+.tnt-chip-sans { font-family: var(--tnt-font); }
+
+/** A picker row's leading label, held to one width so the rows align. */
+.tnt-picker-label { min-width: 190px; }
+
+/** The action inside a verdict banner — "Continue for 1000 more moves". */
+.tnt-btn-banner {
+  font-size: var(--tnt-text-sm);
+  padding: 8px 14px;
+  white-space: nowrap;
+  border-color: var(--tnt-marked-border);
+  color: var(--tnt-marked-deep);
 }
 
 /** The ink-filled primary — "Run machine", "Play". Inverts with the theme. */
@@ -579,6 +618,9 @@ a.tnt-card:hover {
 .tnt-verb[data-verb='prove'] { color: var(--tnt-accepting); background: var(--tnt-accepting-soft); }
 .tnt-verb[data-verb='learn'] { color: var(--tnt-text-muted); background: var(--tnt-surface-dim); }
 
+/** A tag whose text carries a Greek letter the uppercase would mangle (ε-NFA). */
+.tnt-verb-keep { text-transform: none; }
+
 /**
  * The segmented control — "head fixed | tape fixed". A dim trough holding
  * bare buttons; the pressed one lifts onto a white card.
@@ -620,6 +662,251 @@ a.tnt-card:hover {
 .tnt-seg-sm > .tnt-seg-btn {
   font-size: 12px;
   padding: 5px 12px;
+}
+
+/* ---------------------------------------------------------------------------
+ * The simulator's cards — design artboard 02
+ * ------------------------------------------------------------------------ */
+
+/** A card's first row: the mono label left, a meta or a button right. */
+.tnt-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--tnt-space-3);
+  margin-bottom: 10px;
+}
+
+.tnt-card-head > .tnt-label { margin: 0; }
+
+/** The narration card: one sentence in Spectral, held to a stable height. */
+.tnt-narration { padding: 20px; }
+
+.tnt-narration-text {
+  margin: 0;
+  font-family: var(--tnt-serif);
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--tnt-text);
+  text-wrap: pretty;
+  min-height: 82px;
+}
+
+.tnt-narration .tnt-meta { margin: var(--tnt-space-2) 0 0; }
+
+/** The ID sequence card. */
+.tnt-idseq { padding: 20px; }
+
+.tnt-idseq-ids {
+  font-family: var(--tnt-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 14.5px;
+  line-height: 2;
+  word-spacing: 0.1em;
+  color: var(--tnt-text-muted);
+  user-select: text;
+  overflow-wrap: anywhere;
+}
+
+.tnt-idseq-ids > span[data-current='true'] { color: var(--tnt-text); }
+
+.tnt-idseq-note { margin: var(--tnt-space-2) 0 0; }
+
+/** The small Copy button on a card head. */
+.tnt-btn-copy {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--tnt-text-secondary);
+  background: var(--tnt-bg);
+  border-color: var(--tnt-border);
+  border-radius: 3px;
+  padding: 4px 10px;
+}
+
+.tnt-btn-copy:hover { color: var(--tnt-text); }
+
+/** The PDA's current ID as three synced panels: state, input, stack, then the triple. */
+.tnt-id-panels {
+  display: flex;
+  gap: var(--tnt-space-5);
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.tnt-id-panels-input { flex: 1 1 220px; min-width: 180px; }
+.tnt-id-panels-id { flex-basis: 100%; font-size: var(--tnt-text-base); }
+
+/** The q of the ID, ringed in the current colour. */
+.tnt-state-pill {
+  display: inline-block;
+  font-family: var(--tnt-mono);
+  font-size: var(--tnt-text-lg);
+  padding: var(--tnt-space-2) var(--tnt-space-3);
+  border: 2px solid var(--tnt-current);
+  border-radius: var(--tnt-radius-full);
+  background: var(--tnt-current-soft);
+  color: var(--tnt-current-deep);
+}
+
+/** The card a diagram is drawn on: white, a little padding, nothing else. */
+.tnt-diagram-card {
+  background: var(--tnt-surface);
+  border: 1px solid var(--tnt-border);
+  border-radius: var(--tnt-radius);
+  padding: 8px 12px 4px;
+}
+
+/** The input row: label, the mono field, Run, a hairline, then Try chips. */
+.tnt-input-row {
+  display: flex;
+  gap: var(--tnt-space-3);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.tnt-input-row > .tnt-input-label {
+  font-family: var(--tnt-font);
+  font-size: var(--tnt-text-sm);
+  color: var(--tnt-text-muted);
+}
+
+.tnt-try {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.tnt-try > .tnt-input-label {
+  font-family: var(--tnt-font);
+  font-size: var(--tnt-text-sm);
+  color: var(--tnt-text-faint);
+}
+
+/* The transport's three regions. */
+.tnt-transport-buttons { display: flex; gap: 6px; }
+
+.tnt-transport-play { min-width: 92px; height: 38px; padding: 0 20px; justify-content: center; }
+
+.tnt-transport-scrub-wrap {
+  flex: 1 1 160px;
+  min-width: 120px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tnt-transport-scrub-wrap > .tnt-transport-scrub { width: 100%; flex: none; min-width: 0; }
+
+.tnt-transport-speed {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-left: 1px solid var(--tnt-hairline);
+  padding-left: 18px;
+}
+
+.tnt-transport-speed-label {
+  font-family: var(--tnt-font);
+  font-size: 12px;
+  color: var(--tnt-text-faint);
+}
+
+.tnt-transport-speed-range { width: 96px; accent-color: var(--tnt-current); }
+
+.tnt-transport-speed-value {
+  font-family: var(--tnt-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--tnt-text-sm);
+  min-width: 34px;
+}
+
+.tnt-transport-compact { padding: 0; border: none; background: transparent; gap: var(--tnt-space-2); flex-direction: column; align-items: stretch; }
+.tnt-transport-compact .tnt-transport-buttons > .tnt-btn-icon { min-width: 34px; height: 34px; }
+.tnt-transport-compact .tnt-transport-play { flex: 1; height: 34px; min-width: 0; font-size: var(--tnt-text-sm); }
+
+/* ---------------------------------------------------------------------------
+ * The tape — design artboard 02
+ * ------------------------------------------------------------------------ */
+
+.tnt-tape {
+  margin: 0;
+  overflow-x: auto;
+  --tnt-tape-cell: 46px;
+}
+
+.tnt-tape-heads,
+.tnt-tape-under {
+  display: flex;
+  padding-left: 1px;
+}
+
+.tnt-tape-head,
+.tnt-tape-state {
+  width: var(--tnt-tape-cell);
+  flex: none;
+  text-align: center;
+  color: var(--tnt-current);
+  opacity: 0;
+}
+
+.tnt-tape-head { font-size: 13px; line-height: 1; }
+
+.tnt-tape-state {
+  font-family: var(--tnt-mono);
+  font-size: 14px;
+  line-height: 1.4;
+  margin-top: 5px;
+}
+
+.tnt-tape-head[data-on='true'],
+.tnt-tape-state[data-on='true'] { opacity: 1; }
+
+.tnt-tape-cells {
+  display: flex;
+  width: fit-content;
+  border: 1px solid var(--tnt-border-strong);
+  border-right: none;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.tnt-tape-cell {
+  width: var(--tnt-tape-cell);
+  min-height: 52px;
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-right: 1px solid var(--tnt-border);
+  background: var(--tnt-surface);
+  transition: background-color 140ms ease;
+}
+
+.tnt-tape-row {
+  display: block;
+  text-align: center;
+  font-family: var(--tnt-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 22px;
+  line-height: 1.2;
+  color: var(--tnt-text);
+}
+
+.tnt-tape-cell[data-blank='true'] > .tnt-tape-row { color: var(--tnt-text-ghost); }
+.tnt-tape-cell[data-written='true'] > .tnt-tape-row { color: var(--tnt-new); }
+
+.tnt-tape-cell[data-head='true'] {
+  background: var(--tnt-current-soft);
+  box-shadow: inset 0 0 0 1.5px var(--tnt-current);
+}
+
+/* Stacked tracks: smaller rows, a hairline between them. */
+.tnt-tape-cell > .tnt-tape-row + .tnt-tape-row { border-top: 1px solid var(--tnt-hairline); }
+.tnt-tape-cell:has(> .tnt-tape-row + .tnt-tape-row) > .tnt-tape-row { font-size: 15px; line-height: 1.6; }
+
+@media (prefers-reduced-motion: reduce) {
+  .tnt-tape-cell { transition: none; }
 }
 
 /* ---------------------------------------------------------------------------

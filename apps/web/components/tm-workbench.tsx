@@ -2,11 +2,14 @@
 
 /**
  * The Turing-machine gallery page: the chapter 8 machines, run one at a time,
- * each with the programming technique it demonstrates explained beside it.
+ * each with the programming technique it demonstrates explained beside it —
+ * as docs cards in the runner's right column (design artboard 02).
  */
 
+import { useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 import { TM_PRESETS, type Technique, type TmPreset } from '@tape-n-trace/engine'
+import { DocsCard } from './docs-card'
 import { TmRunner } from './tm-runner'
 
 const TECHNIQUE_NOTES: Record<Technique, { title: string; body: string; citation: string }> = {
@@ -60,23 +63,25 @@ const GROUPS: { title: string; techniques: Technique[] }[] = [
 ]
 
 export function TmWorkbench({ initialId = 'zeros-ones' }: { initialId?: string }): React.JSX.Element {
-  const [presetId, setPresetId] = useState(initialId)
+  // `?machine=` picks the preset and `?input=` opens it with a run loaded, so a
+  // lecturer can link straight to Fig. 8.9 on 0011.
+  const params = useSearchParams()
+  const [presetId, setPresetId] = useState(params?.get('machine') ?? initialId)
+  const initialInput = params?.get('input') ?? undefined
   const preset = (TM_PRESETS.find((p) => p.id === presetId) ?? TM_PRESETS[0]) as TmPreset
   const note = TECHNIQUE_NOTES[preset.technique]
 
   return (
-    <div className="tnt-stack">
+    <div className="tnt-stack-lg">
       <div className="tnt-stack-sm" role="group" aria-label="Machines">
         {GROUPS.map((group) => (
-          <div key={group.title} className="tnt-row tnt-row-tight">
-            <span className="tnt-meta" style={{ minWidth: 190 }}>
-              {group.title}:
-            </span>
+          <div key={group.title} className="tnt-row">
+            <span className="tnt-label tnt-picker-label">{group.title}</span>
             {TM_PRESETS.filter((p) => group.techniques.includes(p.technique)).map((p) => (
               <button
                 key={p.id}
                 type="button"
-                className="tnt-chip"
+                className="tnt-chip tnt-chip-sans"
                 aria-pressed={p.id === preset.id}
                 onClick={() => setPresetId(p.id)}
               >
@@ -87,41 +92,6 @@ export function TmWorkbench({ initialId = 'zeros-ones' }: { initialId?: string }
         ))}
       </div>
 
-      <div className="tnt-panels">
-        <div className="tnt-card tnt-stack-sm">
-          <strong>{preset.title}</strong>
-          <p className="tnt-sm" style={{ margin: 0 }}>
-            {preset.blurb}
-          </p>
-          <span className="tnt-meta">Hopcroft 2e §{preset.citation}</span>
-          {preset.nonHalting === undefined ? null : (
-            <p role="note" className="tnt-note tnt-note-warn" style={{ margin: 0 }}>
-              <strong>Does not halt</strong> on {preset.nonHalting.inputs}: {preset.nonHalting.why} The run is stopped at
-              the move cap and says so; it is never reported as rejected.
-            </p>
-          )}
-          {preset.subroutine === undefined ? null : (
-            <details className="tnt-sm">
-              <summary style={{ cursor: 'pointer' }}>
-                Subroutine <strong>{preset.subroutine.name}</strong> — {preset.subroutine.states.length} states
-              </summary>
-              <p style={{ margin: 'var(--tnt-space-1) 0 0' }}>
-                States {preset.subroutine.states.join(', ')}: entered at {preset.subroutine.states[0]}, returning
-                through {preset.subroutine.states.at(-1)}, which has no moves of its own. Inside it the tape panel says
-                so.
-              </p>
-            </details>
-          )}
-        </div>
-        <div className="tnt-card tnt-stack-sm">
-          <strong>{note.title}</strong>
-          <p className="tnt-sm" style={{ margin: 0 }}>
-            {note.body}
-          </p>
-          <span className="tnt-meta">{note.citation}</span>
-        </div>
-      </div>
-
       <TmRunner
         key={preset.id}
         machine={preset.machine}
@@ -129,6 +99,30 @@ export function TmWorkbench({ initialId = 'zeros-ones' }: { initialId?: string }
         encodeInput={preset.encodeInput}
         trackSeparator={preset.technique === 'tracks' ? '|' : undefined}
         subroutine={preset.subroutine}
+        initialInput={initialInput}
+        aside={
+          <>
+            <DocsCard title={preset.title} cite={`Hopcroft 2e §${preset.citation}`} open>
+              <p>{preset.blurb}</p>
+              {preset.nonHalting === undefined ? null : (
+                <p role="note" className="tnt-note tnt-note-warn">
+                  <strong>Does not halt</strong> on {preset.nonHalting.inputs}: {preset.nonHalting.why} The run is
+                  stopped at the move cap and says so; it is never reported as rejected.
+                </p>
+              )}
+              {preset.subroutine === undefined ? null : (
+                <p>
+                  Subroutine <strong>{preset.subroutine.name}</strong> — states {preset.subroutine.states.join(', ')}:
+                  entered at {preset.subroutine.states[0]}, returning through {preset.subroutine.states.at(-1)}, which
+                  has no moves of its own. Inside it the tape card says so.
+                </p>
+              )}
+            </DocsCard>
+            <DocsCard title={note.title} cite={note.citation}>
+              {note.body}
+            </DocsCard>
+          </>
+        }
       />
     </div>
   )

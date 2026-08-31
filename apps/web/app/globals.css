@@ -432,6 +432,9 @@ input[type='range'] { accent-color: var(--tnt-current); }
   .tnt-catalog { grid-template-columns: minmax(0, 1fr); }
 }
 
+.tnt-catalog-list { list-style: none; padding: 20px 0 40px; margin: 0; }
+.tnt-catalog-list > li { display: contents; }
+
 .tnt-tool-card {
   padding: 20px 20px 18px;
   display: flex;
@@ -466,4 +469,59 @@ input[type='range'] { accent-color: var(--tnt-current); }
   line-height: 1.6;
   color: var(--tnt-text-muted);
   text-wrap: pretty;
+}
+
+/* ---------------------------------------------------------------------------
+ * A tool page's head: the title and lead left, the cross-links right
+ * ------------------------------------------------------------------------ */
+
+.tnt-page-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: var(--tnt-space-6);
+  flex-wrap: wrap;
+  margin-bottom: 22px;
+}
+
+.tnt-page-head h1 { margin-bottom: 10px; }
+
+.tnt-lead {
+  margin: 0;
+  font-size: 16px;
+  color: var(--tnt-text-secondary);
+}
+
+.tnt-page-links {
+  margin: 0;
+  font-family: var(--tnt-serif);
+  font-size: var(--tnt-text-base);
+  color: var(--tnt-text-muted);
+  max-width: 34ch;
+  text-wrap: pretty;
+}
+
+/* ---------------------------------------------------------------------------
+ * Mobile — artboard 02b: the transport pins to the bottom of the viewport
+ * ------------------------------------------------------------------------ */
+
+@media (max-width: 620px) {
+  .tnt-panels-aside > :first-child > .tnt-transport {
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
+    box-shadow: 0 -6px 18px rgba(33, 30, 26, 0.06);
+  }
+
+  .tnt-transport-buttons { width: 100%; }
+  .tnt-transport-buttons > .tnt-btn-icon { flex: 1; height: 46px; }
+  .tnt-transport-buttons > .tnt-transport-play { flex: 2; height: 46px; }
+  .tnt-transport-scrub-wrap { order: -1; width: 100%; }
+  .tnt-transport-count { text-align: center; }
+  .tnt-transport-speed { border-left: none; padding-left: 0; }
+
+  .tnt-input-row > .tnt-input-lg { flex: 1 1 100%; min-width: 0; }
+  .tnt-input-row > .tnt-divider { display: none; }
+  .tnt-page-head { margin-bottom: 14px; }
+  .tnt-picker-label { min-width: 0; width: 100%; }
 }

@@ -77,9 +77,11 @@ describe('the simulator', () => {
     render(<TmWorkbench />)
     await user.click(screen.getByRole('button', { name: '0011' }))
 
+    // The convention is the design's segmented control: a radiogroup of
+    // buttons, so the checked state is aria-checked rather than .checked.
     const tapeFixed = screen.getByRole('radio', { name: /tape fixed/i })
     await user.click(tapeFixed)
-    expect((tapeFixed as HTMLInputElement).checked).toBe(true)
+    expect(tapeFixed.getAttribute('aria-checked')).toBe('true')
     expect(screen.getByRole('group', { name: /head on cell 0/ })).toBeDefined()
   })
 

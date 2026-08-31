@@ -1,12 +1,14 @@
 /**
- * A Turing-machine tape.
+ * A Turing-machine tape — design artboard 02's tape card: a row of head
+ * markers, a contiguous run of 46 × 52 mono cells with the scanned cell
+ * tinted and ringed in the current colour, and the state written beneath the
+ * head the way an ID writes it beside the scanned cell.
  *
  * The tape is infinite; what is drawn is a window of it. Two conventions are
  * offered because lecturers teach both: **head-fixed** keeps the head in the
  * middle and scrolls the tape under it, **tape-fixed** keeps the cells where
  * they are and walks the head along them, paging only when the head leaves
- * the window. The state is written under the head, the way the ID puts it
- * beside the scanned cell.
+ * the window.
  *
  * A cell may hold several tracks (§8.3.2, and the many-tapes-to-one
  * construction): pass `trackSeparator` and the cell is drawn as stacked rows.
@@ -39,12 +41,10 @@ export interface TapeStripProps {
   className?: string
 }
 
-const CELL = 34
-
 export function TapeStrip({
   tape,
   blank,
-  radius = 8,
+  radius = 6,
   mode = 'head-fixed',
   step = null,
   tapeIndex = 0,
@@ -73,12 +73,19 @@ export function TapeStrip({
 
   return (
     <figure
-      className={className}
+      className={className === undefined ? 'tnt-tape' : `tnt-tape ${className}`}
       role="group"
       aria-label={`${label}: head on cell ${tape.head} reading ${scanned}${state === undefined ? '' : `, in state ${state}`}`}
-      style={{ margin: 0, overflowX: 'auto' }}
     >
-      <div style={{ display: 'inline-grid', gridTemplateColumns: `repeat(${width}, ${CELL}px)`, gap: 2, padding: '14px 2px 4px' }}>
+      <div className="tnt-tape-heads" aria-hidden="true">
+        {positions.map((position) => (
+          <span key={position} className="tnt-tape-head" data-on={position === tape.head ? 'true' : undefined}>
+            ▼
+          </span>
+        ))}
+      </div>
+
+      <div className="tnt-tape-cells">
         {positions.map((position) => {
           const symbol = cellAt(position)
           const isHead = position === tape.head
@@ -86,48 +93,14 @@ export function TapeStrip({
           return (
             <div
               key={position}
+              className="tnt-tape-cell"
               data-position={position}
               data-head={isHead ? 'true' : undefined}
               data-written={written.has(position) ? 'true' : undefined}
-              style={{ position: 'relative', display: 'grid', gap: 1 }}
+              data-blank={symbol === blank ? 'true' : undefined}
             >
-              {isHead ? (
-                <span
-                  aria-hidden="true"
-                  style={{
-                    position: 'absolute',
-                    top: -14,
-                    left: 0,
-                    right: 0,
-                    textAlign: 'center',
-                    fontSize: 11,
-                    color: 'var(--tnt-current)',
-                    lineHeight: 1,
-                  }}
-                >
-                  ▼
-                </span>
-              ) : null}
               {rows.map((row, r) => (
-                <span
-                  key={r}
-                  style={{
-                    display: 'block',
-                    height: CELL - 6,
-                    lineHeight: `${CELL - 6}px`,
-                    textAlign: 'center',
-                    fontFamily: 'var(--tnt-mono)',
-                    fontSize: 14,
-                    border: isHead ? '2px solid var(--tnt-current)' : '1px solid var(--tnt-border)',
-                    borderRadius: 4,
-                    background: written.has(position)
-                      ? 'var(--tnt-accepting-soft)'
-                      : symbol === blank
-                        ? 'var(--tnt-bg)'
-                        : 'var(--tnt-surface)',
-                    color: symbol === blank ? 'var(--tnt-text-muted)' : 'var(--tnt-text)',
-                  }}
-                >
+                <span key={r} className="tnt-tape-row">
                   {formatRow === undefined ? row : formatRow(row)}
                 </span>
               ))}
@@ -135,18 +108,14 @@ export function TapeStrip({
           )
         })}
       </div>
-      {state === undefined ? null : (
-        <figcaption
-          style={{
-            fontFamily: 'var(--tnt-mono)',
-            fontSize: 12,
-            color: 'var(--tnt-current)',
-            paddingLeft: 2 + (tape.head - start) * (CELL + 2),
-          }}
-        >
-          {state}
-        </figcaption>
-      )}
+
+      <figcaption className="tnt-tape-under">
+        {positions.map((position) => (
+          <span key={position} className="tnt-tape-state" data-on={position === tape.head ? 'true' : undefined}>
+            {position === tape.head ? (state ?? '') : ''}
+          </span>
+        ))}
+      </figcaption>
     </figure>
   )
 }

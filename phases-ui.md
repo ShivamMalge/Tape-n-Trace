@@ -1,6 +1,6 @@
 # Build Phases — UI Overhaul and the Classroom Board
 
-> **Status: U1 closed 2026-08-31; U2 next.** The design is `Tape-n-Trace UIoverhaul/Tape-n-Trace.dc.html`
+> **Status: U1–U2 closed 2026-08-31; U3 next.** The design is `Tape-n-Trace UIoverhaul/Tape-n-Trace.dc.html`
 > (nine artboards, one component system, two themes) plus the board-mode feature phases.md §5 records.
 > This tracker exists so the design lands artboard by artboard, each one checked against its source
 > before the next begins — not as one sweep that gets the palette right and the details wrong.
@@ -32,7 +32,7 @@ Companion documents: [phases.md](phases.md) §5 (board mode) · [architecture.md
 | Phase | Artboards | Ships | Status | Notes |
 |---|---|---|---|---|
 | U1 Foundation | 00 System, 06 Dark | tokens, fonts, primitives, top bar + module panel, Home catalog | ✅ | 2026-08-31 · screenshots of Home in both themes checked against artboards 01 and 06 |
-| U2 Simulator pattern | 02 Simulator, 02b Mobile, 06 Dark | diagram hero, tape card, transport bar, narration / ID / verdict / docs column; TM page first, then FA and PDA | ⬜ | |
+| U2 Simulator pattern | 02 Simulator, 02b Mobile, 06 Dark | diagram hero, tape card, transport bar, narration / ID / verdict / docs column; TM page first, then FA and PDA | ✅ | 2026-08-31 · TM checked in both themes and at 390 px; FA and PDA in light |
 | U3 Conversion, Practice, Pumping | 03, 04, 05 | source/target cards + subset table; exercise + counterexample panel; adversary round + written proof | ⬜ | |
 | U4 Classroom board | 07 Board mode | `/board`: ink → states and arcs, chip labels, live δ, simulate panel | ⬜ | phases.md §5 |
 | U5 Sweep | all | every remaining route on the system; inline-style count down; a11y pass; screenshots beside artboards | ⬜ | |
@@ -76,12 +76,18 @@ Companion documents: [phases.md](phases.md) §5 (board mode) · [architecture.md
 
 ### U2 — The simulator pattern · artboards 02, 02b, 06
 
-- [ ] `/simulate/tm`: breadcrumb bar with the language on the right; input row with Try chips; diagram
+- [x] `/simulate/tm`: breadcrumb bar with the language on the right; input row with Try chips; diagram
       card with the current-state ring; tape card with the head-fixed / tape-fixed segmented control,
       head marker above and state label below the cell; transport card (◀ Play ▶, scrub, step label,
       speed); right column of Narration, ID sequence with Copy, verdict banner, docs card.
-- [ ] The same pattern on `/simulate` and `/simulate/pda`.
-- [ ] At 390 px the page stacks as artboard 02b, transport pinned at the bottom.
+      *(Screenshots with `?input=0011` in light and dark against artboards 02 and 06. Two deviations, recorded:
+      the page keeps its h1 and lead above the picker — the artboard's breadcrumb-only header would drop the
+      only visible page title — and the language sits in the derived syllabus breadcrumb rather than a
+      hand-written one. `?machine=` and `?input=` were added so a lecturer can link to a loaded run.)*
+- [x] The same pattern on `/simulate` and `/simulate/pda`.
+      *(AutomatonController and PdaRunner take an `aside` of docs cards; the FA index is a card grid.)*
+- [x] At 390 px the page stacks as artboard 02b, transport pinned at the bottom.
+      *(Screenshot at 390 px; the transport is `position: sticky; bottom: 0` under 620 px with the scrub above the buttons as the artboard has it.)*
 
 ### U3 — Conversion, Practice, Pumping · artboards 03, 04, 05
 
