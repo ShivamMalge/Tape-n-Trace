@@ -1,12 +1,12 @@
 import type { Metadata } from 'next'
 import type { FiniteAutomaton } from '@tape-n-trace/engine'
-import { Board } from '../../components/board/board'
+import { BOARD_ALPHABET, Board } from '../../components/board/board'
 
 /** `?demo` opens the board on a drawn example — strings ending in 01 — with the table out. */
 const DEMO: FiniteAutomaton = {
   kind: 'ENFA',
   states: ['q0', 'q1', 'q2'],
-  alphabet: ['0', '1'],
+  alphabet: BOARD_ALPHABET,
   transitions: [
     { id: 'q0-[0]->q0', from: 'q0', read: '0', to: 'q0' },
     { id: 'q0-[1]->q0', from: 'q0', read: '1', to: 'q0' },
@@ -39,7 +39,7 @@ export default async function BoardPage({
             For the lecture theatre. Draw with a pen or a finger: a loop is a state, a stroke from one state to
             another is an arc, a loop inside a state makes it accepting, a stroke into a state from its left
             makes it the start. Pick each arc&rsquo;s symbols from the chips. When the machine is drawn, press
-            Simulate.
+            Simulate. Press the full-screen button in the board&rsquo;s corner to give it the whole display.
           </p>
         </div>
         <p className="tnt-page-links">

@@ -16,6 +16,8 @@ export function BoardTools({
   onRedo,
   tool,
   onTool,
+  fullscreen,
+  onFullscreen,
 }: {
   canUndo: boolean
   canRedo: boolean
@@ -23,6 +25,8 @@ export function BoardTools({
   onRedo: () => void
   tool: 'pen' | 'eraser'
   onTool: (tool: 'pen' | 'eraser') => void
+  fullscreen: boolean
+  onFullscreen: () => void
 }): React.JSX.Element {
   return (
     <div className="tnt-board-tools" role="toolbar" aria-label="Board tools">
@@ -51,6 +55,22 @@ export function BoardTools({
             <path d="M10 8l4 4M14 8l-4 4" />
           </svg>
         )}
+      </button>
+      <button
+        type="button"
+        className="tnt-board-btn"
+        aria-pressed={fullscreen}
+        aria-label={fullscreen ? 'Exit full screen' : 'Full screen'}
+        title={fullscreen ? 'Exit full screen (Esc)' : 'Full screen'}
+        onClick={onFullscreen}
+      >
+        <svg aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          {fullscreen ? (
+            <path d="M7 3v4H3M13 3v4h4M7 17v-4H3M13 17v-4h4" />
+          ) : (
+            <path d="M3 7V3h4M17 7V3h-4M3 13v4h4M17 13v4h-4" />
+          )}
+        </svg>
       </button>
     </div>
   )
@@ -83,7 +103,8 @@ export function BoardPicker({
       role="group"
       aria-label={`Label the arc from ${from} to ${to}`}
       style={{
-        left: Math.min(Math.max(at.x - 96, 12), bounds.width - 220),
+        // Wide enough for a, b, 0, 1 and ε side by side (~330px).
+        left: Math.min(Math.max(at.x - 165, 12), bounds.width - 340),
         top: Math.min(Math.max(at.y + 24, 12), bounds.height - 150),
       }}
     >

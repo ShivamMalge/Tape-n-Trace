@@ -119,6 +119,26 @@ describe('the board', () => {
     expect(within(panel).getByText('Rejected')).toBeDefined()
   })
 
+  it('offers a, b, 0, 1 and ε as arc labels, and goes full screen and back', async () => {
+    const user = userEvent.setup()
+    render(<Board />)
+    const svg = screen.getByRole('application')
+    stroke(svg, loop(150, 330, 50))
+    stroke(svg, loop(450, 300, 50))
+    stroke(svg, line({ x: 150, y: 330 }, { x: 450, y: 300 }))
+    const picker = screen.getByRole('group', { name: /Label the arc from q0 to q1/ })
+    for (const symbol of ['a', 'b', '0', '1', 'ε']) expect(within(picker).getByRole('button', { name: symbol })).toBeDefined()
+    await user.click(within(picker).getByRole('button', { name: 'a' }))
+    expect(within(picker).getByRole('button', { name: 'a' }).getAttribute('aria-pressed')).toBe('true')
+
+    // jsdom has no Fullscreen API, so the board takes the viewport-filling fallback.
+    const board = svg.closest('.tnt-board') as HTMLElement
+    await user.click(screen.getByRole('button', { name: 'Full screen' }))
+    expect(board.dataset.fullscreen).toBe('true')
+    await user.keyboard('{Escape}')
+    expect(board.dataset.fullscreen).toBeUndefined()
+  })
+
   it('undoes the last stroke and counts what is on the board', async () => {
     const user = userEvent.setup()
     render(<Board />)

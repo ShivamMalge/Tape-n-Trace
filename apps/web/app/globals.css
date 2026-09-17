@@ -1158,7 +1158,7 @@ button.tnt-board-pill[aria-pressed='true'] { color: var(--board-blue-ink); backg
 }
 
 .tnt-board-table th,
-.tnt-board-table td { padding: 13px 14px; text-align: left; border-top: 1px solid oklch(0.3 0.01 250); }
+.tnt-board-table td { padding: 12px 8px; text-align: left; border-top: 1px solid oklch(0.3 0.01 250); }
 
 .tnt-board-table thead th {
   background: var(--board-raised);
@@ -1167,7 +1167,7 @@ button.tnt-board-pill[aria-pressed='true'] { color: var(--board-blue-ink); backg
   font-weight: 400;
   letter-spacing: 0.12em;
   border-top: none;
-  padding: 11px 14px;
+  padding: 11px 8px;
 }
 
 /* The header casing is written, not transformed: `ε` must stay ε. */
@@ -1189,10 +1189,10 @@ button.tnt-board-pill[aria-pressed='true'] { color: var(--board-blue-ink); backg
 
 .tnt-board-run { display: flex; flex-direction: column; gap: 10px; margin-top: auto; }
 
-.tnt-board-input-row { display: flex; gap: 10px; align-items: center; }
+.tnt-board-input-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
 
 .tnt-board-input {
-  flex: 1;
+  flex: 1 1 100%;
   min-width: 0;
   font: inherit;
   font-family: var(--tnt-mono);
@@ -1253,10 +1253,32 @@ button.tnt-board-pill[aria-pressed='true'] { color: var(--board-blue-ink); backg
 
 .tnt-board-verdict { padding: 12px 16px; }
 
+/* Full screen: the board is the whole display, canvas and panel side by side. */
+.tnt-board:fullscreen,
+.tnt-board[data-fullscreen='true'] {
+  height: 100vh;
+  height: 100dvh;
+  width: 100vw;
+  border: none;
+  border-radius: 0;
+}
+
+.tnt-board[data-fullscreen='true']:not(:fullscreen) {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+}
+
+.tnt-board:fullscreen::backdrop { background: oklch(0.155 0.006 250); }
+
 @media (max-width: 960px) {
   .tnt-board { flex-direction: column; height: auto; }
   .tnt-board-stage { height: 520px; }
   .tnt-board-panel { width: 100%; border-left: none; border-top: 1px solid var(--board-panel-border); }
   .tnt-board-panel[hidden] { display: none; }
   .tnt-board-btn-light { padding: 0 14px; }
+  .tnt-board:fullscreen .tnt-board-stage,
+  .tnt-board[data-fullscreen='true'] .tnt-board-stage { flex: 1 1 auto; height: auto; min-height: 60vh; }
+  .tnt-board:fullscreen,
+  .tnt-board[data-fullscreen='true'] { overflow-y: auto; }
 }

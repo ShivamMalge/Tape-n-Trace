@@ -28,7 +28,7 @@ export interface BoardPanelProps {
   verdict: TraceResult | null
 }
 
-const TRIES = ['0011', '']
+const TRIES = ['aabb', '0011', '']
 
 export function BoardPanel({
   open,

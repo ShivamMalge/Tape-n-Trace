@@ -34,6 +34,7 @@ import {
 import type { FiniteAutomaton, Point, Read, StateId, Trace } from '@tape-n-trace/engine'
 import { groupTransitions } from '@tape-n-trace/ui'
 import { recognise, type PlacedState } from '../../lib/board-recognize'
+import { useFullscreen } from '../../lib/use-fullscreen'
 import { useMachineHistory } from '../../lib/use-machine-history'
 import { usePlayback } from '../../lib/use-playback'
 import { BoardCanvas, type Ink, type Lit } from './board-canvas'
@@ -44,10 +45,13 @@ import { hintFor, pretty } from './board-text'
 
 export { pretty } from './board-text'
 
+/** The arc chips: a, b (the VTU syllabus alphabet) and 0, 1 for binary examples; ε is added. */
+export const BOARD_ALPHABET = ['a', 'b', '0', '1']
+
 const EMPTY: FiniteAutomaton = {
   kind: 'ENFA',
   states: [],
-  alphabet: ['0', '1'],
+  alphabet: BOARD_ALPHABET,
   transitions: [],
   start: '',
   accepting: [],
@@ -95,6 +99,8 @@ export function Board({
   const [badge, setBadge] = useState<string | null>(null)
   const [tool, setTool] = useState<'pen' | 'eraser'>('pen')
   const [marking, setMarking] = useState(false)
+
+  const { ref: boardRef, fullscreen, toggle: toggleFullscreen } = useFullscreen<HTMLDivElement>()
 
   const [open, setOpen] = useState(openInitially)
   const [input, setInput] = useState('')
@@ -250,7 +256,7 @@ export function Board({
   const hint = hintFor(machine, groups.length, problems.map((p) => p.message), trace !== null)
 
   return (
-    <div className="tnt-board" data-open={open ? 'true' : undefined}>
+    <div ref={boardRef} className="tnt-board" data-open={open ? 'true' : undefined} data-fullscreen={fullscreen ? 'true' : undefined}>
       <div className="tnt-board-stage">
         <BoardCanvas
           machine={machine}
@@ -294,6 +300,7 @@ export function Board({
           onRedo={history.redo}
           tool={tool}
           onTool={setTool}
+          fullscreen={fullscreen} onFullscreen={toggleFullscreen}
         />
 
         {badge === null ? null : (
