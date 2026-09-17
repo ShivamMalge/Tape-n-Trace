@@ -20,13 +20,26 @@ import type { FiniteAutomaton, PDA, PDATransition, TMTransition, TuringMachine }
 
 const ARROW: Record<string, string> = { L: '←', R: '→', S: '·' }
 
+/**
+ * What a drawable really is, for the renderer's one-sentence description. A
+ * drawable is typed as a finite automaton, so without this a screen reader
+ * hears a Turing machine announced as a "DFA". Kept beside the object rather
+ * than on it, so the drawable stays exactly the shape the renderer takes.
+ */
+const ORIGIN = new WeakMap<FiniteAutomaton, { kind: string; alphabet: string }>()
+
+/** The machine kind and alphabet name a drawable stands for, if it stands for one. */
+export function drawableOrigin(machine: FiniteAutomaton): { kind: string; alphabet: string } | undefined {
+  return ORIGIN.get(machine)
+}
+
 /** The textbook arc label for one TM move: `X/Y →`, one part per tape. */
 export function tmEdgeLabel(t: TMTransition): string {
   return t.read.map((r, i) => `${r}/${t.write[i]} ${ARROW[t.move[i] as string] ?? t.move[i]}`).join('; ')
 }
 
 export function tmToDrawable(machine: TuringMachine): FiniteAutomaton {
-  return {
+  const drawable: FiniteAutomaton = {
     kind: 'DFA',
     states: [...machine.states],
     alphabet: [...machine.tapeAlphabet],
@@ -35,6 +48,8 @@ export function tmToDrawable(machine: TuringMachine): FiniteAutomaton {
     accepting: [...machine.accepting],
     ...(machine.layout === undefined ? {} : { layout: machine.layout }),
   }
+  ORIGIN.set(drawable, { kind: 'Turing machine', alphabet: 'tape alphabet' })
+  return drawable
 }
 
 /** The textbook arc label: read, pop/push, ε for each empty part. */
@@ -44,7 +59,7 @@ export function pdaEdgeLabel(t: PDATransition): string {
 }
 
 export function pdaToDrawable(pda: PDA): FiniteAutomaton {
-  return {
+  const drawable: FiniteAutomaton = {
     kind: 'NFA',
     states: [...pda.states],
     alphabet: [...pda.inputAlphabet],
@@ -58,6 +73,8 @@ export function pdaToDrawable(pda: PDA): FiniteAutomaton {
     accepting: [...pda.accepting],
     ...(pda.layout === undefined ? {} : { layout: pda.layout }),
   }
+  ORIGIN.set(drawable, { kind: 'PDA', alphabet: 'input alphabet' })
+  return drawable
 }
 
 /**

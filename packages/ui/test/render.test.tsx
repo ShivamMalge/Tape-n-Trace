@@ -13,13 +13,15 @@ import {
   dfaContains01,
   enfaZerosThenOnes,
   nfaEndsIn01,
+  PDA_PRESETS,
   serialise,
   simulate,
   simulateNFA,
+  TM_PRESETS,
   unwrap,
 } from '@tape-n-trace/engine'
 import type { FiniteAutomaton, NFASnapshot, Trace } from '@tape-n-trace/engine'
-import { AutomatonRenderer, BranchTree, InputStrip, TransportBar } from '../src/index.js'
+import { AutomatonRenderer, BranchTree, InputStrip, pdaToDrawable, tmToDrawable, TransportBar } from '../src/index.js'
 
 const noop = (): void => {}
 
@@ -31,7 +33,8 @@ const noop = (): void => {}
 function isDisabled(markup: string, label: string): boolean {
   const tag = markup.split('<button').find((chunk) => chunk.includes(`aria-label="${label}"`))
   if (tag === undefined) throw new Error(`no button labelled "${label}" in the markup`)
-  return tag.slice(0, tag.indexOf('>')).includes('disabled=""')
+  const attributes = tag.slice(0, tag.indexOf('>'))
+  return attributes.includes('disabled=""') || attributes.includes('aria-disabled="true"')
 }
 
 describe('AutomatonRenderer', () => {
@@ -207,5 +210,19 @@ describe('TransportBar', () => {
     const last = renderToStaticMarkup(<TransportBar {...props} stepIndex={5} />)
     expect(isDisabled(last, 'Next step')).toBe(true)
     expect(isDisabled(last, 'Previous step')).toBe(false)
+  })
+
+  it('keeps the end buttons focusable, so the keyboard still works at either end', () => {
+    const last = renderToStaticMarkup(<TransportBar {...props} stepIndex={5} />)
+    const next = last.split('<button').find((chunk) => chunk.includes('aria-label="Next step"')) as string
+    expect(next).toContain('aria-disabled="true"')
+    expect(next.slice(0, next.indexOf('>'))).not.toContain('disabled=""')
+  })
+
+  it('names a Turing machine and a PDA drawn as diagrams for what they are', () => {
+    const tm = renderToStaticMarkup(<AutomatonRenderer machine={tmToDrawable((TM_PRESETS[0] as (typeof TM_PRESETS)[number]).machine)} />)
+    expect(tm).toMatch(/aria-label="Turing machine with 5 states over the tape alphabet \{0, 1, X, Y, B\}/)
+    const pda = renderToStaticMarkup(<AutomatonRenderer machine={pdaToDrawable((PDA_PRESETS[0] as (typeof PDA_PRESETS)[number]).machine)} />)
+    expect(pda).toMatch(/aria-label="PDA with \d+ states over the input alphabet \{a, b\}/)
   })
 })

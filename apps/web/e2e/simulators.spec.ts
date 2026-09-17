@@ -16,15 +16,18 @@ test.describe('finite automaton simulator', () => {
     await expect(scrub).toHaveValue('1')
     await expect(page.getByText('1 of 4 read')).toBeVisible()
 
-    // Keyboard control lives on the toolbar. The scrub bar is the control that
-    // stays enabled at both ends, so focus stays inside the toolbar.
-    await scrub.focus()
+    // Keyboard control lives on the toolbar, and survives reaching either end:
+    // ▶ is disabled at the last step but keeps focus, so Home still works.
+    const next = transport.getByRole('button', { name: 'Next step' })
+    await next.focus()
     await page.keyboard.press('End')
     await expect(page.getByText('4 of 4 read')).toBeVisible()
-    await expect(scrub).not.toHaveValue('1')
-    await expect(transport.getByRole('button', { name: 'Next step' })).toBeDisabled()
+    await expect(next).toBeDisabled()
+    await expect(next).toBeFocused()
     await page.keyboard.press('Home')
     await expect(scrub).toHaveValue('0')
+    await page.keyboard.press('ArrowRight')
+    await expect(scrub).toHaveValue('1')
   })
 
   test('a typed string runs, plays to the end, and is rejected', async ({ page }) => {
@@ -82,6 +85,8 @@ test.describe('Turing machine simulator', () => {
     await page.keyboard.press('End')
     await expect(page.getByRole('status').filter({ hasText: 'Accepted' })).toBeVisible()
     await expect(page.getByText(/⊢/).first()).toBeVisible()
+    // Announced as what it is, not as the finite automaton it is drawn with.
+    await expect(page.getByRole('group', { name: /^Turing machine with 5 states over the tape alphabet/ })).toBeVisible()
   })
 
   test('a machine that does not halt is never reported as rejecting', async ({ page }) => {
@@ -114,5 +119,6 @@ test.describe('PDA simulator', () => {
     await tries.getByRole('button', { name: 'aab', exact: true }).click()
     await end()
     await expect(page.getByRole('status').filter({ hasText: 'Rejected' })).toBeVisible()
+    await expect(page.getByRole('group', { name: /^PDA with 3 states over the input alphabet \{a, b\}/ })).toBeVisible()
   })
 })

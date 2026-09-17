@@ -30,7 +30,7 @@
 ---
 
 Tape-n-Trace covers a full university course in the theory of computation — finite automata, regular
-expressions, grammars, pushdown automata, Turing machines and undecidability — as **twenty-seven
+expressions, grammars, pushdown automata, Turing machines and undecidability — as **twenty-six
 instruments** that all work the same way. Every tool runs its algorithm step by step and writes down
 what it did: one sentence of textbook language per step, the diagram updated, the working shown.
 Nothing here hides its working, and nothing here reports more than it knows.

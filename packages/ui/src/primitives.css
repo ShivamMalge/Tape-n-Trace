@@ -449,12 +449,14 @@ a.tnt-card:hover {
 }
 
 .tnt-btn[disabled],
+.tnt-btn[aria-disabled='true'],
 .tnt-chip[disabled] {
   cursor: not-allowed;
   opacity: 0.5;
 }
 
 .tnt-btn[disabled]:hover,
+.tnt-btn[aria-disabled='true']:hover,
 .tnt-chip[disabled]:hover {
   background: var(--tnt-surface);
   border-color: var(--tnt-border);

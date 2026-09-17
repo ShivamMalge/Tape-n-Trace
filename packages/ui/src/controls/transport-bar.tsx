@@ -87,19 +87,22 @@ export function TransportBar({
       onKeyDown={onKeyDown}
     >
       <div className="tnt-transport-buttons">
-        <Button label="Previous step" onClick={() => go(stepIndex - 1)} disabled={inert || atStart}>
+        <Button label="Previous step" onClick={() => go(stepIndex - 1)} inert={inert} disabled={atStart}>
           ◀
         </Button>
         <button
           type="button"
-          onClick={() => onPlayingChange(!playing)}
-          disabled={inert || (atEnd && !playing)}
+          onClick={() => {
+            if (!atEnd || playing) onPlayingChange(!playing)
+          }}
+          disabled={inert}
+          aria-disabled={!inert && atEnd && !playing ? true : undefined}
           aria-label={playing ? 'Pause' : 'Play'}
           className="tnt-btn tnt-btn-primary tnt-transport-play"
         >
           {playing ? 'Pause' : 'Play'}
         </button>
-        <Button label="Next step" onClick={() => go(stepIndex + 1)} disabled={inert || atEnd}>
+        <Button label="Next step" onClick={() => go(stepIndex + 1)} inert={inert} disabled={atEnd}>
           ▶
         </Button>
       </div>
@@ -153,16 +156,28 @@ export function TransportBar({
 interface ButtonProps {
   label: string
   onClick: () => void
+  /** No run to step through: the control is off, and out of the tab order. */
+  inert: boolean
+  /** At the end of the run in this button's direction. */
   disabled: boolean
   children: React.ReactNode
 }
 
-function Button({ label, onClick, disabled, children }: ButtonProps): React.JSX.Element {
+/**
+ * A run's first and last steps disable a button with `aria-disabled` rather
+ * than `disabled`. A natively disabled button drops keyboard focus, so pressing
+ * ▶ onto the last step (or End) would leave the arrow keys doing nothing until
+ * the reader clicked back into the toolbar.
+ */
+function Button({ label, onClick, inert, disabled, children }: ButtonProps): React.JSX.Element {
   return (
     <button
       type="button"
-      onClick={onClick}
-      disabled={disabled}
+      onClick={() => {
+        if (!disabled) onClick()
+      }}
+      disabled={inert}
+      aria-disabled={!inert && disabled ? true : undefined}
       aria-label={label}
       title={label}
       className="tnt-btn tnt-btn-icon"

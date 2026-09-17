@@ -14,6 +14,7 @@ import type { FiniteAutomaton, Step, StateId } from '@tape-n-trace/engine'
 import { groupTransitions, MINI_NODE_RADIUS, NODE_RADIUS, startMarkerGeometry } from './geometry.js'
 import type { EdgeGroup } from './geometry.js'
 import { boundsOf, resolveLayout } from './layout.js'
+import { drawableOrigin } from './drawables.js'
 import type { ViewBox } from './layout.js'
 import { edgeRole, indexHighlights } from './highlights.js'
 import { StateNode } from './state-node.js'
@@ -244,10 +245,12 @@ function arrowFill(role: 'idle' | 'taken' | 'added' | 'removed' | 'candidate'): 
 
 /** A one-sentence summary for a reader who cannot see the diagram. */
 function describeMachine(machine: FiniteAutomaton): string {
-  const kind = machine.kind === 'ENFA' ? 'ε-NFA' : machine.kind
+  const origin = drawableOrigin(machine)
+  const kind = origin?.kind ?? (machine.kind === 'ENFA' ? 'ε-NFA' : machine.kind)
+  const count = machine.states.length
   const accepting =
     machine.accepting.length === 0
       ? 'no accepting states'
       : `accepting ${machine.accepting.join(', ')}`
-  return `${kind} with ${machine.states.length} states over the alphabet {${machine.alphabet.join(', ')}}, starting at ${machine.start}, ${accepting}.`
+  return `${kind} with ${count} ${count === 1 ? 'state' : 'states'} over the ${origin?.alphabet ?? 'alphabet'} {${machine.alphabet.join(', ')}}, starting at ${machine.start}, ${accepting}.`
 }
