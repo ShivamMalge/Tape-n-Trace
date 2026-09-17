@@ -21,6 +21,8 @@ out/
 # --- Test / coverage ------------------------------------------------------
 coverage/
 .vitest/
+test-results/
+playwright-report/
 
 # --- Python (vyakarana, P1.8) --------------------------------------------
 __pycache__/

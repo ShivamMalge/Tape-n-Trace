@@ -141,6 +141,7 @@ printed copy of the textbook, and the audit is in [docs/citations.md](docs/citat
 pnpm install
 pnpm --filter @tape-n-trace/web dev      # http://localhost:3000
 pnpm test                                 # engine, renderers, web app
+pnpm --filter @tape-n-trace/web test:e2e   # build, then Playwright in Chromium
 ```
 
 For the Python package from a checkout: `pnpm -F @tape-n-trace/bridge build` then
