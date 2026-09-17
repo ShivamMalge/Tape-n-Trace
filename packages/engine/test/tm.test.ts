@@ -220,3 +220,153 @@ describe('many tapes to one — Theorems 8.9 and 8.10', () => {
     if (isErr(result)) expect(result.errors[0]?.code).toBe('TM_ALREADY_SINGLE')
   })
 })
+
+describe('a machine that returns to an earlier ID — it loops, it does not reject', () => {
+  const tm = (transitions: [string, string, string, string, 'L' | 'R' | 'S'][]): TuringMachine => ({
+    states: ['q0', 'q1', 'q2'],
+    inputAlphabet: ['0'],
+    tapeAlphabet: ['0', 'B'],
+    blank: 'B',
+    tapes: 1,
+    start: 'q0',
+    accepting: ['q2'],
+    transitions: transitions.map(([from, read, to, write, move]) => ({
+      id: `${from}-${read}->${to}`,
+      from,
+      to,
+      read: [read],
+      write: [write],
+      move: [move],
+    })),
+  })
+
+  it('reports a machine standing still in place as never halting', () => {
+    const trace = run(tm([['q0', 'B', 'q0', 'B', 'R']]), '')
+    assertTraceInvariants(trace)
+    expect(trace.result).toMatchObject({ type: 'acceptance', accepted: false, loops: true })
+  })
+
+  it('reports a two-state back-and-forth as never halting', () => {
+    const trace = run(tm([['q0', '0', 'q1', '0', 'R'], ['q1', 'B', 'q0', 'B', 'L']]), '0')
+    expect(trace.result).toMatchObject({ accepted: false, loops: true })
+    expect(trace.steps.at(-1)?.snapshot.status).toBe('loops')
+  })
+
+  it('still rejects a machine that really halts', () => {
+    const trace = run(tm([['q0', '0', 'q1', '0', 'R']]), '0')
+    expect(trace.result).toMatchObject({ accepted: false })
+    expect(trace.result).not.toHaveProperty('loops')
+  })
+})
+
+describe('regressions — the search over IDs', () => {
+  type Row = [string, string, string, string, 'L' | 'R']
+  const machine = (states: string[], input: string[], rows: Row[]): TuringMachine => ({
+    states,
+    inputAlphabet: input,
+    tapeAlphabet: [...input, 'B'],
+    blank: 'B',
+    tapes: 1,
+    start: states[0] as string,
+    accepting: ['acc'],
+    transitions: rows.map(([from, read, to, write, move], n) => ({ id: `t${n}`, from, read: [read], to, write: [write], move: [move] })),
+  })
+
+  it('finds a loop that runs through an ID first reached by another branch', () => {
+    // n0 → a → c and n0 → b → c, then c → b: b ⊢ c ⊢ b ⊢ … forever, though no single
+    // path of the breadth-first tree repeats an ID. No branch halts at all.
+    const m = machine(['q0', 'a', 'b', 'c', 'acc'], ['0'], [
+      ['q0', 'B', 'a', 'B', 'R'],
+      ['q0', 'B', 'b', 'B', 'R'],
+      ['a', 'B', 'c', 'B', 'L'],
+      ['b', 'B', 'c', 'B', 'L'],
+      ['c', 'B', 'b', 'B', 'R'],
+    ])
+    const trace = run(m, '')
+    assertTraceInvariants(trace)
+    expect(trace.result).toMatchObject({ type: 'acceptance', accepted: false, loops: true })
+  })
+
+  it('does not merge two configurations whose IDs happen to be spelled alike', () => {
+    // State p on 1x and state p1 on x both write "p1x". Only p can accept.
+    const m = machine(['s', 'm', 'm2', 'p1', 'n', 'n2', 'n3', 'p', 'acc'], ['1', 'x'], [
+      ['s', '1', 'm', 'B', 'R'],
+      ['m', 'x', 'm2', 'x', 'L'],
+      ['m2', 'B', 'p1', 'B', 'R'],
+      ['s', '1', 'n', '1', 'R'],
+      ['n', 'x', 'n2', 'x', 'R'],
+      ['n2', 'B', 'n3', 'B', 'L'],
+      ['n3', 'x', 'p', 'x', 'L'],
+      ['p', '1', 'acc', '1', 'R'],
+    ])
+    expect(run(m, '1x').result).toMatchObject({ type: 'acceptance', accepted: true })
+  })
+
+  it('names a state the machine really halted in when it rejects', () => {
+    // Two branches meet at an ID; the rejection note must name the halting state, not the merged branch.
+    // The halting branch is q0 ⊢ a ⊢ c; the longer q0 ⊢ b ⊢ b2 ⊢ b3 reaches c again and is cut there.
+    const m = machine(['q0', 'a', 'b', 'b2', 'b3', 'c', 'acc'], ['0'], [
+      ['q0', 'B', 'a', 'B', 'R'],
+      ['q0', 'B', 'b', 'B', 'R'],
+      ['a', 'B', 'c', 'B', 'L'],
+      ['b', 'B', 'b2', 'B', 'R'],
+      ['b2', 'B', 'b3', 'B', 'R'],
+      ['b3', 'B', 'c', 'B', 'L'],
+    ])
+    const trace = run(m, '')
+    assertTraceInvariants(trace)
+    expect(trace.result).toMatchObject({ accepted: false })
+    expect(trace.result).not.toHaveProperty('loops')
+    if (trace.result.type === 'acceptance') expect(trace.result.note).toContain('Halted in c ')
+  })
+})
+
+describe('regressions — many tapes to one', () => {
+  const twoTape = (transitions: TuringMachine['transitions'], extra: Partial<TuringMachine> = {}): TuringMachine => ({
+    states: ['q0', 'q1', 'acc'],
+    inputAlphabet: ['0'],
+    tapeAlphabet: ['0', 'B'],
+    blank: 'B',
+    tapes: 2,
+    start: 'q0',
+    accepting: ['acc'],
+    transitions,
+    ...extra,
+  })
+  const accepts = (m: TuringMachine, w: string): boolean => {
+    const result = run(m, w).result
+    return result.type === 'acceptance' && result.accepted
+  }
+
+  it('keeps every move of a nondeterministic M, so N accepts what M accepts', () => {
+    const m = twoTape([
+      { id: 'a', from: 'q0', read: ['0', 'B'], to: 'q1', write: ['0', 'B'], move: ['R', 'S'] },
+      { id: 'b', from: 'q0', read: ['0', 'B'], to: 'acc', write: ['0', 'B'], move: ['R', 'S'] },
+    ])
+    expect(accepts(m, '0')).toBe(true)
+    expect(accepts(unwrap(multitapeToSingle(m)), encodeInput(m, '0') as unknown as string)).toBe(true)
+  })
+
+  it('halts N in a rejecting state of M, as M halts there', () => {
+    const m = twoTape(
+      [
+        { id: 'a', from: 'q0', read: ['0', 'B'], to: 'q1', write: ['0', 'B'], move: ['R', 'S'] },
+        { id: 'c', from: 'q1', read: ['B', 'B'], to: 'acc', write: ['B', 'B'], move: ['S', 'S'] },
+      ],
+      { rejecting: ['q1'] },
+    )
+    expect(accepts(m, '0')).toBe(false)
+    expect(accepts(unwrap(multitapeToSingle(m)), encodeInput(m, '0') as unknown as string)).toBe(false)
+  })
+
+  it('reports an M that never halts as looping, not as rejecting', () => {
+    const m = twoTape([
+      { id: 'a', from: 'q0', read: ['B', 'B'], to: 'q1', write: ['B', 'B'], move: ['R', 'S'] },
+      { id: 'b', from: 'q1', read: ['B', 'B'], to: 'q0', write: ['B', 'B'], move: ['L', 'S'] },
+    ])
+    const trace = unwrap(simulateReduction(m, ''))
+    assertTraceInvariants(trace)
+    expect(trace.result).toMatchObject({ type: 'acceptance', accepted: false, loops: true })
+    expect(trace.steps.at(-1)?.snapshot.status).toBe('loops')
+  })
+})

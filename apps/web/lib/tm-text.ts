@@ -81,9 +81,13 @@ export function parseTmText(source: string, header: TmHeader): Result<TuringMach
     const write = clean(writeText.split(/\s+/))
     const move = clean(moveText.split(/\s+/)).map((m) => m.toUpperCase())
 
-    if (tapes === null) tapes = read.length
-    if (read.length !== tapes || write.length !== tapes || move.length !== tapes) {
-      errors.push(positioned('TM_LINE_ARITY', `"${text}" does not give one read, one write and one move for each of the ${tapes} tape${tapes === 1 ? '' : 's'}.`, at))
+    // Only a self-consistent line fixes the tape count; a typo on the first line
+    // must not make every later, correct line an arity error too.
+    if (tapes === null && read.length === write.length && read.length === move.length) tapes = read.length
+    if (tapes === null || read.length !== tapes || write.length !== tapes || move.length !== tapes) {
+      const count = tapes === null ? '' : ` ${tapes}`
+      const plural = tapes === 1 ? '' : 's'
+      errors.push(positioned('TM_LINE_ARITY', `"${text}" does not give one read, one write and one move for each of the${count} tape${plural}.`, at))
       continue
     }
     const badMove = move.find((m) => !['L', 'R', 'S'].includes(m))

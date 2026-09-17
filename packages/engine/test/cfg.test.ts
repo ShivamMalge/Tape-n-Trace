@@ -145,6 +145,13 @@ describe('derivations', () => {
     expect(result.errors[0]?.code).toBe('DERIVE_UNKNOWN_SYMBOL')
   })
 
+  it('rejects a target holding a variable instead of searching for it', () => {
+    const result = deriveString(anbn, ['a', 'S', 'b'], 'leftmost')
+    expect(isErr(result)).toBe(true)
+    if (!isErr(result)) return
+    expect(result.errors[0]?.code).toBe('DERIVE_UNKNOWN_SYMBOL')
+  })
+
   /**
    * phases.md P1.3 — every parse tree's yield equals the derived string,
    * property-tested over 200 random grammars.
@@ -205,6 +212,16 @@ describe('ambiguity', () => {
     expect(treeYield(treeA).join(' ')).toBe('id + id * id')
     expect(treeYield(treeB).join(' ')).toBe('id + id * id')
     expect(JSON.stringify(treeA)).not.toBe(JSON.stringify(treeB))
+  })
+
+  it('finds leftmost derivations whose extra variables vanish through ε', () => {
+    // [S → aSSS, S → ε ×3]: the form a S S S is longer than the target but yields a.
+    expect(leftmostDerivationsOf(grammar('S -> aSSS | ε'), ['a'])).toEqual([[0, 1, 1, 1]])
+  })
+
+  it('stops on a unit cycle instead of overflowing the call stack', () => {
+    expect(leftmostDerivationsOf(grammar('S -> S | a'), ['b'])).toEqual([])
+    expect(leftmostDerivationsOf(grammar('S -> A | a\nA -> S'), ['a'])).toEqual([[1], [0, 2, 1]])
   })
 
   it('the detector finds an ambiguous witness in the classic grammar', () => {
@@ -284,6 +301,14 @@ describe('left recursion elimination', () => {
     if (isErr(withCycle)) {
       expect(withCycle.errors.map((e) => e.code)).toContain('LEFTREC_CYCLE')
     }
+
+    // A two-variable unit cycle leaves B' → B' behind if it is let through.
+    const longCycle = eliminateLeftRecursion(grammar('A -> B | a\nB -> A | b'))
+    expect(isErr(longCycle)).toBe(true)
+    if (isErr(longCycle)) {
+      expect(longCycle.errors.map((e) => e.code)).toContain('LEFTREC_CYCLE')
+      expect(longCycle.errors[0]?.message).toContain('A → B, B → A')
+    }
   })
 
   it('names primed variables canonically and freshly', () => {
@@ -338,5 +363,18 @@ describe('left recursion elimination', () => {
       }),
       { seed: SEED, numRuns: 100 },
     )
+  })
+})
+
+describe('derivation search on grammars that grow or cycle', () => {
+  it('finds S ⇒ a in S → SS | a | ε, and aaa too', () => {
+    const g = unwrap(parseGrammar('S -> SS | a | ε'))
+    expect(findDerivation(g, ['a'], 'leftmost').steps).toHaveLength(1)
+    expect(findDerivation(g, ['a', 'a', 'a'], 'leftmost').steps).not.toBeNull()
+  })
+
+  it('takes the short route through a unit cycle, not a hundred steps round it', () => {
+    const g = unwrap(parseGrammar('S -> A\nA -> S | a'))
+    expect(findDerivation(g, ['a'], 'leftmost').steps).toHaveLength(2)
   })
 })

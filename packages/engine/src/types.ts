@@ -276,7 +276,17 @@ export interface BoundedClaim {
  * the ones P0.1 can produce plus the shapes the P0.3 conversions will need.
  */
 export type TraceResult =
-  | { type: 'acceptance'; accepted: boolean; note?: string }
+  | {
+      type: 'acceptance'
+      accepted: boolean
+      note?: string
+      /**
+       * Set on a non-acceptance when the machine provably never halts: a
+       * Turing machine that returns to an ID it was already in repeats forever.
+       * Not accepting, but not a rejection either — a rejection is a halt.
+       */
+      loops?: true
+    }
   /**
    * The run was stopped by a §9 guard before it reached a verdict. Distinct from
    * `acceptance` with `accepted: false` on purpose: "we did not find acceptance

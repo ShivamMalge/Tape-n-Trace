@@ -102,6 +102,8 @@ describe('parseRegex — errors', () => {
     ['', 'REGEX_EMPTY'],
     ['0 1', 'REGEX_WHITESPACE'],
     ['0\\', 'REGEX_TRAILING_ESCAPE'],
+    ['*0', 'REGEX_DANGLING_STAR'],
+    ['(*0)', 'REGEX_DANGLING_STAR'],
   ])('rejects %s', (source, code) => {
     const result = parseRegex(source)
     expect(isErr(result), `"${source}" should not parse`).toBe(true)
@@ -171,6 +173,12 @@ describe('regexToENFA — Thompson', () => {
     const trace = unwrap(regexToENFA(parse('01'), ['0', '1']))
     expect(trace.steps).toHaveLength(3 + 2)
     assertTraceInvariants(trace)
+  })
+
+  it('counts the states it creates — concatenation creates none', () => {
+    const trace = unwrap(regexToENFA(parse('01'), ['0', '1']))
+    const enfa = machineOf(trace)
+    expect(trace.meta.counters['statesCreated']).toBe(enfa.states.length)
   })
 
   it('names states deterministically', () => {

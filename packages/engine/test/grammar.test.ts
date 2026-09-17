@@ -57,6 +57,23 @@ const endsIn01: CFG = {
 }
 
 describe('grammarToNFA', () => {
+  it('gives a production written twice one transition, not two with one id', () => {
+    const twice: CFG = {
+      variables: ['S'],
+      terminals: ['a'],
+      productions: [
+        { head: 'S', body: ['a', 'S'] },
+        { head: 'S', body: ['a', 'S'] },
+        { head: 'S', body: ['a'] },
+        { head: 'S', body: ['a'] },
+      ],
+      start: 'S',
+    }
+    const machine = machineOf(unwrap(grammarToNFA(twice)))
+    expect(validateFA(machine).ok).toBe(true)
+    expect(machine.transitions).toHaveLength(2)
+  })
+
   it('turns each production into the move it describes', () => {
     const trace = unwrap(grammarToNFA(endsIn01))
     const machine = machineOf(trace)

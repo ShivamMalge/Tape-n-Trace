@@ -91,6 +91,11 @@ export function grammarToNFA(grammar: CFG): Result<Trace<Step<GrammarSnapshot>>>
   const finishName = freshStateId('F', grammar.variables)
   const transitions: FATransition[] = []
   const accepting = new Set<StateId>()
+  // A production written twice is still one move; two transitions with one id
+  // would make the automaton invalid.
+  const addEdge = (t: FATransition): void => {
+    if (!transitions.some((x) => x.id === t.id)) transitions.push(t)
+  }
   let usesFinish = false
   let usesEpsilon = false
 
@@ -125,17 +130,17 @@ export function grammarToNFA(grammar: CFG): Result<Trace<Step<GrammarSnapshot>>>
       case 'terminal': {
         usesFinish = true
         accepting.add(finishName)
-        transitions.push(edge(production.head, shape.sym, finishName))
+        addEdge(edge(production.head, shape.sym, finishName))
         narration = `${production.head} → ${shape.sym} reads "${shape.sym}" and finishes, so it becomes a move from ${production.head} to the accepting state ${finishName}.`
         break
       }
       case 'terminal-variable':
-        transitions.push(edge(production.head, shape.sym, shape.next))
+        addEdge(edge(production.head, shape.sym, shape.next))
         narration = `${production.head} → ${shape.sym}${shape.next} reads "${shape.sym}" and continues as ${shape.next}, so it becomes a move from ${production.head} to ${shape.next}.`
         break
       case 'variable':
         usesEpsilon = true
-        transitions.push(edge(production.head, null, shape.next))
+        addEdge(edge(production.head, null, shape.next))
         narration = `${production.head} → ${shape.next} reads nothing at all, so it becomes an ε-transition from ${production.head} to ${shape.next}.`
         break
     }

@@ -73,6 +73,15 @@ export function deepFreeze<T>(value: T): T {
   if (Object.isFrozen(value)) return value
 
   Object.freeze(value)
+  if (Array.isArray(value)) {
+    // A Turing machine's tape or a PDA's stack holds thousands of symbols in
+    // every branch node; strings need no freezing, so skip the call for them.
+    for (let i = 0; i < value.length; i++) {
+      const item: unknown = value[i]
+      if (item !== null && typeof item === 'object') deepFreeze(item)
+    }
+    return value
+  }
   for (const key of Object.keys(value as object)) {
     deepFreeze((value as Record<string, unknown>)[key])
   }

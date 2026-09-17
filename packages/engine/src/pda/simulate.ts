@@ -115,6 +115,15 @@ export function validatePDA(machine: PDA): ValidationError[] {
 }
 
 /**
+ * The identity of a configuration for the explored set. Stack symbols are kept
+ * apart: joined without a separator, the stacks [AB, X] and [A, BX] would read
+ * as the same ABX and a live branch would be dropped as already explored.
+ */
+function configKey(state: string, position: number, stack: readonly Sym[]): string {
+  return `${state}|${position}|${JSON.stringify(stack)}`
+}
+
+/**
  * Membership without a trace — the fast path the conversion tests sweep with.
  * Same search, same caps, no snapshots. Returns null when the cap fired before
  * an answer was reached, so a bounded non-answer can never masquerade as "no".
@@ -129,7 +138,7 @@ export function acceptsPDA(machine: PDA, input: string | readonly Sym[], maxNode
 
   while (queue.length > 0) {
     const config = queue.shift() as { state: string; position: number; stack: Sym[] }
-    const key = `${config.state}|${config.position}|${config.stack.join('')}`
+    const key = configKey(config.state, config.position, config.stack)
     if (seen.has(key)) continue
     seen.add(key)
 
@@ -190,13 +199,28 @@ export function simulatePDA(
     via: null,
     status: 'live',
   }
-  let nodes: PdaBranchNode[] = [root]
-  const seen = new Set<string>([`${root.state}|0|${machine.startStack}`])
+  // The branch tree under construction. Mutable while the search runs — an
+  // emitted snapshot gets its own copy — so a move costs O(what changed), not a
+  // copy and a scan of every node: long runs to the cap used to freeze the page.
+  const nodes: PdaBranchNode[] = [root]
+  const indexOf = new Map<string, number>([[root.id, 0]])
+  const update = (id: string, patch: Partial<PdaBranchNode>): void => {
+    const i = indexOf.get(id) as number
+    nodes[i] = { ...(nodes[i] as PdaBranchNode), ...patch }
+  }
+  const add = (node: PdaBranchNode): void => {
+    indexOf.set(node.id, nodes.length)
+    nodes.push(node)
+  }
+  const seen = new Set<string>([configKey(root.state, 0, root.stack)])
   const queue: string[] = [root.id]
+  let head = 0
 
   // Past the narration cap the search carries on silently — but a verdict step
   // is always emitted, so the final snapshot agrees with the result (§5).
-  const emit = (narration: string, highlight: Highlight[], status: PdaSnapshot['status']): void => {
+  // Narration may be passed as a thunk: past the step cap it is never shown,
+  // and rendering every ID's stack as text for a long run is most of its cost.
+  const emit = (narration: string | (() => string), highlight: Highlight[], status: PdaSnapshot['status']): void => {
     if (status === 'running' && builder.length >= LIMITS.TRACE_STEPS) {
       builder.truncate(
         `The run passed ${LIMITS.TRACE_STEPS} narrated steps and continues without commentary.`,
@@ -204,7 +228,7 @@ export function simulatePDA(
       )
       return
     }
-    builder.step({ narration, highlight, citation: '6.1.4', snapshot: { machine, input: symbols, nodes, status } })
+    builder.step({ narration: typeof narration === 'string' ? narration : narration(), highlight, citation: '6.1.4', snapshot: { machine, input: symbols, nodes: [...nodes], status } })
   }
 
   emit(
@@ -215,7 +239,7 @@ export function simulatePDA(
 
   if (accepted(machine, root, symbols.length)) {
     // Only reachable by final state: the start stack is never empty.
-    nodes = nodes.map((n) => (n.id === root.id ? { ...n, status: 'accepting' as const } : n))
+    update(root.id, { status: 'accepting' })
     emit(
       `The input is empty and ${machine.start} is already accepting: the start ID accepts with no move made.`,
       [{ type: 'state', id: machine.start, role: 'accepting' }],
@@ -226,7 +250,7 @@ export function simulatePDA(
 
   let acceptingNode: string | null = null
 
-  while (queue.length > 0 && acceptingNode === null) {
+  while (head < queue.length && acceptingNode === null) {
     if (nodes.length > maxNodes) {
       // The live branches are left live: they did not die, the search stopped.
       builder.truncate(
@@ -244,8 +268,8 @@ export function simulatePDA(
       )
     }
 
-    const nodeId = queue.shift() as string
-    const node = nodes.find((n) => n.id === nodeId) as PdaBranchNode
+    const nodeId = queue[head++] as string
+    const node = nodes[indexOf.get(nodeId) as number] as PdaBranchNode
     if (node.status !== 'live') continue
 
     const next = symbols[node.position]
@@ -254,11 +278,9 @@ export function simulatePDA(
     const stepIndex = builder.length
 
     if (moves.length === 0) {
-      nodes = nodes.map((n) =>
-        n.id === nodeId ? { ...n, status: 'dead' as const, diedAtStep: stepIndex, note: 'no move' } : n,
-      )
+      update(nodeId, { status: 'dead' as const, diedAtStep: stepIndex, note: 'no move' })
       emit(
-        `${idToText(node.state, symbols.slice(node.position), node.stack)} has no applicable move — this branch dies.`,
+        () => `${idToText(node.state, symbols.slice(node.position), node.stack)} has no applicable move — this branch dies.`,
         [{ type: 'treeNode', id: nodeId, role: 'dead' }],
         'running',
       )
@@ -269,7 +291,7 @@ export function simulatePDA(
     const skippedAsSeen: string[] = []
     for (const t of moves) {
       const moved = moveOf(t, node.position, node.stack)
-      const key = `${t.to}|${moved.position}|${moved.stack.join('')}`
+      const key = configKey(t.to, moved.position, moved.stack)
       if (seen.has(key)) {
         skippedAsSeen.push(t.id)
         continue
@@ -287,23 +309,21 @@ export function simulatePDA(
       children.push(child)
     }
 
-    nodes = [...nodes, ...children]
+    for (const child of children) add(child)
     if (children.length === 0) {
       // Every move repeats an ID already explored — this branch is finished.
-      nodes = nodes.map((n) =>
-        n.id === nodeId ? { ...n, status: 'dead' as const, diedAtStep: stepIndex, note: 'repeats an explored ID' } : n,
-      )
+      update(nodeId, { status: 'dead' as const, diedAtStep: stepIndex, note: 'repeats an explored ID' })
     }
     builder.bump('transitionsTaken', moves.length)
 
     const winner = children.find((c) => accepted(machine, c, symbols.length))
     if (winner !== undefined) {
       acceptingNode = winner.id
-      nodes = nodes.map((n) => (n.id === winner.id ? { ...n, status: 'accepting' as const } : n))
+      update(winner.id, { status: 'accepting' })
     }
 
     emit(
-      describeExpansion(machine, node, symbols, children, skippedAsSeen.length, winner !== undefined),
+      () => describeExpansion(machine, node, symbols, children, skippedAsSeen.length, winner !== undefined),
       [
         { type: 'treeNode', id: nodeId, role: 'expanding' },
         ...children.map((c) => ({ type: 'treeNode' as const, id: c.id, role: winner?.id === c.id ? ('accepting' as const) : ('matched' as const) })),
@@ -322,7 +342,7 @@ export function simulatePDA(
   }
 
   const finalStep = builder.length
-  nodes = nodes.map((n) => (n.status === 'live' ? { ...n, status: 'dead' as const, diedAtStep: finalStep, note: 'exhausted' } : n))
+  for (const n of [...nodes]) if (n.status === 'live') update(n.id, { status: 'dead', diedAtStep: finalStep, note: 'exhausted' })
   emit(
     `Every branch has died: no sequence of moves ${machine.acceptBy === 'finalState' ? 'consumes the input in an accepting state' : 'consumes the input with an empty stack'}. The string is rejected.`,
     [],

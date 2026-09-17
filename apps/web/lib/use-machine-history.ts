@@ -10,7 +10,8 @@
  *
  * Dragging a state would otherwise push one entry per pointer move, so a commit
  * can be marked `coalesce`: consecutive commits with the same coalesce key
- * replace one another instead of stacking. One drag becomes one undo.
+ * replace one another instead of stacking, and a keyless commit right after
+ * them settles the group. One drag becomes one undo.
  */
 
 import { useCallback, useMemo, useRef, useState } from 'react'
@@ -49,7 +50,12 @@ export function useMachineHistory(initial: FiniteAutomaton): MachineHistory {
 
   const commit = useCallback((next: FiniteAutomaton, options: CommitOptions = {}) => {
     const key = options.coalesce ?? null
-    const continuing = key !== null && key === lastCoalesceKey.current
+    // A commit without a key straight after a coalescing one settles that
+    // gesture — the editor ends a drag that way — so it joins the group and
+    // closes it. Pushing it instead would leave a drag as two undo entries,
+    // the first of which (the drop onto the last dragged position) looks like
+    // an undo that did nothing.
+    const continuing = lastCoalesceKey.current !== null && (key === null || key === lastCoalesceKey.current)
     lastCoalesceKey.current = key
 
     setHistory((current) => {

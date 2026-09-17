@@ -255,6 +255,32 @@ describe('homomorphism (§4.2.3)', () => {
     expect(bruteForceMembership(built, '')).toBe(true)
   })
 
+  it('keeps parallel transitions apart when their images need bridge states', () => {
+    // p→q on a and on b. Sharing one bridge state between the two paths would
+    // also spell xx and yy, which are the image of nothing.
+    const parallel: FiniteAutomaton = {
+      kind: 'NFA',
+      states: ['p', 'q'],
+      alphabet: ['a', 'b'],
+      transitions: [
+        { id: 'p-[a]->q', from: 'p', read: 'a', to: 'q' },
+        { id: 'p-[b]->q', from: 'p', read: 'b', to: 'q' },
+      ],
+      start: 'p',
+      accepting: ['q'],
+    }
+    const built = machineOf(unwrap(homomorphism(parallel, { a: ['x', 'y'], b: ['y', 'x'] })))
+    expect(validateFA(built).ok).toBe(true)
+    expect(bruteForceMembership(built, ['x', 'y'])).toBe(true)
+    expect(bruteForceMembership(built, ['y', 'x'])).toBe(true)
+    expect(bruteForceMembership(built, ['x', 'x'])).toBe(false)
+    expect(bruteForceMembership(built, ['y', 'y'])).toBe(false)
+
+    // Two symbols with the same image between the same states are one move.
+    expect(validateFA(machineOf(unwrap(homomorphism(parallel, { a: [], b: [] })))).ok).toBe(true)
+    expect(validateFA(machineOf(unwrap(homomorphism(parallel, { a: ['x'], b: ['x'] })))).ok).toBe(true)
+  })
+
   it('reports every symbol the homomorphism forgot', () => {
     const result = homomorphism(dfaContains01, { '0': ['a'] })
     expect(isErr(result)).toBe(true)

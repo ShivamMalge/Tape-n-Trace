@@ -66,7 +66,10 @@ export function layeredLayout(machine: FiniteAutomaton, options: LayoutOptions =
   const rowGap = options.rowGap ?? radius * 3.4
 
   const ranks = rankByDistance(machine)
-  const maxRank = Math.max(0, ...Object.values(ranks))
+  const reached = Object.values(ranks)
+  const unreachable = machine.states.some((state) => ranks[state] === undefined)
+  // Unreachable states get the rank after the last reachable one — their own.
+  const maxRank = reached.length === 0 ? 0 : Math.max(...reached) + (unreachable ? 1 : 0)
 
   // Group by rank, keeping machine order within a rank so layout is deterministic.
   const columns: StateId[][] = Array.from({ length: maxRank + 1 }, () => [])

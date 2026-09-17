@@ -525,6 +525,11 @@
             },
             "note": {
               "type": "string"
+            },
+            "loops": {
+              "type": "boolean",
+              "const": true,
+              "description": "Set on a non-acceptance when the machine provably never halts: a Turing machine that returns to an ID it was already in repeats forever. Not accepting, but not a rejection either — a rejection is a halt."
             }
           },
           "required": [

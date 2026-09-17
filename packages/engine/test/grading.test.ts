@@ -99,6 +99,23 @@ describe('gradeLanguage — correctness is language, not structure', () => {
 })
 
 describe('gradeLanguage — the witness is the feedback', () => {
+  it('names the right side when a symbol is longer than one character', () => {
+    // Re-running the joined witness "ab" would split it into a and b, which the
+    // machine cannot read — and that used to come out as "rejects".
+    const student: FiniteAutomaton = {
+      kind: 'DFA',
+      states: ['p', 'q'],
+      alphabet: ['ab'],
+      transitions: [t('p', 'ab', 'q')],
+      start: 'p',
+      accepting: ['q'],
+    }
+    const result = grade(student, { ...student, accepting: [] })
+    if (result.verdict !== 'wrong') throw new Error('should be wrong')
+    expect(result.witness).toBe('ab')
+    expect(result.side).toBe('student-accepts')
+  })
+
   /**
    * phases.md P1.1 — a student DFA wrong on exactly one long string receives
    * that string. L = 0* against a student who only counted to five: the

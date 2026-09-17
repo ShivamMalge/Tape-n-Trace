@@ -114,8 +114,13 @@ export function multitapeToSingle(machine: TuringMachine): Result<TuringMachine>
     }
     return name
   }
+  const added = new Set<string>()
   const add = (from: string, read: Sym, to: string, write: Sym, move: 'L' | 'R'): void => {
-    transitions.push({ id: tmTransitionId(from, [read], [write], [move], to), from, read: [read], to, write: [write], move: [move] })
+    const id = tmTransitionId(from, [read], [write], [move], to)
+    // Two moves of M that differ only in their ids give N the same move once.
+    if (added.has(id)) return
+    added.add(id)
+    transitions.push({ id, from, read: [read], to, write: [write], move: [move] })
   }
 
   const start = enqueue({ kind: 'scan', q: machine.start, reads: Array.from({ length: k }, () => UNREAD) })
@@ -134,19 +139,23 @@ export function multitapeToSingle(machine: TuringMachine): Result<TuringMachine>
           add(name, cell, enqueue({ kind: 'scan', q: phase.q, reads }), cell, 'R')
           continue
         }
-        // All k symbols known: this is M's move, if M has one.
-        const move = (byState.get(phase.q) ?? []).find((t) => t.read.every((r, i) => r === reads[i]))
-        if (move === undefined) continue // N dies here, as M would.
-        const remaining = Array.from({ length: k }, () => true)
-        const pending = Array.from({ length: k }, () => false)
-        // Start the sweep back on this very cell — it may hold markers — by
-        // entering the sweep state with a leftward move after re-reading it.
-        // To process this cell too, hand it to a sweep state arriving from the right.
-        const sweep = enqueue({ kind: 'sweep', p: move.to, writes: [...move.write], moves: [...move.move], remaining, pending })
-        // Move right (off the cell), then the sweep state will come back onto it.
-        const turn = enqueue({ kind: 'back', p: move.to, writes: [...move.write], moves: [...move.move], remaining, pending })
-        add(name, cell, turn, cell, 'R')
-        void sweep
+        // All k symbols known: these are M's moves, if M has any — every one of
+        // them, so a nondeterministic M gives a nondeterministic N. A rejecting
+        // state halts M, so N halts there too.
+        if (machine.rejecting?.includes(phase.q) === true) continue
+        const moves = (byState.get(phase.q) ?? []).filter((t) => t.read.every((r, i) => r === reads[i]))
+        for (const move of moves) {
+          const remaining = Array.from({ length: k }, () => true)
+          const pending = Array.from({ length: k }, () => false)
+          // Start the sweep back on this very cell — it may hold markers — by
+          // entering the sweep state with a leftward move after re-reading it.
+          // To process this cell too, hand it to a sweep state arriving from the right.
+          const sweep = enqueue({ kind: 'sweep', p: move.to, writes: [...move.write], moves: [...move.move], remaining, pending })
+          // Move right (off the cell), then the sweep state will come back onto it.
+          const turn = enqueue({ kind: 'back', p: move.to, writes: [...move.write], moves: [...move.move], remaining, pending })
+          add(name, cell, turn, cell, 'R')
+          void sweep
+        }
         continue
       }
 
@@ -227,7 +236,7 @@ export interface ReductionSnapshot {
   current: TmConfig
   mMoves: number
   nMoves: number
-  status: 'running' | 'accepted' | 'rejected' | 'stopped'
+  status: 'running' | 'accepted' | 'rejected' | 'stopped' | 'loops'
   [key: string]: unknown
 }
 
@@ -275,7 +284,10 @@ export function simulateReduction(
   let mMoves = 0
   let previousKind = 'scan'
   let status: ReductionSnapshot['status'] = 'running'
-  const nStatus = nRun.value.result.type === 'acceptance' ? (nRun.value.result.accepted ? 'accepted' : 'rejected') : 'stopped'
+  const nResult = nRun.value.result
+  // N never halting is not a rejection, just as M never halting is not.
+  const nStatus =
+    nResult.type === 'acceptance' ? (nResult.accepted ? 'accepted' : nResult.loops === true ? 'loops' : 'rejected') : 'stopped'
 
   nPath.forEach((nConfig, nMoves) => {
     const { kind } = phaseOf(nConfig.state)
@@ -328,6 +340,7 @@ export function simulateReduction(
     builder.build({
       type: 'acceptance',
       accepted: nStatus === 'accepted',
+      ...(nStatus === 'loops' ? { loops: true as const } : {}),
       note: `N made ${nPath.length - 1} moves to simulate M's ${mPath.length - 1}; Theorem 8.10 bounds each simulated move by 4n + 2k.`,
     }),
   )

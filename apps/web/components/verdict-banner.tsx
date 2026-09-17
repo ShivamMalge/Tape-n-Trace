@@ -47,8 +47,10 @@ interface Verdict {
 function describe(result: TraceResult): Verdict | null {
   switch (result.type) {
     case 'acceptance':
-      return result.accepted
-        ? { headline: 'Accepted', detail: result.note ?? null, variant: 'tnt-banner-good' }
+      if (result.accepted) return { headline: 'Accepted', detail: result.note ?? null, variant: 'tnt-banner-good' }
+      // A machine that provably never halts has not rejected: rejection is a halt.
+      return result.loops === true
+        ? { headline: 'Never halts', detail: result.note ?? null, variant: 'tnt-banner-warn' }
         : { headline: 'Rejected', detail: result.note ?? null, variant: 'tnt-banner-bad' }
 
     case 'incomplete':

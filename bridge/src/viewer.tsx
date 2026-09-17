@@ -48,7 +48,11 @@ function resultText(result: TraceResult): string {
 
 export function Viewer({ payload, trace, step, options, onStepChange }: ViewerProps): React.JSX.Element {
   const [playing, setPlaying] = useState(false)
-  const [speed, setSpeed] = useState(1)
+  // `vy.options(speed=…)` / `run(w, speed=…)` sets the starting pace; the
+  // slider can still change it locally afterwards.
+  const optionSpeed = typeof options['speed'] === 'number' && options['speed'] > 0 ? options['speed'] : 1
+  const [speed, setSpeed] = useState(optionSpeed)
+  useEffect(() => setSpeed(optionSpeed), [optionSpeed])
   const stepCount = trace?.steps.length ?? 0
   const index = Math.min(Math.max(0, step), Math.max(0, stepCount - 1))
   const current = trace?.steps[index] ?? null

@@ -67,8 +67,11 @@ export function TmWorkbench({ initialId = 'zeros-ones' }: { initialId?: string }
   // lecturer can link straight to Fig. 8.9 on 0011.
   const params = useSearchParams()
   const [presetId, setPresetId] = useState(params?.get('machine') ?? initialId)
-  const initialInput = params?.get('input') ?? undefined
   const preset = (TM_PRESETS.find((p) => p.id === presetId) ?? TM_PRESETS[0]) as TmPreset
+  // The linked input was chosen for the linked machine; another preset picked
+  // afterwards opens empty rather than run on a string meant for something else.
+  const [linkedId] = useState(preset.id)
+  const initialInput = preset.id === linkedId ? (params?.get('input') ?? undefined) : undefined
   const note = TECHNIQUE_NOTES[preset.technique]
 
   return (

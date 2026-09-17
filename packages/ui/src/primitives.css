@@ -88,6 +88,9 @@
 .tnt-stack-sm > *,
 .tnt-stack-lg > * {
   margin-block: 0;
+  /* A grid item's min-width defaults to its content's, so one long code line,
+     select or tag would stretch the whole column past a phone's screen. */
+  min-width: 0;
 }
 
 .tnt-row {
@@ -561,6 +564,12 @@ a.tnt-card:hover {
   font-size: 12px;
   color: var(--tnt-text-muted);
   white-space: nowrap;
+  max-width: 100%;
+}
+
+/* On a phone a long tag wraps rather than widening the page. */
+@media (max-width: 600px) {
+  .tnt-tag { white-space: normal; flex-wrap: wrap; overflow-wrap: anywhere; }
 }
 
 .tnt-select {
@@ -572,6 +581,7 @@ a.tnt-card:hover {
   background: var(--tnt-surface);
   color: var(--tnt-text);
   cursor: pointer;
+  max-width: 100%;
 }
 
 .tnt-select:hover { border-color: var(--tnt-text); }

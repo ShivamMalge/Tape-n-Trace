@@ -84,7 +84,10 @@ export function DerivationWorkbench(): React.JSX.Element {
           </span>
           <input
             value={target}
-            onChange={(event) => setTarget(event.target.value)}
+            onChange={(event) => {
+              setTarget(event.target.value)
+              setOutcome({ trace: null, errors: [] })
+            }}
             spellCheck={false}
             autoComplete="off"
             className="tnt-input tnt-input-mono"
@@ -96,7 +99,10 @@ export function DerivationWorkbench(): React.JSX.Element {
           <span className="tnt-muted">Mode</span>
           <select
             value={mode}
-            onChange={(event) => setMode(event.target.value as 'leftmost' | 'rightmost')}
+            onChange={(event) => {
+              setMode(event.target.value as 'leftmost' | 'rightmost')
+              setOutcome({ trace: null, errors: [] })
+            }}
             className="tnt-input"
           >
             <option value="leftmost">leftmost</option>

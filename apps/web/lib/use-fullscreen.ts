@@ -26,13 +26,18 @@ export function useFullscreen<T extends HTMLElement>(): {
   const toggle = useCallback(() => {
     const element = ref.current
     if (element === null) return
-    if (document.fullscreenEnabled && typeof element.requestFullscreen === 'function') {
-      if (document.fullscreenElement === element) void document.exitFullscreen()
-      else element.requestFullscreen().catch(() => setFullscreen(true))
+    if (document.fullscreenElement === element) {
+      void document.exitFullscreen().catch(() => setFullscreen(false))
+    } else if (fullscreen) {
+      // In the CSS fallback — including after the browser refused the API —
+      // leaving must not ask for full screen again.
+      setFullscreen(false)
+    } else if (document.fullscreenEnabled && typeof element.requestFullscreen === 'function') {
+      element.requestFullscreen().catch(() => setFullscreen(true))
     } else {
-      setFullscreen((on) => !on)
+      setFullscreen(true)
     }
-  }, [])
+  }, [fullscreen])
 
   // The CSS fallback has no browser-provided exit, so Esc is wired by hand.
   useEffect(() => {

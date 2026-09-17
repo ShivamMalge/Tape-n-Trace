@@ -123,6 +123,18 @@ describe('the bridge widget', () => {
     expect(el.textContent).toContain('Read 0 and move to state b.')
   })
 
+  it('starts playback at the speed the options carry — vy.options(speed=2)', () => {
+    const model = makeModel({ payload: null, trace: TRACE, step: 0, options: { speed: 2 } })
+    const { el } = mount(model)
+    const speed = el.querySelector('input[aria-label="Playback speed"]') as HTMLInputElement
+    expect(speed.value).toBe('2')
+
+    act(() => {
+      model.set('options', { speed: 4 })
+    })
+    expect(speed.value).toBe('4')
+  })
+
   it('renders a nondeterministic run as a branch tree, not a single path', () => {
     const nodes = [
       { id: 'n0', state: 'q0', position: 0, parent: null, via: null, status: 'live' },

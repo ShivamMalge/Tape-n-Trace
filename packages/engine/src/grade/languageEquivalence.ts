@@ -19,13 +19,12 @@
  * the product runs. A student may submit a DFA, an NFA or an ε-NFA.
  */
 
-import { equivalence } from '../fa/equivalence.js'
+import { equivalence, type EquivalenceSnapshot } from '../fa/equivalence.js'
 import { nfaToDfa } from '../fa/subset.js'
 import { minimize } from '../fa/minimize.js'
-import { simulateDFA } from '../fa/simulate.js'
 import { completeDFA, validateFA } from '../validate.js'
 import { err, ok, validationError, type Result } from '../result.js'
-import type { FiniteAutomaton, Sym } from '../types.js'
+import type { FiniteAutomaton, Step, Sym, Trace } from '../types.js'
 
 export type LanguageGrade =
   | {
@@ -109,7 +108,7 @@ export function gradeLanguage(
   }
 
   const witness = (outcome.witness as string | undefined) ?? ''
-  const studentAccepts = accepts(studentDfa, witness)
+  const studentAccepts = studentAcceptsWitness(compared.value, studentDfa)
   const shown = witness === '' ? 'the empty string' : `"${witness}"`
 
   return ok({
@@ -162,7 +161,16 @@ function minimalStateCountOf(referenceDfa: FiniteAutomaton): number {
     : referenceDfa.states.length
 }
 
-function accepts(dfa: FiniteAutomaton, word: string): boolean {
-  const run = simulateDFA(dfa, word)
-  return run.ok && run.value.result.type === 'acceptance' && run.value.result.accepted
+/**
+ * Whether the student's machine is the one accepting the witness.
+ *
+ * Read off the separating pair the product walk stopped on, not by re-running
+ * the witness: the witness is a joined string, and over symbols longer than one
+ * character ("ab") splitting it back apart gives a different word — or one the
+ * machine cannot read at all, which silently came out as "rejects".
+ */
+function studentAcceptsWitness(trace: Trace<Step<EquivalenceSnapshot>>, studentDfa: FiniteAutomaton): boolean {
+  const last = trace.steps[trace.steps.length - 1]?.snapshot
+  const separator = last?.pairs.find((pair) => pair.id === last.current)
+  return separator !== undefined && studentDfa.accepting.includes(separator.a)
 }

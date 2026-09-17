@@ -15,7 +15,7 @@
  */
 
 import { useCallback, useMemo, useState, type ReactNode } from 'react'
-import { isDeterministicTM, isOk, simulateTM, tmIdText } from '@tape-n-trace/engine'
+import { isDeterministicTM, isOk, simulateTM, tmIdLog } from '@tape-n-trace/engine'
 import type { Sym, TmTrace, TuringMachine, ValidationError } from '@tape-n-trace/engine'
 import { AutomatonRenderer, BranchTree, TapeStrip, TransportBar } from '@tape-n-trace/ui'
 import { DocsCard } from './docs-card'
@@ -74,6 +74,17 @@ export function TmRunner({
   const [mode, setMode] = useState<Mode>('head-fixed')
   const playback = usePlayback(trace)
 
+  // An edited machine makes the old run meaningless: drop it rather than show
+  // a trace, IDs and verdict of a machine that is no longer on the page.
+  const [ranOn, setRanOn] = useState(machine)
+  if (ranOn !== machine) {
+    setRanOn(machine)
+    setTrace(null)
+    setErrors([])
+    setRan(null)
+    setCap(MOVE_CAP)
+  }
+
   const run = useCallback(
     (word: string, maxSteps: number) => {
       const symbols = encodeInput === undefined ? word : encodeInput(word)
@@ -94,10 +105,10 @@ export function TmRunner({
   const step = trace?.steps[playback.stepIndex] ?? null
   const snapshot = step?.snapshot ?? null
   const current = snapshot?.current ?? null
-  const ids = useMemo(
-    () => (trace === null ? [] : trace.steps.map((s) => tmIdText(s.snapshot.current, machine.blank))),
-    [trace, machine.blank],
-  )
+  // One computation path, as §8.2.3 writes it — not one ID per narrated step,
+  // which would repeat IDs for steps that make no move and mix branches.
+  const ids = useMemo(() => (trace === null ? [] : tmIdLog(trace).split(' ⊢ ')), [trace])
+  const litId = playback.stepCount > 0 && playback.stepIndex === playback.stepCount - 1 ? ids.length - 1 : -1
   const nondeterministic = useMemo(() => !isDeterministicTM(machine), [machine])
   const stopped = trace?.result.type === 'incomplete'
 
@@ -238,7 +249,7 @@ export function TmRunner({
 
           <IdSequence
             ids={ids}
-            current={playback.stepIndex}
+            current={litId}
             note="§8.2.3: the state written immediately left of the scanned cell."
           />
 
@@ -257,7 +268,8 @@ export function TmRunner({
                 onClick={() => {
                   const next = cap + MOVE_CAP
                   setCap(next)
-                  run(input, next)
+                  // Continue the run that was stopped, not whatever is in the box now.
+                  run(ran ?? input, next)
                 }}
                 className="tnt-btn tnt-btn-banner"
               >

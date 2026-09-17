@@ -66,6 +66,8 @@ describe('the oracles decide, they do not pattern-match', () => {
     expect(accepts(l, ')(')).toBe(false) // balanced counts, illegal order
     expect(accepts(l, '(()')).toBe(false)
     expect(accepts(l, '')).toBe(true)
+    // Only brackets: a symbol outside the alphabet is not a closing bracket.
+    expect(accepts(l, '(x')).toBe(false)
   })
 
   it('ww: same half twice, not just even length', () => {
@@ -74,6 +76,7 @@ describe('the oracles decide, they do not pattern-match', () => {
     expect(accepts(l, '0110')).toBe(false)
     expect(accepts(l, '')).toBe(true)
     expect(accepts(l, '010')).toBe(false)
+    expect(accepts(l, 'abab')).toBe(false) // doubled, but not over {0,1}
   })
 
   it('primes: agreement with a sieve up to 60', () => {

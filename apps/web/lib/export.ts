@@ -39,11 +39,15 @@ export function parseTntJson(text: string): { machine: FiniteAutomaton } | { err
     return { error: 'That file is not valid JSON.' }
   }
 
+  // `null`, a number or an array are valid JSON too, and have no fields to read.
+  if (parsed === null || typeof parsed !== 'object') {
+    return { error: 'That file is not a Tape-n-Trace machine — the format header is missing.' }
+  }
   const file = parsed as Partial<TntFile>
   if (file.format !== 'tape-n-trace/machine@1') {
     return { error: 'That file is not a Tape-n-Trace machine — the format header is missing.' }
   }
-  if (file.machine === undefined || !Array.isArray(file.machine.states)) {
+  if (file.machine === undefined || file.machine === null || !Array.isArray(file.machine.states)) {
     return { error: 'That file has a format header but no machine in it.' }
   }
   return { machine: file.machine }

@@ -317,26 +317,41 @@ export function homomorphism(fa: FiniteAutomaton, h: Homomorphism): Result<Closu
   const builder = new TraceBuilder<ClosureSnapshot>('closure.regular.homomorphism', { fa, h })
   const states = [...fa.states]
   const transitions: FATransition[] = []
+  const taken = new Set(states)
+  const seen = new Set<string>()
   let bridges = 0
 
   for (const t of fa.transitions) {
     const image = t.read === null ? [] : (h[t.read] ?? [])
 
     if (image.length === 0) {
-      transitions.push({ id: faTransitionId(t.from, null, t.to), from: t.from, read: null, to: t.to })
+      // Two symbols with the same image between the same pair of states give
+      // one move, not two transitions sharing an id.
+      const id = faTransitionId(t.from, null, t.to)
+      if (seen.has(id)) continue
+      seen.add(id)
+      transitions.push({ id, from: t.from, read: null, to: t.to })
       continue
     }
 
     // A path of |h(a)| transitions, with |h(a)| - 1 fresh states in between.
+    // The bridge states are private to this transition: two parallel edges
+    // sharing them would splice their images together into strings neither
+    // one spells.
     let from = t.from
     image.forEach((symbol, i) => {
       const last = i === image.length - 1
-      const to = last ? t.to : `${t.from}~${t.to}~${i}`
+      const to = last ? t.to : freshStateId(`${t.from}~${t.to}~${i}`, taken)
       if (!last) {
+        taken.add(to)
         states.push(to)
         bridges += 1
       }
-      transitions.push({ id: faTransitionId(from, symbol, to), from, read: symbol, to })
+      const id = faTransitionId(from, symbol, to)
+      if (!seen.has(id)) {
+        seen.add(id)
+        transitions.push({ id, from, read: symbol, to })
+      }
       from = to
     })
   }

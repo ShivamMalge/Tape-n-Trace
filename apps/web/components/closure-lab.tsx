@@ -106,6 +106,16 @@ export function ClosureLab(): React.JSX.Element {
   // alphabet is the *input* side and the images must live in the machine's.
   const inverse = opId === 'inverse-homomorphism'
   const editorAlphabet = inverse ? ['a', 'b'] : (left?.alphabet ?? [])
+  // The operation runs on exactly the rows the editor shows, an empty box being
+  // ε as the editor says. Images typed for the other operation's alphabet stay
+  // in `h` but must not leak in: h⁻¹ would reject them as unreadable, with no
+  // box on the page to clear them from.
+  const alphabetKey = JSON.stringify(editorAlphabet)
+  const shown = useMemo<Homomorphism>(
+    () =>
+      Object.fromEntries((JSON.parse(alphabetKey) as string[]).map((symbol) => [symbol, h[symbol] ?? []])),
+    [h, alphabetKey],
+  )
 
   const outcome = useMemo(() => {
     if (left === undefined) return { trace: null as Trace | null, errors: [] as ValidationError[] }
@@ -113,12 +123,12 @@ export function ClosureLab(): React.JSX.Element {
       opId,
       left,
       operation.arity === 2 ? (right ?? null) : null,
-      operation.needsHomomorphism === true ? h : null,
+      operation.needsHomomorphism === true ? shown : null,
     )
     return isOk(result)
       ? { trace: result.value as Trace, errors: [] as ValidationError[] }
       : { trace: null as Trace | null, errors: result.errors }
-  }, [opId, left, right, h, operation])
+  }, [opId, left, right, shown, operation])
 
   const needsDeterminising = outcome.errors.some((e) => e.code === 'CLOSURE_NEEDS_DFA')
 

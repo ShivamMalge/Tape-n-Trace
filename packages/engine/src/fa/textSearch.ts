@@ -17,15 +17,19 @@
  * what has been read", so the states can be named by that prefix.
  */
 
-import { faTransitionId } from '../ids.js'
+import { faTransitionId, freshStateId } from '../ids.js'
 import { err, ok, validationError, type Result, type ValidationError } from '../result.js'
 import { simulateDFA } from './simulate.js'
 import type { DFASnapshot } from './simulate.js'
 import type { FATransition, FiniteAutomaton, StateId, Sym } from '../types.js'
 
-/** The state for a keyword prefix. The empty prefix is the start state. */
-function prefixState(prefix: string): StateId {
-  return prefix === '' ? 'start' : prefix
+/**
+ * The state for a keyword prefix. The empty prefix is the start state, named
+ * `start` unless a keyword prefix already is — searching for "start" must not
+ * fold that keyword's last state into the start state.
+ */
+function prefixState(prefix: string, start: StateId): StateId {
+  return prefix === '' ? start : prefix
 }
 
 export interface KeywordMachines {
@@ -70,7 +74,7 @@ export function keywordMachines(
  * keyword at any position. From there each keyword is a straight chain.
  */
 export function keywordNFA(keywords: readonly string[], alphabet: readonly Sym[]): FiniteAutomaton {
-  const start = prefixState('')
+  const start = 'start'
   const states: StateId[] = [start]
   const transitions: FATransition[] = alphabet.map((symbol) => ({
     id: faTransitionId(start, symbol, start),
@@ -84,8 +88,9 @@ export function keywordNFA(keywords: readonly string[], alphabet: readonly Sym[]
     // Chains are kept separate per keyword — that is what makes it an NFA and
     // what the DFA below merges.
     let from = start
-    ;[...word].forEach((symbol, i) => {
-      const to = `k${index}:${word.slice(0, i + 1)}`
+    const characters = [...word]
+    characters.forEach((symbol, i) => {
+      const to = `k${index}:${characters.slice(0, i + 1).join('')}`
       states.push(to)
       transitions.push({ id: faTransitionId(from, symbol, to), from, read: symbol, to })
       from = to
@@ -104,10 +109,14 @@ export function keywordNFA(keywords: readonly string[], alphabet: readonly Sym[]
  * far**, which is exactly what the subset construction would have discovered.
  */
 export function keywordDFA(keywords: readonly string[], alphabet: readonly Sym[]): FiniteAutomaton {
+  // Prefixes by character, not UTF-16 code unit, so a keyword containing an
+  // astral character (an emoji, say) never produces a half-surrogate state.
   const prefixes = new Set<string>([''])
   for (const word of keywords) {
-    for (let i = 1; i <= word.length; i++) prefixes.add(word.slice(0, i))
+    const characters = [...word]
+    for (let i = 1; i <= characters.length; i++) prefixes.add(characters.slice(0, i).join(''))
   }
+  const start = freshStateId('start', prefixes)
 
   const ordered = [...prefixes].sort((a, b) => a.length - b.length || (a < b ? -1 : 1))
 
@@ -115,35 +124,35 @@ export function keywordDFA(keywords: readonly string[], alphabet: readonly Sym[]
   for (const prefix of ordered) {
     for (const symbol of alphabet) {
       // The longest suffix of `prefix + symbol` that is still a keyword prefix.
-      const extended = prefix + symbol
+      const extended = [...prefix, symbol]
       let target = ''
-      for (let start = 0; start < extended.length; start++) {
-        const candidate = extended.slice(start)
+      for (let from = 0; from < extended.length; from++) {
+        const candidate = extended.slice(from).join('')
         if (prefixes.has(candidate)) {
           target = candidate
           break
         }
       }
       transitions.push({
-        id: faTransitionId(prefixState(prefix), symbol, prefixState(target)),
-        from: prefixState(prefix),
+        id: faTransitionId(prefixState(prefix, start), symbol, prefixState(target, start)),
+        from: prefixState(prefix, start),
         read: symbol,
-        to: prefixState(target),
+        to: prefixState(target, start),
       })
     }
   }
 
   return {
     kind: 'DFA',
-    states: ordered.map(prefixState),
+    states: ordered.map((p) => prefixState(p, start)),
     alphabet: [...alphabet],
     transitions,
-    start: prefixState(''),
+    start,
     // A state accepts when *some* keyword ends there — not only when the whole
     // prefix is one. Searching for {abb, b}, the state for prefix "ab" has to
     // accept, because the text so far ends in "b". Checking only for an exact
     // match misses every keyword that is a suffix of a longer one's prefix.
-    accepting: ordered.filter((p) => keywords.some((k) => p.endsWith(k))).map(prefixState),
+    accepting: ordered.filter((p) => keywords.some((k) => p.endsWith(k))).map((p) => prefixState(p, start)),
   }
 }
 
@@ -198,16 +207,19 @@ export function searchText(keywords: readonly string[], text: string): Result<Se
 
   const accepting = new Set(machines.dfa.accepting)
   const matches: Match[] = []
+  // A keyword listed twice is still one keyword, and occurs once per position.
+  const unique = [...new Set(keywords)]
 
   path.forEach((state, index) => {
     // A state is named by the prefix it stands for, so every keyword that is a
     // suffix of that prefix has just finished here — which is how overlapping
     // matches fall out without a second pass.
     if (!accepting.has(state)) return
-    const prefix = state === 'start' ? '' : state
-    for (const keyword of keywords) {
+    const prefix = state === machines.dfa.start ? '' : state
+    for (const keyword of unique) {
       if (prefix.endsWith(keyword)) {
-        matches.push({ keyword, start: index + 1 - keyword.length, end: index + 1 })
+        // Positions count characters, as `path` does, not UTF-16 code units.
+        matches.push({ keyword, start: index + 1 - [...keyword].length, end: index + 1 })
       }
     }
   })

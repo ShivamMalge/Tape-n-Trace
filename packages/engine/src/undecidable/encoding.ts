@@ -143,6 +143,22 @@ function numbering(machine: TuringMachine): Result<{ states: StateId[]; symbols:
       )
     }
   }
+  // δ is a function (§9.1.2): a code that gives one (state, symbol) two moves is
+  // ill-formed, and `decodeTM` reads it back as the machine with no moves.
+  const moved = new Set<string>()
+  for (const t of machine.transitions) {
+    const key = JSON.stringify([t.from, t.read[0]])
+    if (moved.has(key)) {
+      problems.push(
+        validationError(
+          'CODE_NONDETERMINISTIC',
+          `§9.1.2 codes a deterministic machine; "${t.from}" has more than one move on "${String(t.read[0])}".`,
+          { kind: 'transition', id: t.id },
+        ),
+      )
+    }
+    moved.add(key)
+  }
   if (problems.length > 0) return err(problems)
 
   const accepting = machine.accepting[0] as StateId

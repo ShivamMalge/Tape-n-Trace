@@ -1104,6 +1104,7 @@ input[type='range'] { accent-color: var(--tnt-current); }
 }
 
 button.tnt-board-pill { cursor: pointer; }
+button.tnt-board-pill[disabled] { opacity: 0.45; cursor: not-allowed; }
 button.tnt-board-pill[aria-pressed='true'] { color: var(--board-blue-ink); background: var(--board-blue-fill); border-color: var(--board-blue-fill); }
 
 .tnt-board-simulate {

@@ -381,3 +381,34 @@ describe('honest caps', () => {
     expect((trace.steps.at(-1) as Step<PdaSnapshot>).snapshot.status).toBe('accepted')
   })
 })
+
+describe('multi-character stack symbols', () => {
+  it('keeps the stacks [AB, X] and [A, BX] apart when pruning explored configurations', () => {
+    const t = (from: string, read: string | null, pop: string, push: string[], to: string) => ({
+      id: pdaTransitionId(from, read, pop, push, to),
+      from,
+      read,
+      pop,
+      push,
+      to,
+    })
+    const machine: PDA = {
+      states: ['q0', 'qa', 'q1', 'q2', 'q3'],
+      inputAlphabet: ['a'],
+      stackAlphabet: ['Z0', 'A', 'B', 'X', 'AB', 'BX'],
+      transitions: [
+        t('q0', null, 'Z0', ['AB', 'X'], 'q1'),
+        t('q0', null, 'Z0', ['A', 'BX'], 'qa'),
+        t('qa', null, 'A', ['A'], 'q1'),
+        t('q1', null, 'A', [], 'q2'),
+        t('q2', 'a', 'BX', [], 'q3'),
+      ],
+      start: 'q0',
+      startStack: 'Z0',
+      accepting: ['q3'],
+      acceptBy: 'finalState',
+    }
+    expect(unwrap(simulatePDA(machine, 'a')).result).toMatchObject({ type: 'acceptance', accepted: true })
+    expect(acceptsPDA(machine, 'a')).toBe(true)
+  })
+})

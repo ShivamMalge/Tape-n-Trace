@@ -12,6 +12,7 @@ import {
   EPSILON_GLYPH,
   edgeGeometry,
   groupTransitions,
+  layeredLayout,
   selfLoopGeometry,
   startMarkerGeometry,
 } from '../src/index.js'
@@ -123,5 +124,22 @@ describe('startMarkerGeometry', () => {
     const g = startMarkerGeometry({ x: 100, y: 40 }, 24)
     expect(g.path).toBe('M 50 40 L 74 40')
     expect(g.angle).toBe(0)
+  })
+})
+
+describe('layeredLayout', () => {
+  it('puts unreachable states in a final rank of their own, not beside reachable ones', () => {
+    const machine: FiniteAutomaton = {
+      kind: 'DFA',
+      states: ['a', 'b', 'c'],
+      alphabet: ['0'],
+      transitions: [{ id: faTransitionId('a', '0', 'b'), from: 'a', read: '0', to: 'b' }],
+      start: 'a',
+      accepting: ['b'],
+    }
+    const layout = layeredLayout(machine)
+    expect(layout['a']!.x).toBeLessThan(layout['b']!.x)
+    // c is at no distance from the start: a rank past b's, not b's own.
+    expect(layout['c']!.x).toBeGreaterThan(layout['b']!.x)
   })
 })

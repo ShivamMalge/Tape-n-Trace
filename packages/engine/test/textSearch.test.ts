@@ -130,6 +130,26 @@ describe('searching', () => {
     expect(result.path).toEqual([])
   })
 
+  it('searches for the keyword "start" without folding it into the start state', () => {
+    const result = searchText(['start'], 'xstart')
+    expect(isErr(result)).toBe(false)
+    if (isErr(result)) return
+    expect(validateFA(result.value.machines.dfa).ok).toBe(true)
+    expect(result.value.machines.dfa.start).not.toBe('start')
+    expect(result.value.matches).toEqual([{ keyword: 'start', start: 1, end: 6 }])
+  })
+
+  it('reports a keyword listed twice once per occurrence, not twice', () => {
+    expect(unwrap(searchText(['ab', 'ab'], 'ab')).matches).toEqual([{ keyword: 'ab', start: 0, end: 2 }])
+  })
+
+  it('counts positions in characters, even for a keyword outside the BMP', () => {
+    const result = unwrap(searchText(['😀b'], 'a😀b'))
+    expect(result.matches).toEqual([{ keyword: '😀b', start: 1, end: 3 }])
+    // No state is half of a surrogate pair.
+    expect(result.machines.dfa.states).toEqual(['start', '😀', '😀b'])
+  })
+
   it('refuses an empty keyword list, and the empty string as a keyword', () => {
     expect(isErr(searchText([], 'text'))).toBe(true)
     const empty = searchText([''], 'text')

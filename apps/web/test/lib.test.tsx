@@ -10,7 +10,10 @@ import { afterEach, describe, expect, it } from 'vitest'
 import { act, cleanup, renderHook } from '@testing-library/react'
 import { dfaContains01, emptyMachine, moveState, toggleAccepting } from '@tape-n-trace/engine'
 import { containsEpsilon, formatEdgeLabel, parseEdgeLabel } from '../lib/edge-labels'
+import { recognise, type PlacedState } from '../lib/board-recognize'
 import { parseTntJson, toTntJson } from '../lib/export'
+import { parseTmText } from '../lib/tm-text'
+import { useFullscreen } from '../lib/use-fullscreen'
 import { useMachineHistory } from '../lib/use-machine-history'
 
 afterEach(cleanup)
@@ -63,6 +66,13 @@ describe('the .tnt format', () => {
 
   it('refuses a header with no machine behind it', () => {
     const text = JSON.stringify({ format: 'tape-n-trace/machine@1' })
+    expect(parseTntJson(text)).toEqual({ error: expect.stringContaining('no machine') })
+  })
+
+  it('explains, rather than throws on, JSON that is null or has a null machine', () => {
+    expect(parseTntJson('null')).toEqual({ error: expect.stringContaining('format header') })
+    expect(parseTntJson('42')).toEqual({ error: expect.stringContaining('format header') })
+    const text = JSON.stringify({ format: 'tape-n-trace/machine@1', machine: null })
     expect(parseTntJson(text)).toEqual({ error: expect.stringContaining('no machine') })
   })
 
@@ -121,6 +131,26 @@ describe('undo history', () => {
     expect(result.current.canUndo).toBe(false)
   })
 
+  it('keeps one undo entry when the drag is settled by a final keyless commit, as the editor does', () => {
+    const { result } = renderHook(() => useMachineHistory(dfaContains01))
+
+    for (let x = 100; x <= 140; x += 10) {
+      act(() => result.current.commit(moveState(result.current.machine, 'q0', { x, y: 90 }), { coalesce: 'move:q0' }))
+    }
+    act(() => result.current.commit(moveState(result.current.machine, 'q0', { x: 140, y: 90 })))
+
+    act(() => result.current.undo())
+    expect(result.current.machine.layout?.['q0']).toEqual(dfaContains01.layout?.['q0'])
+    expect(result.current.canUndo).toBe(false)
+
+    // The settle closed the group: the next edit is its own entry.
+    act(() => result.current.redo())
+    act(() => result.current.commit(toggleAccepting(result.current.machine, 'q0')))
+    act(() => result.current.undo())
+    expect(result.current.machine.layout?.['q0']).toEqual({ x: 140, y: 90 })
+    expect(result.current.machine.accepting).not.toContain('q0')
+  })
+
   it('starts a new entry when a different gesture begins', () => {
     const { result } = renderHook(() => useMachineHistory(dfaContains01))
 
@@ -158,5 +188,56 @@ describe('undo history', () => {
     const { result } = renderHook(() => useMachineHistory(dfaContains01))
     act(() => result.current.commit(dfaContains01))
     expect(result.current.canUndo).toBe(false)
+  })
+})
+
+describe('the TM text form', () => {
+  it('does not let a malformed first line fix the tape count for every later line', () => {
+    const result = parseTmText('q0, 0 1 -> q1, X, R\nq1, 0 -> q1, 0, R\nq1, 1 -> q2, 1, R', {
+      start: 'q0',
+      accepting: [],
+      blank: 'B',
+      inputAlphabet: ['0', '1'],
+    })
+    expect(result.ok).toBe(false)
+    if (!result.ok) expect(result.errors.map((e) => e.position)).toEqual([0])
+  })
+})
+
+describe('full screen', () => {
+  it('leaves the CSS fallback on the second toggle after the browser refuses the API', async () => {
+    const descriptor = Object.getOwnPropertyDescriptor(document, 'fullscreenEnabled')
+    Object.defineProperty(document, 'fullscreenEnabled', { value: true, configurable: true })
+    try {
+      const element = document.createElement('div')
+      let requests = 0
+      element.requestFullscreen = () => {
+        requests += 1
+        return Promise.reject(new Error('refused'))
+      }
+      const { result } = renderHook(() => useFullscreen<HTMLDivElement>())
+      ;(result.current.ref as { current: HTMLDivElement | null }).current = element
+
+      await act(async () => result.current.toggle())
+      expect(result.current.fullscreen).toBe(true)
+      await act(async () => result.current.toggle())
+      expect(result.current.fullscreen).toBe(false)
+      expect(requests).toBe(1)
+    } finally {
+      if (descriptor === undefined) Reflect.deleteProperty(document, 'fullscreenEnabled')
+      else Object.defineProperty(document, 'fullscreenEnabled', descriptor)
+    }
+  })
+})
+
+describe('the board recogniser', () => {
+  it('reads a round loop that leaves a state and returns to it as a self-loop', () => {
+    const q0: PlacedState = { id: 'q0', at: { x: 150, y: 330 } }
+    // A circle above q0, starting and ending on q0's rim.
+    const points = Array.from({ length: 41 }, (_, i) => {
+      const a = Math.PI / 2 + (i / 40) * Math.PI * 2
+      return { x: 150 + 45 * Math.cos(a), y: 255 + 45 * Math.sin(a) }
+    })
+    expect(recognise(points, [q0])).toMatchObject({ kind: 'arc', from: 'q0', to: 'q0' })
   })
 })

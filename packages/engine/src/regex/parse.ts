@@ -94,7 +94,17 @@ class Parser {
 
     for (;;) {
       const next = this.parseStar()
-      if (next === null) break
+      if (next === null) {
+        // A star with nothing before it to repeat. Said here, where it happens:
+        // left alone it surfaces later as an unmatched or unclosed bracket,
+        // which points the student at the wrong character.
+        if (!this.atEnd && this.peek() === '*') {
+          this.fail('REGEX_DANGLING_STAR', `The star at position ${this.index} has nothing before it to repeat.`, this.index)
+          this.index += 1
+          continue
+        }
+        break
+      }
       left = left === null ? next : { op: 'concat', left, right: next }
     }
 

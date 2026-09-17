@@ -207,6 +207,11 @@ function defaultConsistency(snapshot: unknown, result: TraceResult): boolean | s
     return `no default consistency check exists for a "${result.type}" result — pass finalSnapshotMatchesResult`
   }
 
+  // A machine that provably never halts ends on 'loops', not on a rejection.
+  if (result.loops === true) {
+    return status === 'loops' || `the result says the machine loops but the final snapshot has status ${JSON.stringify(status)}`
+  }
+
   if (status !== 'accepted' && status !== 'rejected') {
     return `the final snapshot has status ${JSON.stringify(status)}, expected 'accepted' or 'rejected'`
   }

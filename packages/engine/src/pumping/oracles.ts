@@ -149,6 +149,7 @@ export const PUMPING_LANGUAGES: PumpingLanguage[] = [
     membership: (word) => {
       let depth = 0
       for (const sym of word) {
+        if (sym !== '(' && sym !== ')') return false
         depth += sym === '(' ? 1 : -1
         if (depth < 0) return false
       }
@@ -166,7 +167,7 @@ export const PUMPING_LANGUAGES: PumpingLanguage[] = [
     contextFree: false,
     difficulty: 'hard',
     membership: (word) => {
-      if (word.length % 2 !== 0) return false
+      if (word.length % 2 !== 0 || !word.every((s) => s === '0' || s === '1')) return false
       const half = word.length / 2
       for (let i = 0; i < half; i++) {
         if (word[i] !== word[i + half]) return false

@@ -186,8 +186,12 @@ export function eliminateLeftRecursion(source: CFG): Result<Trace<Step<LeftRecur
     }
   }
 
+  // The closing claim is checked, not asserted: run the structural test on the result.
+  const remains = isLeftRecursive(grammar)
   builder.step({
-    narration: `Every variable is processed and no left-recursive chain remains — checked structurally on the leftmost-symbol graph, not by eye. The new primed variables carry ε-productions; the simplification pipeline removes those, and the order matters: eliminate left recursion first, then clean up ε.`,
+    narration: remains
+      ? `Every variable is processed, but the leftmost-symbol graph of the result still has a cycle, so left recursion remains. The standard algorithm guarantees removal only for grammars without cycles or ε-productions.`
+      : `Every variable is processed and no left-recursive chain remains — checked structurally on the leftmost-symbol graph, not by eye. The new primed variables carry ε-productions; the simplification pipeline removes those, and the order matters: eliminate left recursion first, then clean up ε.`,
     highlight: [],
     snapshot: { grammar, source, current: null, status: 'done' },
   })
@@ -219,5 +223,55 @@ function checkInput(grammar: CFG): ValidationError[] {
     }
   })
 
+  // A longer unit cycle — A → B, B → A — is just as fatal as A → A: the
+  // substitution turns it into a primed variable deriving only itself.
+  const cycle = unitCycle(grammar)
+  if (cycle !== null) {
+    problems.push(
+      validationError(
+        'LEFTREC_CYCLE',
+        `The unit productions ${cycle.names.map((v, i) => `${v} → ${cycle.names[(i + 1) % cycle.names.length]}`).join(', ')} form a cycle, which the algorithm cannot terminate on. Remove the unit productions first (the simplification pipeline does), then eliminate left recursion.`,
+        { kind: 'production', id: String(cycle.production) },
+      ),
+    )
+  }
+
   return problems
+}
+
+/**
+ * A cycle of two or more variables linked by unit productions (A → B, B → A),
+ * with the index of one production on it; null when there is none. A → A alone
+ * is reported by its own check.
+ */
+function unitCycle(grammar: CFG): { names: string[]; production: number } | null {
+  const variables = new Set(grammar.variables)
+  const edges = new Map<string, string[]>()
+  for (const p of grammar.productions) {
+    const [only] = p.body
+    if (p.body.length !== 1 || only === undefined || only === p.head || !variables.has(only)) continue
+    edges.set(p.head, [...(edges.get(p.head) ?? []), only])
+  }
+  const path: string[] = []
+  const done = new Set<string>()
+  const visit = (v: string): string[] | null => {
+    const at = path.indexOf(v)
+    if (at >= 0) return path.slice(at)
+    if (done.has(v)) return null
+    path.push(v)
+    for (const next of edges.get(v) ?? []) {
+      const found = visit(next)
+      if (found !== null) return found
+    }
+    path.pop()
+    done.add(v)
+    return null
+  }
+  for (const v of grammar.variables) {
+    const names = visit(v)
+    if (names === null) continue
+    const production = grammar.productions.findIndex((p) => p.head === names[0] && p.body.length === 1 && p.body[0] === names[1])
+    return { names, production }
+  }
+  return null
 }

@@ -19,6 +19,9 @@ import type { CFG, Highlight, Production, Step, Trace } from '../types.js'
 
 export type DerivationMode = 'leftmost' | 'rightmost'
 
+/** Joins a sentential form into a set key; no grammar symbol contains it. */
+const SEPARATOR = String.fromCharCode(0)
+
 export interface DeriveSnapshot {
   grammar: CFG
   /** The sentential form, as the token strip the renderer draws. */
@@ -71,7 +74,7 @@ export function minYields(grammar: CFG): Map<string, number> {
 /**
  * Find a derivation of `target`, leftmost or rightmost, within bounds.
  *
- * Depth-first over sentential forms, expanding only the leftmost (or rightmost)
+ * Breadth-first over sentential forms, expanding only the leftmost (or rightmost)
  * variable — which is what makes the found sequence a leftmost (rightmost)
  * derivation by construction. Pruning: the terminal prefix (suffix) must match
  * the target, and the guaranteed minimum yield must not exceed its length.
@@ -113,20 +116,37 @@ export function findDerivation(
     return sentential.length === target.length
   }
 
-  const search = (
-    sentential: string[],
-    depth: number,
-    path: DerivationStep[],
-  ): DerivationStep[] | null => {
-    if (bounds.statesExplored >= maxStates || depth > bounds.maxDepth) return null
+  // Breadth-first, with every sentential form explored once. Depth-first
+  // without memory chased S ⇒ SS ⇒ SSS … to the depth bound on grammars like
+  // S → SS | a | ε and never came back for S ⇒ a; breadth-first also makes the
+  // derivation found a shortest one.
+  interface Visit {
+    form: string[]
+    depth: number
+    parent: number
+    step: DerivationStep | null
+  }
+  const visits: Visit[] = [{ form: [grammar.start], depth: 0, parent: -1, step: null }]
+  const seen = new Set<string>([grammar.start])
+  const pathTo = (at: number): DerivationStep[] => {
+    const steps: DerivationStep[] = []
+    for (let i = at; i > 0; i = (visits[i] as Visit).parent) steps.unshift((visits[i] as Visit).step as DerivationStep)
+    return steps
+  }
+
+  for (let at = 0; at < visits.length; at++) {
+    if (bounds.statesExplored >= maxStates) break
     bounds.statesExplored += 1
+    const { form: sentential, depth } = visits[at] as Visit
 
     const positions = sentential.flatMap((symbol, i) => (variables.has(symbol) ? [i] : []))
     if (positions.length === 0) {
-      return sentential.length === target.length && sentential.every((s, i) => s === target[i])
-        ? path
-        : null
+      if (sentential.length === target.length && sentential.every((s, i) => s === target[i])) {
+        return { steps: pathTo(at), bounds }
+      }
+      continue
     }
+    if (depth >= bounds.maxDepth) continue
 
     const position = mode === 'leftmost' ? (positions[0] as number) : (positions.at(-1) as number)
     const head = sentential[position] as string
@@ -139,15 +159,14 @@ export function findDerivation(
       ]
       if (minimumLength(next) > target.length) continue
       if (!prefixMatches(next)) continue
-
-      const found = search(next, depth + 1, [...path, { production: index, position }])
-      if (found !== null) return found
+      const key = next.join(SEPARATOR)
+      if (seen.has(key)) continue
+      seen.add(key)
+      visits.push({ form: next, depth: depth + 1, parent: at, step: { production: index, position } })
     }
-    return null
   }
 
-  const found = search([grammar.start], 0, [])
-  return found === null ? { steps: null, bounds } : { steps: found, bounds }
+  return { steps: null, bounds }
 }
 
 /**
@@ -162,9 +181,9 @@ export function deriveString(
   target: readonly string[],
   mode: DerivationMode = 'leftmost',
 ): Result<Trace<Step<DeriveSnapshot>>> {
-  const unknown = target.filter(
-    (symbol) => !grammar.terminals.includes(symbol) && !grammar.variables.includes(symbol),
-  )
+  // Only terminals: a derivation ends in a terminal string, so a target holding
+  // a variable is not derivable — searching for it would report a bound, not a no.
+  const unknown = target.filter((symbol) => !grammar.terminals.includes(symbol))
   if (unknown.length > 0) {
     return err(
       [...new Set(unknown)].map((symbol) =>

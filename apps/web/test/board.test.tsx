@@ -139,6 +139,38 @@ describe('the board', () => {
     expect(board.dataset.fullscreen).toBeUndefined()
   })
 
+  it('keeps the drawing across a reload when given a storage key, and clears it on request', async () => {
+    const user = userEvent.setup()
+    // An in-memory stand-in: this jsdom has no usable localStorage of its own.
+    const store = new Map<string, string>()
+    const storage = {
+      getItem: (k: string) => store.get(k) ?? null,
+      setItem: (k: string, v: string) => void store.set(k, v),
+      removeItem: (k: string) => void store.delete(k),
+      clear: () => store.clear(),
+    }
+    const original = Object.getOwnPropertyDescriptor(window, 'localStorage')
+    Object.defineProperty(window, 'localStorage', { value: storage, configurable: true })
+    render(<Board storageKey="test-board" />)
+    const svg = screen.getByRole('application')
+    stroke(svg, loop(150, 330, 50))
+    stroke(svg, loop(450, 300, 50))
+    expect(screen.getByText('2 states · 0 arcs')).toBeDefined()
+
+    // A reload: the board unmounts and comes back with nothing but the key.
+    cleanup()
+    render(<Board storageKey="test-board" />)
+    expect(await screen.findByText('2 states · 0 arcs')).toBeDefined()
+
+    await user.click(screen.getByRole('button', { name: 'clear board' }))
+    expect(screen.getByText('0 states · 0 arcs')).toBeDefined()
+    cleanup()
+    render(<Board storageKey="test-board" />)
+    expect(await screen.findByText('0 states · 0 arcs')).toBeDefined()
+    if (original === undefined) Reflect.deleteProperty(window, 'localStorage')
+    else Object.defineProperty(window, 'localStorage', original)
+  })
+
   it('undoes the last stroke and counts what is on the board', async () => {
     const user = userEvent.setup()
     render(<Board />)
@@ -151,6 +183,39 @@ describe('the board', () => {
     await user.click(screen.getByRole('button', { name: /undo/i }))
     expect(screen.getByText('1 state · 0 arcs')).toBeDefined()
     expect(screen.queryByRole('img', { name: /State q1/ })).toBeNull()
+  })
+
+  it('drops the run when an undo changes the machine, so no stale verdict is shown', async () => {
+    const user = userEvent.setup()
+    render(<Board />)
+    const svg = screen.getByRole('application')
+    stroke(svg, loop(150, 330, 50))
+    stroke(svg, loop(150, 330, 30))
+    await user.click(screen.getByRole('button', { name: 'Simulate' }))
+    const panel = screen.getByRole('complementary', { name: /Transition table/ })
+    await user.click(within(panel).getByRole('button', { name: 'ε' }))
+    const slider = screen.getByRole('slider', { name: 'Step' }) as HTMLInputElement
+    fireEvent.change(slider, { target: { value: slider.max } })
+    expect(within(panel).getByText('Accepted')).toBeDefined()
+
+    // Undo takes q0's accepting ring away: the accepted run is no longer this machine's.
+    await user.click(screen.getByRole('button', { name: /undo/i }))
+    expect(screen.queryByRole('img', { name: /accepting state/ })).toBeNull()
+    expect(within(panel).queryByText('Accepted')).toBeNull()
+  })
+
+  it('closes the arc picker when an undo removes one of its states', async () => {
+    const user = userEvent.setup()
+    render(<Board />)
+    const svg = screen.getByRole('application')
+    stroke(svg, loop(150, 330, 50))
+    stroke(svg, loop(450, 300, 50))
+    stroke(svg, line({ x: 150, y: 330 }, { x: 450, y: 300 }))
+    expect(screen.getByRole('group', { name: /Label the arc from q0 to q1/ })).toBeDefined()
+
+    await user.click(screen.getByRole('button', { name: /undo/i }))
+    expect(screen.getByText('1 state · 0 arcs')).toBeDefined()
+    expect(screen.queryByRole('group', { name: /Label the arc/ })).toBeNull()
   })
 
   it('refuses to run an unfinished machine and says what is missing', async () => {

@@ -121,7 +121,7 @@ function LanguageChip({ language }: { language: CanonicalLanguage }): React.JSX.
   )
 
   return (
-    <li>
+    <li style={{ maxWidth: '100%' }}>
       {topic === undefined ? (
         <span className="tnt-tag" title={language.why}>
           {body}

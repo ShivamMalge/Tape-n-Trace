@@ -67,6 +67,7 @@ export function regexToENFA(
   const addState = (): StateId => {
     const id = fresh()
     states.push(id)
+    builder.bump('statesCreated')
     return id
   }
 
@@ -144,7 +145,6 @@ export function regexToENFA(
       }
     }
 
-    builder.bump('statesCreated', 2)
     builder.step({
       narration: describe(node, fragment),
       citation: '3.2.3',

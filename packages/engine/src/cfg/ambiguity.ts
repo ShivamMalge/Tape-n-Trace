@@ -14,6 +14,7 @@
  */
 
 import { ok, type Result } from '../result.js'
+import { minYields } from './derive.js'
 import { applyToTree, startTree, type CfgTreeNode, type TreeBuilder } from './parseTree.js'
 import type { BoundedClaim, CFG, Production } from '../types.js'
 
@@ -117,38 +118,49 @@ export function leftmostDerivationsOf(
   maxStates = 30_000,
 ): number[][] {
   const variables = new Set(grammar.variables)
+  const min = minYields(grammar)
   const found: number[][] = []
   let explored = 0
 
-  const search = (sentential: string[], path: number[]): void => {
-    if (found.length >= cap || explored >= maxStates) return
+  // Breadth-first with an explicit queue. Recursing depth-first overflowed the
+  // call stack on a unit cycle (S → S | a) before the state cap could fire, and
+  // pruning on the form's length dropped every form whose extra symbols were
+  // nullable — S → aSSS | ε has a derivation of a, which that prune never saw.
+  const queue: { sentential: string[]; path: number[] }[] = [{ sentential: [grammar.start], path: [] }]
+  for (let at = 0; at < queue.length; at++) {
+    if (found.length >= cap || explored >= maxStates) break
     explored += 1
+    const { sentential, path } = queue[at] as { sentential: string[]; path: number[] }
+    queue[at] = { sentential: [], path: [] }
 
     const position = sentential.findIndex((symbol) => variables.has(symbol))
     if (position === -1) {
       if (sentential.length === target.length && sentential.every((s, i) => s === target[i])) {
         found.push(path)
       }
-      return
+      continue
     }
 
-    // Prune: the terminal prefix must match the target.
+    // Prune: the terminal prefix must match the target, and the form must not
+    // already be guaranteed to yield more symbols than the target has.
+    let prefix = true
     for (let i = 0; i < position; i++) {
-      if (sentential[i] !== target[i]) return
+      if (sentential[i] !== target[i]) prefix = false
     }
-    if (sentential.length - 1 > target.length) return
+    if (!prefix) continue
+    const minimum = sentential.reduce((sum, symbol) => sum + (variables.has(symbol) ? (min.get(symbol) ?? 1) : 1), 0)
+    if (minimum > target.length) continue
 
     const head = sentential[position] as string
     grammar.productions.forEach((production, index) => {
       if (production.head !== head) return
-      search(
-        [...sentential.slice(0, position), ...production.body, ...sentential.slice(position + 1)],
-        [...path, index],
-      )
+      queue.push({
+        sentential: [...sentential.slice(0, position), ...production.body, ...sentential.slice(position + 1)],
+        path: [...path, index],
+      })
     })
   }
 
-  search([grammar.start], [])
   return found
 }
 

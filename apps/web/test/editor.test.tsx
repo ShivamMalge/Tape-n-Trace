@@ -92,6 +92,18 @@ describe('keyboard navigability (§11.5)', () => {
     expect(screen.getAllByRole('img', { name: /^State accept/ }).length).toBeGreaterThan(0)
   })
 
+  it('closes the edge label editor when a state of that edge is deleted', async () => {
+    const user = userEvent.setup()
+    render(<MachineEditor initial={dfaContains01} />)
+
+    await user.click(screen.getByRole('img', { name: /Transition from q0 to q1 on 0/i }))
+    expect(screen.getByRole('form', { name: /Label for the edge from q0 to q1/i })).toBeDefined()
+
+    await user.click(screen.getByRole('button', { name: /Delete state q1/i }))
+    // An open editor would write q0 → q1 back into a machine that has no q1.
+    expect(screen.queryByRole('form', { name: /Label for the edge/i })).toBeNull()
+  })
+
   it('undoes and redoes', async () => {
     const user = userEvent.setup()
     render(<MachineEditor />)

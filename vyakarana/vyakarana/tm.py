@@ -8,10 +8,16 @@ from typing import Any, Iterable, Mapping
 
 from . import runtime
 from .errors import ValidationError
+from .options import options as _options
 from .results import Halted, Simulation
 from .widget import show
 
 DEFAULT_MAX_STEPS = 10_000
+
+
+def _step_cap(max_steps: int | None) -> int:
+    """An explicit cap wins; otherwise the global `options(max_steps=...)`."""
+    return int(_options()["max_steps"] if max_steps is None else max_steps)
 
 
 def _tuple_of(value: str | Iterable[str]) -> tuple[str, ...]:
@@ -77,7 +83,8 @@ class TM:
         instance._encode = None
         return instance
 
-    def run(self, word: str, max_steps: int = DEFAULT_MAX_STEPS, **overrides: Any) -> Simulation:
+    def run(self, word: str, max_steps: int | None = None, **overrides: Any) -> Simulation:
+        max_steps = _step_cap(max_steps)
         symbols = self._encode(word) if self._encode is not None else word
         trace = runtime.call_result("simulateTM", self._machine, symbols, {"maxSteps": int(max_steps)})
         self._last_trace = trace
@@ -91,7 +98,8 @@ class TM:
             _continue=lambda more: self.run(word, max_steps=int(max_steps) + more, **overrides),
         )
 
-    def accepts(self, word: str, max_steps: int = DEFAULT_MAX_STEPS) -> bool | Halted:
+    def accepts(self, word: str, max_steps: int | None = None) -> bool | Halted:
+        max_steps = _step_cap(max_steps)
         symbols = self._encode(word) if self._encode is not None else word
         trace = runtime.call_result("simulateTM", self._machine, symbols, {"maxSteps": int(max_steps)})
         result = trace["result"]

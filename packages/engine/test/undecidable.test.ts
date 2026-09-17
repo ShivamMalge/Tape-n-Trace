@@ -212,6 +212,16 @@ describe('codes for Turing machines — §9.1.2', () => {
     ).toBe('CODE_OFF_MACHINE')
   })
 
+  it('refuses a nondeterministic machine, whose code would not read back as a machine', () => {
+    const nondeterministic: TuringMachine = {
+      ...example91,
+      transitions: [...example91.transitions, { id: 'e', from: 'q1', read: ['1'], to: 'q2', write: ['1'], move: ['L'] }],
+    }
+    const result = encodeTM(nondeterministic)
+    expect(isErr(result)).toBe(true)
+    if (isErr(result)) expect(result.errors.map((e) => e.code)).toEqual(['CODE_NONDETERMINISTIC'])
+  })
+
   it('refuses to pair a machine with something that is not a binary string', () => {
     const result = encodePair(example91, '10a1')
     expect(isErr(result) && result.errors[0]?.code).toBe('PAIR_INPUT')

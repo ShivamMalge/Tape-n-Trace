@@ -18,7 +18,7 @@
  * simulator pages use (architecture.md §2, §10.1).
  */
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   addState,
   addTransition,
@@ -36,9 +36,10 @@ import { groupTransitions } from '@tape-n-trace/ui'
 import { recognise, type PlacedState } from '../../lib/board-recognize'
 import { useFullscreen } from '../../lib/use-fullscreen'
 import { useMachineHistory } from '../../lib/use-machine-history'
+import { useStoredMachine } from '../../lib/use-stored-machine'
 import { usePlayback } from '../../lib/use-playback'
 import { BoardCanvas, type Ink, type Lit } from './board-canvas'
-import { BoardPicker, BoardTools } from './board-chrome'
+import { BoardPicker, BoardStatus, BoardTools } from './board-chrome'
 import { BoardPanel } from './board-panel'
 import { LogoMark } from '../logo-mark'
 import { hintFor, pretty } from './board-text'
@@ -74,6 +75,8 @@ export interface BoardProps {
   onChange?: ((machine: FiniteAutomaton) => void) | undefined
   /** Hide the corner brand and tag when the board sits inside another card. */
   embedded?: boolean
+  /** Save the drawing in the browser under this key, so a reload keeps it. */
+  storageKey?: string | undefined
 }
 
 export function Board({
@@ -82,9 +85,11 @@ export function Board({
   openInitially = false,
   onChange,
   embedded = false,
+  storageKey,
 }: BoardProps): React.JSX.Element {
   const history = useMachineHistory(initial)
   const machine = history.machine
+  useStoredMachine(storageKey, machine, history.reset)
 
   useEffect(() => {
     onChange?.(machine)
@@ -142,14 +147,15 @@ export function Board({
   }, [machine])
   const runnable = machine.states.length > 0 && problems.length === 0
 
-  const commit = useCallback(
-    (next: FiniteAutomaton) => {
-      history.commit(next)
-      setTrace(null)
-      setRan(null)
-    },
-    [history],
-  )
+  // Every change of machine drops the run made on the old one. Undo and redo
+  // also close the arc picker: its states may be the ones that went away.
+  const change = (apply: () => void, closePicker = false): void => {
+    apply()
+    setTrace(null)
+    setRan(null)
+    if (closePicker) setPending(null)
+  }
+  const commit = (next: FiniteAutomaton): void => change(() => history.commit(next))
 
   const pointOf = (event: React.PointerEvent<SVGSVGElement>): Point => {
     const rect = event.currentTarget.getBoundingClientRect()
@@ -296,8 +302,8 @@ export function Board({
         <BoardTools
           canUndo={history.canUndo}
           canRedo={history.canRedo}
-          onUndo={history.undo}
-          onRedo={history.redo}
+          onUndo={() => change(history.undo, true)}
+          onRedo={() => change(history.redo, true)}
           tool={tool}
           onTool={setTool}
           fullscreen={fullscreen} onFullscreen={toggleFullscreen}
@@ -314,22 +320,20 @@ export function Board({
           <BoardPicker from={pending.from} to={pending.to} at={pending.at} bounds={size} symbols={symbols} has={arcHas} onToggle={toggleSymbol} />
         )}
 
-        <div className="tnt-board-status">
-          <span className="tnt-board-pill">
-            {machine.states.length} {machine.states.length === 1 ? 'state' : 'states'} · {groups.length} {groups.length === 1 ? 'arc' : 'arcs'}
-          </span>
-          <button
-            type="button"
-            className="tnt-board-pill"
-            aria-pressed={marking}
-            onClick={() => {
-              setMarking(!marking)
-              setBadge(marking ? null : 'tap a state to mark it accepting — or draw a second loop inside it')
-            }}
-          >
-            mark accepting
-          </button>
-        </div>
+        <BoardStatus
+          states={machine.states.length}
+          arcs={groups.length}
+          marking={marking}
+          onMarking={() => {
+            setMarking(!marking)
+            setBadge(marking ? null : 'tap a state to mark it accepting — or draw a second loop inside it')
+          }}
+          onClear={() => {
+            commit({ ...EMPTY, alphabet: machine.alphabet, kind: machine.kind })
+            setPending(null)
+            setBadge('board cleared · Undo brings it back')
+          }}
+        />
 
         <button type="button" className="tnt-board-simulate" onClick={() => setOpen(!open)} aria-expanded={open}>
           {open ? 'Hide table' : 'Simulate'}

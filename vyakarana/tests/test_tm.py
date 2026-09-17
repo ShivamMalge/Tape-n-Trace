@@ -40,6 +40,22 @@ class TestStepGuard:
         assert further.stopped is True
         assert further.trace["steps"][-1]["snapshot"]["moves"] >= sim.trace["steps"][-1]["snapshot"]["moves"]
 
+    def test_the_global_max_steps_option_is_the_default_cap(self):
+        import vyakarana as vy
+
+        previous = vy.options()["max_steps"]
+        try:
+            vy.options(max_steps=50)
+            sim = gallery.never_halts.run("1")
+            assert sim.trace["result"]["bounded"]["searchedUpTo"] == 50
+            assert gallery.never_halts.accepts("1") is Halted.NO
+            # An explicit argument still wins over the option.
+            assert gallery.never_halts.run("1", max_steps=20).trace["result"]["bounded"]["searchedUpTo"] == 20
+            with pytest.raises(ValueError, match="max_steps"):
+                vy.options(max_steps=0)
+        finally:
+            vy.options(max_steps=previous)
+
     def test_a_halting_run_refuses_to_continue(self):
         sim = gallery.zeros_ones.run("01")
         with pytest.raises(ValueError, match="halted on its own"):

@@ -177,6 +177,23 @@ describe('the closure lab', () => {
     expect(screen.queryByRole('textbox', { name: /image of/i })).toBeNull()
   })
 
+  it('runs h⁻¹ on the images shown in its editor, not on leftovers from h', async () => {
+    const user = userEvent.setup()
+    render(<ClosureLab />)
+    await user.selectOptions(screen.getByRole('combobox', { name: /operation/i }), 'complement')
+    await user.selectOptions(screen.getByRole('combobox', { name: /machine/i }), 'dfa-contains-01')
+    await user.selectOptions(screen.getByRole('combobox', { name: /operation/i }), 'inverse-homomorphism')
+
+    // The editor shows h(a) and h(b), both empty (ε) and neither flagged: the
+    // construction must run rather than complain about images the page does not show.
+    expect((screen.getByRole('textbox', { name: /image of a/i }) as HTMLInputElement).value).toBe('')
+    expect(screen.queryByRole('alert')).toBeNull()
+    expect(screen.getByRole('slider', { name: 'Step' })).toBeDefined()
+
+    await user.type(screen.getByRole('textbox', { name: /image of a/i }), '01')
+    expect(screen.queryByRole('alert')).toBeNull()
+  })
+
   it('offers a second machine only for the binary operations', async () => {
     const user = userEvent.setup()
     render(<ClosureLab />)

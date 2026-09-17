@@ -39,7 +39,7 @@ export default async function BoardPage({
             For the lecture theatre. Draw with a pen or a finger: a loop is a state, a stroke from one state to
             another is an arc, a loop inside a state makes it accepting, a stroke into a state from its left
             makes it the start. Pick each arc&rsquo;s symbols from the chips. When the machine is drawn, press
-            Simulate. Press the full-screen button in the board&rsquo;s corner to give it the whole display.
+            Simulate. Press the full-screen button in the board&rsquo;s corner to give it the whole display. The drawing is kept in this browser, so a reload does not lose it.
           </p>
         </div>
         <p className="tnt-page-links">
@@ -47,7 +47,7 @@ export default async function BoardPage({
           handwriting. In <a href="/practice">Practice</a> the same board answers an exercise.
         </p>
       </div>
-      {demo === undefined ? <Board /> : <Board initial={DEMO} openInitially />}
+      {demo === undefined ? <Board storageKey="tnt-board" /> : <Board initial={DEMO} openInitially />}
     </div>
   )
 }

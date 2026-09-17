@@ -41,6 +41,15 @@ export function PdaRunner({ machine, suggested = [], aside }: PdaRunnerProps): R
   const [errors, setErrors] = useState<ValidationError[]>([])
   const playback = usePlayback(trace)
 
+  // An edited machine makes the old run meaningless: drop it.
+  const [ranOn, setRanOn] = useState(machine)
+  if (ranOn !== machine) {
+    setRanOn(machine)
+    setTrace(null)
+    setErrors([])
+    setRan(null)
+  }
+
   const run = useCallback(
     (word: string) => {
       const result = simulatePDA(machine, word)

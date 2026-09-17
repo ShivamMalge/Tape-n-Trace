@@ -143,6 +143,12 @@ export function recognise(points: readonly Point[], states: readonly PlacedState
     // A loop drawn inside an existing state is its second ring: accepting.
     if (within !== null && f.meanRadius < STATE_RADIUS * 1.4) return { kind: 'accepting', state: within.id }
     const crowding = stateNear(states, f.centroid, 2.0)
+    // A round loop that leaves a state and comes back to it is a self-loop,
+    // drawn the way the book draws one — not a new state crowding it.
+    const home = stateNear(states, first)
+    if (crowding !== null && home !== null && home.id === crowding.id && stateNear(states, last)?.id === home.id) {
+      return { kind: 'arc', from: home.id, to: home.id, at: points[Math.floor(points.length / 2)] as Point }
+    }
     if (crowding !== null) {
       return { kind: 'nothing', why: `too close to ${crowding.id} for a new state — draw it further away, or draw inside ${crowding.id} to mark it accepting` }
     }

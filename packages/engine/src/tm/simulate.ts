@@ -48,7 +48,7 @@ export interface TmSnapshot {
   nodes: TmBranchNode[]
   /** The configuration this step is about — the one expanded, or the accepting one. */
   current: TmConfig
-  status: 'running' | 'accepted' | 'rejected' | 'stopped'
+  status: 'running' | 'accepted' | 'rejected' | 'stopped' | 'loops'
   /** Moves made along the path to `current`. */
   moves: number
   [key: string]: unknown
@@ -131,6 +131,24 @@ export function tapeIdText(state: string, tape: Tape, blank: Sym): string {
 /** The ID of a configuration; multitape IDs list one tape per ‖-separated part (the book gives no notation, §8.4.1). */
 export function idText(config: TmConfig, blank: Sym): string {
   return config.tapes.map((tape) => tapeIdText(config.state, tape, blank)).join(' ‖ ')
+}
+
+/**
+ * A configuration as a lookup key: the state and, per tape, the cells from the
+ * leftmost nonblank-or-head to the rightmost, with the head's place among them.
+ * Unlike the ID text this is injective — state names and symbols are free-form,
+ * so `p` on 1x and `p1` on x write the same ID but are different configurations.
+ */
+function configKey(config: TmConfig, blank: Sym): string {
+  const tapes = config.tapes.map((tape) => {
+    const span = nonblankSpan(tape, blank)
+    const from = span === null ? tape.head : Math.min(span[0], tape.head)
+    const to = span === null ? tape.head : Math.max(span[1], tape.head)
+    const cells: Sym[] = []
+    for (let p = from; p <= to; p++) cells.push(readCell(tape, p, blank))
+    return [tape.head - from, cells]
+  })
+  return JSON.stringify([config.state, tapes])
 }
 
 const moveOf = (d: 'L' | 'R' | 'S'): number => (d === 'L' ? -1 : d === 'R' ? 1 : 0)
@@ -234,9 +252,75 @@ export function simulateTM(
   let counter = 0
   const fresh = (): string => `n${counter++}`
   const root: TmBranchNode = { id: fresh(), ...initialConfig(machine, symbols), position: 0, parent: null, via: null, status: 'live' }
-  let nodes: TmBranchNode[] = [root]
-  const seen = new Set<string>([idText(root, blank)])
-  const queue: string[] = [root.id]
+  // The branch tree under construction. Mutable while the search runs — an
+  // emitted snapshot gets its own copy — so a move costs O(what changed), not a
+  // copy and a scan of every node: long runs to the cap used to freeze the page.
+  const nodes: TmBranchNode[] = [root]
+  const indexOf = new Map<string, number>([[root.id, 0]])
+  const update = (id: string, patch: Partial<TmBranchNode>): void => {
+    const i = indexOf.get(id) as number
+    nodes[i] = { ...(nodes[i] as TmBranchNode), ...patch }
+  }
+  const add = (node: TmBranchNode): void => {
+    indexOf.set(node.id, nodes.length)
+    nodes.push(node)
+  }
+  const rootKey = configKey(root, blank)
+  const seen = new Set<string>([rootKey])
+  // Each node's ID and parent, to tell a loop (an ID repeated on its own path)
+  // from two branches merely meeting at the same ID.
+  const keyOf = new Map<string, string>([[root.id, rootKey]])
+  // The node each explored ID lives at, and every move into an ID found first by
+  // another branch. A cycle can run through such merges without any one path
+  // repeating an ID, so they are kept to check for one once the search ends.
+  const nodeOfKey = new Map<string, string>([[rootKey, root.id]])
+  const merges: [string, string][] = []
+  const parentOf = new Map<string, string | null>([[root.id, null]])
+  const onPath = (nodeId: string | null, key: string): boolean => {
+    for (let id = nodeId; id !== null; id = parentOf.get(id) ?? null) if (keyOf.get(id) === key) return true
+    return false
+  }
+  let loop: { from: TmBranchNode; to: string } | null = null
+  /** A move that closes a cycle in the explored graph of IDs, tree moves and merges together — or null. */
+  const cycleThroughMerges = (): { from: TmBranchNode; to: string } | null => {
+    const next = new Map<string, string[]>()
+    const link = (from: string, to: string): void => {
+      const list = next.get(from)
+      if (list === undefined) next.set(from, [to])
+      else list.push(to)
+    }
+    for (const [id, parent] of parentOf) if (parent !== null) link(parent, id)
+    for (const [id, key] of merges) link(id, nodeOfKey.get(key) as string)
+    // Iterative depth-first search; an edge into a node still on the stack closes a cycle.
+    const colour = new Map<string, 1 | 2>()
+    for (const start of parentOf.keys()) {
+      if (colour.has(start)) continue
+      colour.set(start, 1)
+      const stack: [string, number][] = [[start, 0]]
+      while (stack.length > 0) {
+        const frame = stack[stack.length - 1] as [string, number]
+        const out = next.get(frame[0]) ?? []
+        if (frame[1] >= out.length) {
+          colour.set(frame[0], 2)
+          stack.pop()
+          continue
+        }
+        const to = out[frame[1]++] as string
+        const c = colour.get(to)
+        if (c === 1) {
+          const from = nodes[indexOf.get(frame[0]) as number] as TmBranchNode
+          return { from, to: idText(nodes[indexOf.get(to) as number] as TmBranchNode, blank) }
+        }
+        if (c === undefined) {
+          colour.set(to, 1)
+          stack.push([to, 0])
+        }
+      }
+    }
+    return null
+  }
+  const queue: TmBranchNode[] = [root]
+  let head = 0
   const byIndex = new Map<string, TMTransition[]>()
   for (const t of machine.transitions) {
     const list = byIndex.get(t.from) ?? []
@@ -244,16 +328,24 @@ export function simulateTM(
     byIndex.set(t.from, list)
   }
 
-  const emit = (narration: string, highlight: Highlight[], current: TmConfig, moves: number, status: TmSnapshot['status']): void => {
+  // Narration may be passed as a thunk: past the step cap it is never shown,
+  // and writing out long tapes as IDs for every move is most of a long run's cost.
+  const emit = (
+    narration: string | (() => string),
+    highlight: Highlight[],
+    current: TmConfig,
+    moves: number,
+    status: TmSnapshot['status'],
+  ): void => {
     if (status === 'running' && builder.length >= LIMITS.TRACE_STEPS) {
       builder.truncate(`The run passed ${LIMITS.TRACE_STEPS} narrated moves and continues without commentary.`, LIMITS.TRACE_STEPS)
       return
     }
     builder.step({
-      narration,
+      narration: typeof narration === 'string' ? narration : narration(),
       highlight,
       citation: '8.2.3',
-      snapshot: { machine, input: symbols, nodes, current: { state: current.state, tapes: current.tapes }, status, moves },
+      snapshot: { machine, input: symbols, nodes: [...nodes], current: { state: current.state, tapes: current.tapes }, status, moves },
     })
   }
 
@@ -269,7 +361,7 @@ export function simulateTM(
   )
 
   if (machine.accepting.includes(machine.start)) {
-    nodes = [{ ...root, status: 'accepting' }]
+    update(root.id, { status: 'accepting' })
     emit(`The start state is accepting, so the machine accepts at once.`, [{ type: 'state', id: machine.start, role: 'accepting' }], root, 0, 'accepted')
     return ok(builder.build({ type: 'acceptance', accepted: true, note: `Accepted in ${stateText(machine.start)} after 0 moves.` }))
   }
@@ -278,7 +370,7 @@ export function simulateTM(
   let acceptingNode: TmBranchNode | null = null
   let deepest: TmBranchNode = root
 
-  while (queue.length > 0 && acceptingNode === null) {
+  while (head < queue.length && acceptingNode === null) {
     if (expanded >= maxSteps) {
       deepest = nodes.reduce((best, n) => (n.position > best.position ? n : best), deepest)
       builder.truncate(`The machine made ${maxSteps} moves without halting, so the run was stopped — a Turing machine need not halt (§8.2.6).`, maxSteps, { replace: true })
@@ -298,9 +390,9 @@ export function simulateTM(
       )
     }
 
-    const nodeId = queue.shift() as string
-    const node = nodes.find((n) => n.id === nodeId) as TmBranchNode
-    if (node.status !== 'live') continue
+    // Queued nodes are still live: a node's status changes only when it is expanded.
+    const node = queue[head++] as TmBranchNode
+    const nodeId = node.id
     expanded++
     if (node.position > deepest.position) deepest = node
 
@@ -309,9 +401,9 @@ export function simulateTM(
 
     if (moves.length === 0 || machine.rejecting?.includes(node.state) === true) {
       const scanned = node.tapes.map((tape) => readCell(tape, tape.head, blank)).join(', ')
-      nodes = nodes.map((n) => (n.id === nodeId ? { ...n, status: 'dead' as const, diedAtStep: stepIndex, note: 'no move' } : n))
+      update(nodeId, { status: 'dead', diedAtStep: stepIndex, note: 'no move' })
       emit(
-        `${idText(node, blank)}: in ${stateText(node.state)} there is no move on ${scanned}. The machine halts without accepting — it dies (§8.2.6).`,
+        () => `${idText(node, blank)}: in ${stateText(node.state)} there is no move on ${scanned}. The machine halts without accepting — it dies (§8.2.6).`,
         [{ type: 'treeNode', id: nodeId, role: 'dead' }, { type: 'state', id: node.state, role: 'dead' }, ...headHighlights(node)],
         node,
         node.position,
@@ -323,30 +415,44 @@ export function simulateTM(
     const children: TmBranchNode[] = []
     for (const t of moves) {
       const next = apply(t, node, blank)
-      const key = idText(next, blank)
-      if (seen.has(key)) continue
+      const key = configKey(next, blank)
+      if (seen.has(key)) {
+        if (onPath(nodeId, key)) {
+          if (loop === null) loop = { from: node, to: idText(next, blank) }
+        } else {
+          merges.push([nodeId, key])
+        }
+        continue
+      }
       seen.add(key)
-      children.push({ id: fresh(), ...next, position: node.position + 1, parent: nodeId, via: t.id, status: 'live' })
+      const child: TmBranchNode = { id: fresh(), ...next, position: node.position + 1, parent: nodeId, via: t.id, status: 'live' }
+      keyOf.set(child.id, key)
+      nodeOfKey.set(key, child.id)
+      parentOf.set(child.id, nodeId)
+      children.push(child)
     }
-    nodes = [...nodes, ...children]
+    for (const child of children) add(child)
     if (children.length === 0) {
-      nodes = nodes.map((n) => (n.id === nodeId ? { ...n, status: 'dead' as const, diedAtStep: stepIndex, note: 'repeats an explored ID' } : n))
+      const note = loop?.from === node ? 'loops: repeats an ID on its own path' : 'repeats an explored ID'
+      update(nodeId, { status: 'dead', diedAtStep: stepIndex, note })
     }
     builder.bump('tapeMoves', moves.length)
 
     const winner = children.find((c) => machine.accepting.includes(c.state))
     if (winner !== undefined) {
       acceptingNode = winner
-      nodes = nodes.map((n) => (n.id === winner.id ? { ...n, status: 'accepting' as const } : n))
+      update(winner.id, { status: 'accepting' })
     }
 
     const focus = winner ?? children[0] ?? node
-    const narration =
+    const narration = (): string =>
       moves.length === 1 && children.length === 1
         ? describeMove(moves[0] as TMTransition, node, children[0] as TmBranchNode, blank, k) +
           (winner !== undefined ? ` ${stateText(winner.state)} is accepting: the machine halts and accepts.` : '')
         : children.length === 0
-          ? `${idText(node, blank)} has moves, but each leads to an ID already explored — this branch adds nothing new.`
+          ? loop?.from === node
+            ? `${idText(node, blank)} ⊢ ${loop.to}, an ID this computation was already in: from here it repeats the same moves forever.`
+            : `${idText(node, blank)} has moves, but each leads to an ID already explored — this branch adds nothing new.`
           : `${idText(node, blank)} has ${moves.length} possible moves (a nondeterministic choice): ${children.map((c) => idText(c, blank)).join(' | ')}.${
               winner !== undefined ? ` ${idText(winner, blank)} is in an accepting state: the machine accepts.` : ''
             }`
@@ -366,7 +472,7 @@ export function simulateTM(
       winner !== undefined ? 'accepted' : 'running',
     )
 
-    for (const child of children) if (child.id !== acceptingNode?.id) queue.push(child.id)
+    for (const child of children) if (child.id !== acceptingNode?.id) queue.push(child)
   }
 
   if (acceptingNode !== null) {
@@ -379,9 +485,40 @@ export function simulateTM(
     )
   }
 
-  const last = nodes.filter((n) => n.status === 'dead').sort((a, b) => b.position - a.position)[0] ?? root
+  if (loop === null && merges.length > 0) loop = cycleThroughMerges()
+
+  if (loop !== null) {
+    // Every reachable ID was explored and none accepts, but a computation came
+    // back to an ID it had been in: it runs forever. Not accepted — and not a
+    // rejection, which is a halt (§8.2.6).
+    const { from, to } = loop
+    const deterministic = isDeterministicTM(machine)
+    for (const n of [...nodes]) if (n.status === 'live') update(n.id, { status: 'dead', diedAtStep: builder.length, note: 'exhausted' })
+    emit(
+      deterministic
+        ? `The machine returned to ${to}, an ID it was already in, so it repeats the same moves forever: it never halts, and never accepts.`
+        : `No branch accepts, and at least one runs forever — it returns to ${to}, an ID it was already in. The input is not accepted, but the machine does not halt on it.`,
+      headHighlights(from),
+      from,
+      from.position,
+      'loops',
+    )
+    return ok(
+      builder.build({
+        type: 'acceptance',
+        accepted: false,
+        loops: true,
+        note: deterministic
+          ? `Never halts: after ${from.position + 1} moves it is back in ${to} and loops forever.`
+          : `Not accepted: no branch accepts, and a branch loops forever (it returns to ${to}).`,
+      }),
+    )
+  }
+
+  // A computation that halted — not a branch cut short because its ID was already explored.
+  const last = nodes.filter((n) => n.status === 'dead' && n.note === 'no move').sort((a, b) => b.position - a.position)[0] ?? root
   const finalStep = builder.length
-  nodes = nodes.map((n) => (n.status === 'live' ? { ...n, status: 'dead' as const, diedAtStep: finalStep, note: 'exhausted' } : n))
+  for (const n of [...nodes]) if (n.status === 'live') update(n.id, { status: 'dead', diedAtStep: finalStep, note: 'exhausted' })
   emit(
     k === 1 && nodes.length === last.position + 1
       ? `The machine halted in ${stateText(last.state)}, which is not accepting: the input is rejected after ${last.position} moves.`

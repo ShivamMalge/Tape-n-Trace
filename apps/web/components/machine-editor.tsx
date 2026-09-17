@@ -66,6 +66,12 @@ export function MachineEditor({
   const [notice, setNotice] = useState<string | null>(null)
   const svgRef = useRef<SVGSVGElement | null>(null)
 
+  // An edge whose state was deleted, renamed or undone away cannot be labelled:
+  // committing would write transitions to a state the machine no longer has.
+  if (editingEdge !== null && !(machine.states.includes(editingEdge.from) && machine.states.includes(editingEdge.to))) {
+    setEditingEdge(null)
+  }
+
   const validation = validateFA(machine)
   const errors: ValidationError[] = isErr(validation) ? validation.errors : []
 

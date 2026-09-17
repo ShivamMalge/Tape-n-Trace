@@ -14,7 +14,7 @@
  * all low integers fail to represent a valid TM code ... the top rows of the
  * table are in fact solid 0's" — and `encoding.ts` pins where that stops: the
  * first well-formed code is w₆₈₂, and the first machine able to accept anything
- * at all is M₂₇₀₈. The table therefore starts wherever the caller asks.
+ * at all is M₁₃₅₄. The table therefore starts wherever the caller asks.
  *
  * **Some cells have no answer.** A machine may run forever, so a cell is filled
  * by a run under a step budget, and a run that reaches the budget is reported as

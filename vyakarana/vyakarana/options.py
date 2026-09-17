@@ -22,6 +22,8 @@ def options(**overrides: Any) -> dict[str, Any]:
             raise ValueError(f"{key} must be one of {_ALLOWED[key]}, not {value!r}")
         if key == "speed" and not 0.25 <= float(value) <= 4.0:
             raise ValueError("speed must be between 0.25 and 4.0")
+        if key == "max_steps" and (isinstance(value, bool) or not isinstance(value, int) or value < 1):
+            raise ValueError(f"max_steps must be a positive int, not {value!r}")
         _current[key] = value
     return dict(_current)
 

@@ -76,6 +76,35 @@ export function BoardTools({
   )
 }
 
+/** The bottom-left pills: what is on the board, mark accepting, and clear. */
+export function BoardStatus({
+  states,
+  arcs,
+  marking,
+  onMarking,
+  onClear,
+}: {
+  states: number
+  arcs: number
+  marking: boolean
+  onMarking: () => void
+  onClear: () => void
+}): React.JSX.Element {
+  return (
+    <div className="tnt-board-status">
+      <span className="tnt-board-pill">
+        {states} {states === 1 ? 'state' : 'states'} · {arcs} {arcs === 1 ? 'arc' : 'arcs'}
+      </span>
+      <button type="button" className="tnt-board-pill" aria-pressed={marking} onClick={onMarking}>
+        mark accepting
+      </button>
+      <button type="button" className="tnt-board-pill" disabled={states === 0} onClick={onClear}>
+        clear board
+      </button>
+    </div>
+  )
+}
+
 export function BoardPicker({
   from,
   to,
